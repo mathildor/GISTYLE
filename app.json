@@ -1,0 +1,8 @@
+{
+  "name": "GIS-project",
+  "description": "",
+  "repository": "/Users/mathilde/GitHub/GIS/GIS-project",
+  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
+}
