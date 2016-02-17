@@ -1,7 +1,51 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+body{
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
-a {
-  color: #00B7FF;
+body ul{
+  list-style-type: none;
+}
+body a:hover{
+  text-decoration: none;
+  color: #DAD8D8;
+}
+body a{
+  color: white;
+  text-decoration: none;
+}
+.side-panel li{
+  margin: 20px;
+  width: 70%;
+}
+
+.side-panel a{
+  border: 2px solid;
+  padding: 5px;
+}
+
+.top-panel{
+  margin:0;
+  background-color: black;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+.top-panel h1{
+  margin-top: 0px;
+  margin-bottom:0px;
+}
+
+#panel-list{
+  padding-left: 2px;
+}
+
+#side-panel-col{
+  height: 100vh;
+  background-color: grey;
+  padding:0;
+  padding-left: 0px;
+}
+.side-panel{
+  height: 100%;
 }
