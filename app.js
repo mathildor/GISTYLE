@@ -47,3 +47,15 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+
+//CONNECT TO DATABASE!
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+
+// Connect to the db
+var uri="mongodb://heroku_5dxc4nxv:ujhacelafa84d4fh7l8vofpa5g@ds039404.mongolab.com:39404/heroku_5dxc4nxv"
+MongoClient.connect(uri, function(err, db) {
+  if(!err) {
+    console.log("We are connected");
+  }
+});
