@@ -49,13 +49,33 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 //CONNECT TO DATABASE!
+
 // Retrieve
 var MongoClient = require('mongodb').MongoClient;
 
 // Connect to the db
 var uri="mongodb://heroku_5dxc4nxv:ujhacelafa84d4fh7l8vofpa5g@ds039404.mongolab.com:39404/heroku_5dxc4nxv"
 MongoClient.connect(uri, function(err, db) {
-  if(!err) {
+  if(err){
+    console.log("Unable to connect to mongoDB server. Error: ",err);
+  }else{
     console.log("We are connected");
+    //Insert the rest of the database queries here:
+
+    //Get the documents collection:
+    var collection = db.collection('users');
+
+    //Create user:
+    var user1 = {name: 'test user', age:'42', roles: ['admin', 'moderator', 'user']};
+    //insert user:
+    collection.insert([user1], function(err, result){
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Inserted %d documents into the "users" collection. The documents inserted with "_id" are:', result.length, result);
+      }
+      //close connection
+      db.close();
+    });
   }
 });
