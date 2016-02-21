@@ -62,6 +62,7 @@ MongoClient.connect(uri, function(err, db) {
     console.log("We are connected");
     //Insert the rest of the database queries here:
 
+    /*
     //Get the documents collection:
     var collection = db.collection('users');
 
@@ -76,6 +77,22 @@ MongoClient.connect(uri, function(err, db) {
       }
       //close connection
       db.close();
+    });*/
+
+    // Get the documents collection
+    var collection = db.collection('map-layers');
+
+    collection.find({type: 'FeatureCollection'}).toArray(function (err, result) {
+      if (err) {
+        console.log(err);
+      } else if (result.length) {
+        console.log('Found:', result);
+      } else {
+        console.log('No document(s) found with defined "find" criteria!');
+      }
+      //Close connection
+      db.close();
     });
+
   }
 });
