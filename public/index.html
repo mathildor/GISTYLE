@@ -75,11 +75,6 @@
     map.on('click', onMapClick);
 
 
-    //ADDING geoJSON TO THE MAP:
-
-    L.geoJson(geojsonFeature).addTo(map);
-
-
 
     //CONNECT TO DATABASE!
 
@@ -95,12 +90,12 @@
             console.log("We are connected");
             //Insert the rest of the database queries here:
 
-            /*
+
              //Get the documents collection:
              var collection = db.collection('users');
 
              //Create user:
-             var user1 = {name: 'test user', age:'42', roles: ['admin', 'moderator', 'user']};
+             var user1 = {name: 'test user 2', age:'2', roles: ['admin', 'moderator', 'user']};
              //insert user:
              collection.insert([user1], function(err, result){
              if (err) {
@@ -110,7 +105,7 @@
              }
              //close connection
              db.close();
-             });*/
+             });
 
             // Get the documents collection
             var collection = db.collection('map-layers');
@@ -127,8 +122,17 @@
                 db.close();
             });
 
+            geojsonFeature=result;
+
         }
     });
+
+
+
+    //ADDING geoJSON TO THE MAP:
+
+    L.geoJson(geojsonFeature).addTo(map);
+
 
 
 
