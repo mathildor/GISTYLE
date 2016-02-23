@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app-ols');
+var app = require('../app');
 var debug = require('debug')('gis:server');
 var http = require('http');
 

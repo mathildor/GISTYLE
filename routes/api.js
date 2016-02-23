@@ -5,6 +5,14 @@ var express = require('express'),
 User = require('../models/user.js');
 
 
+router.get('/logout', function(req, res) {
+    //res.send('Hello world');
+    req.logout();
+    res.status(200).json({status: 'Hadebra!'});
+});
+
+
+/*
 router.post('/register', function(req, res) {
     User.register(new User({ username: req.body.username }), req.body.password, function(err, account) {
         if (err) {
@@ -31,10 +39,7 @@ router.post('/login', function(req, res, next) {
     })(req, res, next);
 });
 
-router.get('/logout', function(req, res) {
-    req.logout();
-    res.status(200).json({status: 'Hadebra!'});
-});
+
 
 router.post('/userInfo', function(req,res){
     //Get the token from the request
@@ -74,6 +79,6 @@ getToken = function (headers) {
         return null;
     }
 };
-
+*/
 
 module.exports = router;

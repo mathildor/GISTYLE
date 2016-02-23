@@ -3,19 +3,17 @@
  */
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var cors = require('cors');
-var io = require('./io');
 var jsts = require('jsts');
 var passport = require('passport');
 var jwt = require('jwt-simple');
 
 //Mongoose
-var uri="mongodb://heroku_5dxc4nxv:ujhacelafa84d4fh7l8vofpa5g@ds039404.mongolab.com:39404/heroku_5dxc4nxv";
+var uri="mongodb://heroku_xmpl1lg6:mgla64r400lt8sek0o6gmq6rlq@ds061248.mongolab.com:61248/heroku_xmpl1lg6";
 mongoose.connect(uri);
 var User = require('./models/user.js');
 
@@ -31,7 +29,7 @@ app.use(require('node-sass-middleware')({
     sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // require routes
 var routes = require('./routes/api.js');
