@@ -112,8 +112,7 @@ MongoClient.connect(uri, function(err, db) {
       //Close connection
       db.close();
     });
-
-    geojsonFeature=result;
+    
 
   }
 });
