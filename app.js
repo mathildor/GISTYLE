@@ -30,7 +30,7 @@ app.use(logger('dev'));
 //Configure app to use bodyParser()
 //This will let us get the data from a POST
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); //ORIGINALLY SET TO FALSE!
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
