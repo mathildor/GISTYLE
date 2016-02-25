@@ -1,4 +1,7 @@
 
+$nav-color:rgba(0,0,0,0.58);
+
+
 #map{
   background-image: url("map.jpg");
   z-index: 1;
@@ -31,4 +34,20 @@
 
 .navbar-buttons{
   padding-right: 80px;
+}
+
+.sidebar-menu{
+  background-color: rgba(0,0,0,0.58);
+  margin-top: 60px;
+  height: 100vh;
+
+  a{
+    color:white;
+  }
+}
+
+#col-sidebar{
+  z-index: 999;
+  padding-left: 0px;
+  padding-right: -20px;
 }
