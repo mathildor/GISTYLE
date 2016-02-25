@@ -12,6 +12,22 @@ router.get('/logout', function(req, res) {
 });
 
 
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            return res.status(500).json({err: err});
+        }
+        if (!user) {
+            return res.status(401).json({err: info});
+        }
+
+        var token = jwt.encode(user, 'hemmelig');
+        return res.status(200).json({token: token});
+
+    })(req, res, next);
+});
+
+
 /*
 router.post('/register', function(req, res) {
     User.register(new User({ username: req.body.username }), req.body.password, function(err, account) {

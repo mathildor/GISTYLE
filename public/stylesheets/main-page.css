@@ -1,0 +1,30 @@
+#map {
+  background-image: url("map.jpg");
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: block; }
+
+.menus {
+  z-index: 999; }
+
+.navbar {
+  font-size: medium;
+  background-color: transparent;
+  background: rgba(0, 0, 0, 0.58);
+  background: -moz-linear-gradient(left, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.92) 94%, rgba(0, 0, 0, 0.92) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0, 0, 0, 0.58)), color-stop(45%, rgba(0, 0, 0, 0.58)), color-stop(94%, rgba(0, 0, 0, 0.92)), color-stop(100%, rgba(0, 0, 0, 0.92)));
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.92) 94%, rgba(0, 0, 0, 0.92) 100%);
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.92) 94%, rgba(0, 0, 0, 0.92) 100%);
+  background: -ms-linear-gradient(left, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.92) 94%, rgba(0, 0, 0, 0.92) 100%);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.58) 45%, rgba(0, 0, 0, 0.92) 94%, rgba(0, 0, 0, 0.92) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=1 ); }
+  .navbar h1 {
+    color: white;
+    margin-top: 10px; }
+
+.navbar-buttons {
+  padding-right: 80px; }
+
+/*# sourceMappingURL=main-page.css.map */

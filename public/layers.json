@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Water",
+    "type": "Polygon"
+  },
+  {
+    "name": "Road",
+    "type": "Line",
+    "width": "5"
+
+  },
+  {
+    "name": "Building",
+    "type": "Polygon"
+  }
+]
+

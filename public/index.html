@@ -2,93 +2,37 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/main-page.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/welcome.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!--
     <link rel="stylesheet" href="/javascripts/leaflet/leaflet.css" />
     <script src="/javascripts/leaflet/leaflet.js"></script>
-    <script src="javascripts/angular.js"></script>
-    <title>GIS</title>
+    -->
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+
+    <!-- Add all controllers here:     -->
+    <script src="javascripts/controllers/angApp.js"></script>
+    <script src="javascripts/controllers/controllers.js"></script>
+
+    <title>GISTYLE</title>
 </head>
-<body>
+<body ng-app="gisApp">
 
 
-
-<div class="container-fluid">
-
-    <div class="row" id="top-panel-row">
-        <div class="top-panel">
-            <h1> GISTYLE </h1>
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col-sm-1" id="side-panel-col">
-            <div class="side-panel">
-                <ul id="panel-list">
-                    <li id="help"><a href="">help</a></li>
-                    <li id="layers"><a href="">layers</a></li>
-                    <li id="functions"><a href="">functions</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="col-sm-11" id="col-map">
-
-            <div id="map">
-
-            </div>
-        </div>
-    </div><!-- End row-->
-
-</div> <!-- End container-->
-
-<script>
-    var map = L.map('map').setView([51.505, -0.09], 13);
-    L.tileLayer('//api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="://openstreetmap.org">OpenStreetMap</a> contributors, <a href="//creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="//mapbox.com">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoibW9yZ2FuaGVybG9ja2VyIiwiYSI6Ii1zLU4xOWMifQ.FubD68OEerk74AYCLduMZQ'
-    }).addTo(map);
-
-    var circle = L.circle([51.508, -0.11], 500, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5
-    }).addTo(map);
-
-    var polygon = L.polygon([
-        [51.509, -0.08],
-        [51.503, -0.06],
-        [51.51, -0.047]
-    ]).addTo(map);
-
-
-    //Add popups the the different layers, example buffer with desctiption? i.e Buffer, 30m
-    circle.bindPopup("I am a circle.");
-    polygon.bindPopup("I am a polygon.");
-
-    function onMapClick(e) {
-        alert("You clicked the map at " + e.latlng);
-    }
-
-    map.on('click', onMapClick);
+<ng-view>
+    <h1>Hola</h1>
+</ng-view>
 
 
 
 
-    //ADDING geoJSON TO THE MAP:
-
-    //L.geoJson(geojsonFeature).addTo(map);
-
-
-
-
-</script>
 
 
 
 </body>
-
-
 </html>
