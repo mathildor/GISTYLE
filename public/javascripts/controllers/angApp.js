@@ -29,7 +29,8 @@ gisApp.config(['$routeProvider',
 
         }).
         when('/login',{ //Just for now, later changed to login page ofc
-            templateUrl:'views/main-page.html'
+            templateUrl:'views/main-page.html',
+            controller:'mapController'
         }).
         otherwise({
             redirectTo: '/views/welcome'
@@ -45,15 +46,6 @@ gisApp.config(['$routeProvider',
 //Application routes are declared via the $routeProvider:
 //ngRoute and cookies are depencedies of the module
 
-/*gis.config(function($routeProvider) {
-    $routeProvider
-        .when('/sdkfasdf', {
-            controller: '',
-            templateUrl: '/views/mainPage-old.html'
-        })
-        .otherwise({ redirectTo: '../../../views/mainPage-old.html' });
-});
-*/
 
 /*
 gis.run(function ($rootScope, $location, $route, AuthService) {

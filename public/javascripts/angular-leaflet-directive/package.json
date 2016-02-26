@@ -1,0 +1,114 @@
+{
+  "_args": [
+    [
+      "angular-leaflet-directive",
+      "/Users/mathilde/GitHub/GIS/GIS-project"
+    ]
+  ],
+  "_from": "angular-leaflet-directive@*",
+  "_id": "angular-leaflet-directive@0.10.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/angular-leaflet-directive",
+  "_nodeVersion": "4.2.2",
+  "_npmUser": {
+    "email": "david.rubert@gmail.com",
+    "name": "tombatossals"
+  },
+  "_npmVersion": "2.14.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "angular-leaflet-directive",
+    "raw": "angular-leaflet-directive",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/angular-leaflet-directive/-/angular-leaflet-directive-0.10.0.tgz",
+  "_shasum": "ec2059f4c1017d5be720ba9a9a1e05801ea017a1",
+  "_shrinkwrap": null,
+  "_spec": "angular-leaflet-directive",
+  "_where": "/Users/mathilde/GitHub/GIS/GIS-project",
+  "author": {
+    "name": "https://github.com/tombatossals/angular-leaflet-directive/graphs/contributors"
+  },
+  "bugs": {
+    "url": "https://github.com/tombatossals/angular-leaflet-directive/issues"
+  },
+  "dependencies": {
+    "angular": "1.x",
+    "leaflet": "0.7.x"
+  },
+  "description": "angular-leaflet-directive - An AngularJS directive to easily interact with Leaflet maps",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-uglify": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-graphviz": "^0.1.1",
+    "grunt-jscs": "^2.3.0",
+    "grunt-karma": "^0.12.1",
+    "grunt-ng-annotate": "^1.0.1",
+    "grunt-open": "^0.2.3",
+    "grunt-protractor-runner": "^2.0.0",
+    "grunt-shell": "^1.1.2",
+    "grunt-shell-spawn": "^0.3.2",
+    "jasmine-core": "^2.2.0",
+    "jsdom": "^7.0.2",
+    "karma": "^0.13.15",
+    "karma-coffee-preprocessor": "^0.3.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "load-grunt-config": "^0.19.0",
+    "matchdep": "^1.0.0",
+    "mkdirp": "^0.5.0",
+    "phantomjs": "1.9",
+    "protractor": "^2.0.0",
+    "q": "^1.2.0",
+    "requirejs": "^2.1.20",
+    "semantic-release": "^4.3.5",
+    "shelljs": "^0.5.3"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "ec2059f4c1017d5be720ba9a9a1e05801ea017a1",
+    "tarball": "http://registry.npmjs.org/angular-leaflet-directive/-/angular-leaflet-directive-0.10.0.tgz"
+  },
+  "gitHead": "15323bc8c3bad3f2dedafbcfebb6772dc0813cfb",
+  "homepage": "http://tombatossals.github.io/angular-leaflet-directive/",
+  "keywords": [
+    "angularjs",
+    "cli",
+    "leaflet"
+  ],
+  "license": "MIT",
+  "main": "dist/angular-leaflet-directive",
+  "maintainers": [
+    {
+      "name": "tombatossals",
+      "email": "david.rubert@gmail.com"
+    }
+  ],
+  "name": "angular-leaflet-directive",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tombatossals/angular-leaflet-directive.git"
+  },
+  "scripts": {
+    "karmaChrome": "grunt test-unit-chrome",
+    "karmaChromeOnce": "grunt karma:unit-chrome-once",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "test": "grunt travis --verbose"
+  },
+  "version": "0.10.0"
+}

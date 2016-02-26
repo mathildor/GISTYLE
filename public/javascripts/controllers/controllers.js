@@ -2,7 +2,7 @@
 /* Controllers:    */
 
 
-var gisControllers = angular.module('gisControllers', []);
+var gisControllers = angular.module('gisControllers', ['leaflet-directive']);
 
 //Defining controller: ButtonController:
 gisControllers.controller('ButtonController', function($scope){
@@ -25,6 +25,11 @@ gisControllers.controller('LayerController', ['$scope', '$http', function($scope
 }]);
 
 
+
+gisControllers.controller("mapController", [ "$scope",
+    function($scope) {
+        // Nothing here!
+    }]);
 
 
 /*
