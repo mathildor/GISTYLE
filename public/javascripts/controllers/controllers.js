@@ -109,6 +109,17 @@ angular.module('gisApp').controller('registerController',
                 $scope.error = false;
                 $scope.disabled = true;
 
+                console.log('pass er: '+$scope.registerForm.password);
+                console.log('rep pass er: '+$scope.registerForm.repeatedPassword);
+
+                if(!($scope.registerForm.password === $scope.registerForm.repeatedPassword)){
+                    console.log('not same passw');
+                    $scope.error = true;
+                    $scope.errorMessage = "Passwords do not match";
+                    //$scope.disabled = false;
+                    //$scope.registerForm = {};
+                }
+
                 // call register from service
                 AuthService.register($scope.registerForm.username, $scope.registerForm.password)
                     // handle success

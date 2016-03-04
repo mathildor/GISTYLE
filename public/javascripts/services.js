@@ -15,6 +15,7 @@ angular.module('gisApp').factory('AuthService',
             });
 
             function isLoggedIn() {
+                console.log('user: '+user);
                 if(user) {
                     return true;
                 } else {
@@ -27,6 +28,7 @@ angular.module('gisApp').factory('AuthService',
                     // handle success
                     .success(function (data) {
                         if(data.status){
+                            console.log('User active!');
                             user = true;
                         } else {
                             user = false;
@@ -34,6 +36,7 @@ angular.module('gisApp').factory('AuthService',
                     })
                     // handle error
                     .error(function (data) {
+                        console.log('user error');
                         user = false;
                     });
             }

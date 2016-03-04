@@ -2,7 +2,9 @@
     <div class="background-img"></div>
     <div class="login-content">
         <div class="login-top-panel">
-            <h1 id="gistyle">GISTYLE</h1>
+            <a href="#/welcome">
+                <h1 id="gistyle">GISTYLE</h1>
+            </a>
             <div class="login-top-right">
                 <div id="activeButton">
                     <a id="signUp">Sign up</a>
@@ -13,7 +15,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="login-popup-background"></div>
+            <div class="login-popup-background" id="signUpBackground"></div>
             <div class="signUp-popup">
                 <div class="col-lg-6">
                     <img id="icon" src="../stylesheets/map-icon.png"/>
@@ -30,10 +32,9 @@
                                 <li><div ng-show="error" class="alert alert-danger">{{errorMessage}}</div></li>
                                 <li><input id="mail" class="form-control" ng-model="registerForm.username" name="username" required placeholder="Enter email"/></li>
                                 <li><input type="password" class="form-control" ng-model="registerForm.password" name="password" required id="password" placeholder="Password"/></li>
-                                <li><input type="password" ng-model="registerForm.repeatedPassword" name="repeatedPassword" id="passwordAgain" placeholder="Repeat password"/></li>
+                                <li><input type="password" class="form-control" ng-model="registerForm.repeatedPassword" name="repeatedPassword" id="passwordAgain" placeholder="Repeat password"/></li>
                                 <li><button type=submit id="login-button" ng-disabled="disabled" class="btn btn-default" > Sign up </button></li>
                             </ul>
-
 
                     </form>
                 </div>

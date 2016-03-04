@@ -21,7 +21,7 @@ body {
   z-index: 999; }
 
 #gistyle {
-  margin-left: 1.5%;
+  margin-left: 10%;
   margin-top: 10px; }
 
 .login-top-panel {
@@ -91,7 +91,7 @@ body {
     margin-left: 10%;
     font-family: "Lucida Grande"; }
   .login-popup .line {
-    width: 4.3em;
+    width: 4.8em;
     background-color: grey;
     height: 1px;
     display: inline-flex; }
@@ -153,21 +153,21 @@ body {
   width: 40%;
   height: 35%;
   margin: auto;
+  margin-top: 30vh;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
-  right: 0;
-  padding-top: 10px; }
+  right: 0; }
   .signUp-popup input {
     margin-bottom: 10%;
     height: 30px;
-    width: 73%;
+    width: 80%;
     color: black;
     font-size: small; }
   .signUp-popup button {
     height: 30px;
-    width: 73%;
+    width: 80%;
     border: none;
     background: #FF7676;
     box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.5);
@@ -176,10 +176,13 @@ body {
     margin-left: 10%;
     font-family: "Lucida Grande"; }
   .signUp-popup .line {
-    width: 3.2em;
+    width: 4.5em;
     background-color: grey;
     height: 1px;
     display: inline-flex; }
+
+#signUpBackground {
+  height: 50vh; }
 
 /* Form css, angular - SIGN UP */
 .signUp-form input.ng-invalid.ng-touched {

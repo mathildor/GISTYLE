@@ -2,12 +2,10 @@
  * Created by mathilde on 23/02/16.
  */
 
-
-
 var gisApp = angular.module("gisApp", [
     //adding all dependencies:
-    'ngRoute'
-    //'gisControllers'
+    'ngRoute',
+    'gisControllers'
 ]);
 
 
@@ -20,7 +18,7 @@ gisApp.config(['$routeProvider',
         when('/mainPage',{
             templateUrl: 'views/main-page.html',
             controller:"mapController",
-            access: {restricted: true}
+            access: {restricted: false} //Fix later, just so update doesn't log out
         }).
         when('/views/welcome',{
             templateUrl: 'views/welcome.html',
@@ -50,11 +48,12 @@ gisApp.config(['$routeProvider',
 
 
 gisApp.run(function ($rootScope, $location, $route, AuthService) {
-    $rootScope.$on('$routeChangeStart',
-        function (event, next, current) {
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
             AuthService.getUserStatus();
-            if (next.access.restricted &&
-                !AuthService.isLoggedIn()) {
+            //console.log('acc restrict?: '+next.access.restricted);
+            //console.log('logged in?: '+AuthService.isLoggedIn());
+
+            if (next.access.restricted && !AuthService.isLoggedIn()) {
                 $location.path('/login');
                 $route.reload();
             }
