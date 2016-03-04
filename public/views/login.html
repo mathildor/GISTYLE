@@ -1,3 +1,41 @@
-<div class="login">
-    <button>Logg inn</button>
+<div class="login-page">
+    <div class="background-img"></div>
+    <div class="login-content">
+        <div class="login-top-panel">
+            <h1 id="gistyle">GISTYLE</h1>
+            <div class="login-top-right">
+
+                <a href="#/register">Sign up</a>
+                <p id="split">|</p>
+                <div id="activeButton">
+                    <a id="logIn">Log in</a>
+                    <div class="underline"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="login-popup-background"></div>
+            <div class="login-popup">
+                <div class="col-lg-6">
+                    <img id="icon" src="../stylesheets/map-icon.png"/>
+                </div>
+                <div class="col-lg-6">
+                    <form class="login-form form" ng-submit="login()" >
+
+                        <ul>
+                            <li id="login-text">
+                                <div class="line"></div>
+                                <h4 id="login-head">  LOG IN  </h4>
+                                <div class="line"></div>
+                            </li>
+                            <li><div ng-show="error" class="alert alert-danger">{{errorMessage}}</div></li>
+                            <li><input name="username" class="form-control" ng-model="loginForm.username" id="mail" placeholder="Mail" required /></li>
+                            <li><input type="password" class="form-control" name="password" ng-model="loginForm.password" id="password" placeholder="Password" required /></li>
+                            <li><button type="submit" id="login-button">Log in</button></li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

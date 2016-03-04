@@ -1,6 +1,6 @@
 
 <div ng-controller="mapController" id="map">
-    <leaflet width="100%" height="100vh"></leaflet>
+    <leaflet lf-center="trd" defaults="defaults" ng-click="fitBounds()" width="100%" height="100vh"></leaflet>
 </div>
 
 <div class="menus">
@@ -20,7 +20,10 @@
                             <a class="navbar-buttons" id="info">Info</a>
                         </div>
                         <div class="form-group">
-                            <a id="help">Help</a>
+                            <a class="navbar-buttons" id="help">Help</a>
+                        </div>
+                        <div class="form-group">
+                            <a id="logOut" href="#/logout">Log out</a>
                         </div>
                     </form>
                 </div><!--/.navbar-collapse -->

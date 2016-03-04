@@ -6,8 +6,8 @@
 
 var gisApp = angular.module("gisApp", [
     //adding all dependencies:
-    'ngRoute',
-    'gisControllers'
+    'ngRoute'
+    //'gisControllers'
 ]);
 
 
@@ -15,73 +15,53 @@ var gisApp = angular.module("gisApp", [
 
 gisApp.config(['$routeProvider',
     function($routeProvider) {
+        //console.log('!!------ in angApp -----!!!');
         $routeProvider.
-        when('/test', {
-            templateUrl: 'views/test.html',
-            controller: 'LayerController'
-        }).
-        when('/test2',{
-            templateUrl: 'views/test2.html',
-            controller:""
+        when('/mainPage',{
+            templateUrl: 'views/main-page.html',
+            controller:"mapController",
+            access: {restricted: true}
         }).
         when('/views/welcome',{
-            templateUrl: 'views/welcome.html'
+            templateUrl: 'views/welcome.html',
+            access: {restricted: false}
 
         }).
-        when('/login',{ //Just for now, later changed to login page ofc
-            templateUrl:'views/main-page.html',
-            controller:'mapController'
+        when('/login',{
+            templateUrl:'views/login.html',
+            controller:'loginController',
+            access: {restricted: false}
+        }).
+        when('/logout',{
+            templateUrl:'views/welcome.html',
+            controller: 'logoutController',
+            access: {restricted: true}
+        }).
+        when('/register',{
+            templateUrl:'views/register.html',
+            controller:'registerController',
+            access: {restricted: false}
         }).
         otherwise({
-            redirectTo: '/views/welcome'
+            redirectTo: '/views/welcome',
+            access: {restricted: false}
         });
     }]);
 
 
+gisApp.run(function ($rootScope, $location, $route, AuthService) {
+    $rootScope.$on('$routeChangeStart',
+        function (event, next, current) {
+            AuthService.getUserStatus();
+            if (next.access.restricted &&
+                !AuthService.isLoggedIn()) {
+                $location.path('/login');
+                $route.reload();
+            }
+        });
+});
 
 
 //USE for ordering layers by name:
 //&scope.orderProp='name';
 
-//Application routes are declared via the $routeProvider:
-//ngRoute and cookies are depencedies of the module
-
-
-/*
-gis.run(function ($rootScope, $location, $route, AuthService) {
-    AuthService.getAuthStatus().then(function(){
-        //Success
-    }, function(){
-        //Error, user is not authenticated
-        $location.path('/login');
-        $route.reload();
-    });
-});
-*/
-
-/*
-gis.config(function($routeProvider) {
-    $routeProvider
-        .when('/', {
-            controller: 'fileController',
-            templateUrl: '/views/file.html',
-            access: {restricted: true}
-        })
-        .when('/file/:fileId', {
-            controller: 'mapController',
-            templateUrl: '/partials/map.html',
-            access: {restricted: true}
-        })
-        .when('/login',{
-            controller: 'loginController',
-            templateUrl: '/partials/login.html',
-            access: {restricted: false}
-        })
-        .when('/register', {
-            templateUrl: 'partials/register.html',
-            controller: 'registerController',
-            access: {restricted: false}
-        })
-        .otherwise({ redirectTo: '/login' });
-});
-    */

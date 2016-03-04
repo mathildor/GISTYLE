@@ -1,7 +1,4 @@
-/**
- * Created by mathilde on 23/02/16.
- */
-
+// user model
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
@@ -14,4 +11,5 @@ var User = new Schema({
 
 User.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('user', User);
+
+module.exports = mongoose.model('users', User);

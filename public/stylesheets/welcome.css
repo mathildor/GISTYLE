@@ -1,3 +1,15 @@
+body {
+  margin: 0;
+  overflow: hidden; }
+  body ul {
+    list-style-type: none; }
+  body a:hover {
+    text-decoration: none;
+    color: #DAD8D8; }
+  body a {
+    color: white;
+    text-decoration: none; }
+
 .background-img {
   background-image: url("map.jpg");
   -webkit-filter: blur(5px);
