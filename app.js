@@ -19,6 +19,7 @@ mongoose.connect('mongodb://heroku_xmpl1lg6:mgla64r400lt8sek0o6gmq6rlq@ds061248.
 
 // user schema/model
 var User = require('./models/user.js');
+//var Layer = require('./models/layer.js');
 
 // create instance of express
 var app = express();
@@ -48,12 +49,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // routes
 app.use('/user/', routes);
+//app.use('/', routes);
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// error hndlers
+// error handlers
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;

@@ -1,5 +1,4 @@
 
-/* Controllers:    */
 
 
 var gisControllers = angular.module('gisControllers', ['leaflet-directive']);
@@ -17,32 +16,56 @@ gisControllers.controller('ButtonController', function($scope){
 //Can save dependencies in controller.$inject, or send in
 
 
-gisControllers.controller('LayerController', ['$scope', '$http', function($scope, $http) {
-
-    $http.get('layers.json').success(function(data){
-        $scope.layers=data;
-    })
-}]);
+gisControllers.controller("mapController", [ "$scope", '$http', "leafletData", function($scope, $http, leafletData) {
 
 
-
-gisControllers.controller("mapController", [ "$scope", "leafletData", function($scope, leafletData) {
     angular.extend($scope, {
+        defaults:{
+            zoomControlPosition: 'bottomright'
+        },
         trd: {
             lat: 63.387523,
             lng: 10.39066,
             zoom: 11
         },
-        defaults: {
-            tileLayer: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
-            zoomControlPosition: 'bottomright',
-            tileLayerOptions: {
-                opacity: 0.9,
-                detectRetina: true,
-                reuseTiles: true
-            }
+        layers:{
+            baselayers:{
+                osm: {
+                    name: 'OpenStreetMap',
+                    url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    type: 'xyz'
+                },
+            },
+            overlays:{}
         }
     });
+
+    $http.get('/user/layer')
+        .success(function(data, status){
+            console.log('success in get req');
+            angular.extend($scope.layers.overlays, {
+                countries: {
+                    name:'World Country Boundaries',
+                    type: 'geoJSONShape',
+                    data: data,
+                    visible: true,
+                    layerOptions: {
+                        style: {
+                            color: '#00D',
+                            fillColor: 'yellow',
+                            weight: 2.0,
+                            opacity: 0.6,
+                            fillOpacity: 0.2
+                        }
+                    }
+                }
+            });
+        })
+        .error(function (data) {
+            console.log('error getting layer');
+        });
+
+
 
     $scope.fitBounds = function() {
         leafletData.getMap().then(function(map) {
@@ -139,11 +162,4 @@ angular.module('gisApp').controller('registerController',
             };
 
         }]);
-//var map = L.map('map').setView([51.505, -0.09], 13);
 
-/*
-gisControllers.controller('DetailController',['$scope', '$routeParams',
-function($scope, $routeParams){
-    //$scope.name=$routeParams.name;
-}]);
-    */

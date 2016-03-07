@@ -3,6 +3,18 @@ var router = express.Router();
 var passport = require('passport');
 
 var User = require('../models/user.js');
+var Layer = require('../models/layer.js');
+
+
+router.get('/layer', function(req, res){
+    console.log('in get /layer');
+    Layer.find({ type:'Feature'}, function(err, docs){
+        res.json(docs);
+        //res(docs);
+        console.log(docs);
+    });
+    //console.log('res is: '+res);
+});
 
 
 router.post('/register', function(req, res) {
