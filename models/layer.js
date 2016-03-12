@@ -4,12 +4,16 @@ var Schema = mongoose.Schema;
 
 
 var Layer = new Schema({
-    geometry: {
-        type: Schema.Types.String,
-        coordinates: Schema.Types.Array
-    },
-    properties: Schema.Types.Mixed
 
+    name: {type:String},
+    data: {
+
+        geometry: {
+            type: Schema.Types.String,
+            coordinates: Schema.Types.Array
+        },
+        properties: Schema.Types.Mixed
+    }
 });
 
 

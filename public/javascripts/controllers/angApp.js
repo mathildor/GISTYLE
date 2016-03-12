@@ -17,8 +17,8 @@ gisApp.config(['$routeProvider',
         $routeProvider.
         when('/mainPage',{
             templateUrl: 'views/main-page.html',
-            controller:"mapController",
-            access: {restricted: false} //Fix later, just so update doesn't log out
+            //controller:"cartoController",
+            access: {restricted: false} //Change later, just so update doesn't log out
         }).
         when('/views/welcome',{
             templateUrl: 'views/welcome.html',

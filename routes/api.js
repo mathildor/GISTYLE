@@ -8,7 +8,7 @@ var Layer = require('../models/layer.js');
 
 router.get('/layer', function(req, res){
     console.log('in get /layer');
-    Layer.find({ type:'Feature'}, function(err, docs){
+    Layer.find({name:buildings}, function(err, docs){
         res.json(docs);
         //res(docs);
         console.log(docs);
