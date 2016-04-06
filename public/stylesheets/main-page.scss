@@ -2,10 +2,12 @@
 $nav-color:rgba(0,0,0,0.58);
 
 
-#map{
+
+#cartodb-map{
+
+  z-index:1;
   /*background-image: url("map.jpg");*/
-  z-index: 1;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   position: fixed;
   display: block;
@@ -41,8 +43,37 @@ $nav-color:rgba(0,0,0,0.58);
   margin-top: 60px;
   height: 100vh;
 
+}
+
+#sidebar{
+  margin-left: 2em;
+  padding-top: 2em;
   a{
     color:white;
+    font-size: large;
+  }
+
+  img{
+    margin-top: 2px;
+    width: 11px;
+  }
+
+  .dropdown{
+    background-color: rgba(0, 0, 0, 0.73);
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    margin-right: 0.7em;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.44);
+    a{
+      font-size: medium;
+      margin-left: 1em;
+    }
+  }
+
+  .operators{
+    margin-top: 7vh;
   }
 }
 

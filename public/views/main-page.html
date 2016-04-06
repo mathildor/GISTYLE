@@ -1,7 +1,12 @@
 
-<div id="map">
-    <!--<leaflet lf-center="trd" defaults="defaults" ng-click="fitBounds()" width="100%" height="100vh"></leaflet>-->
+
+<div id="cartodb-map">
+
 </div>
+
+<!--<div>
+    <leaflet id="map" layers="layers" lf-center="trd" defaults="defaults" ng-click="fitBounds()"></leaflet>
+</div>-->
 
 <div class="menus">
     <div class="container-fluid">
@@ -34,9 +39,30 @@
             <div class="col-md-2" id="col-sidebar">
                 <div class="sidebar-menu">
                     <!--SIDE BAR START-->
-                    <div id="sideBar">
+                    <div id="sidebar">
                         <ul class="sidebar-brand">
-                            <a>Layers</a>
+                            <a href="" >Visible layers: <img src="../../images/triangle_down.png"/></a>
+                            <div class="dropdown">
+                                <ul>
+                                    <li>
+                                        <a> River</a>
+                                        <input onClick="handleLayers()" checked class= "rivers" id="0" type="checkbox">
+                                    </li>
+                                    <li>
+                                        <a> Buildings</a>
+                                        <input  onClick="handleLayers()" checked  class= "buildings" id="1" type="checkbox">
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="operators">
+                                <li>
+                                  <a  href="" ng-click="buffer()">Buffer</a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="intersection()">Intersection</a>
+                                </li>
+                            </div>
                         </ul>
                     </div>
                 </div>

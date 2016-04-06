@@ -57,7 +57,7 @@ app.get('/', function(req, res) {
 
 // error handlers
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    var err = new Error('Not Found, error 404');
     err.status = 404;
     next(err);
 });

@@ -1,7 +1,5 @@
 
-
-
-var gisControllers = angular.module('gisControllers', ['leaflet-directive']);
+var gisControllers = angular.module('gisControllers',[]);
 
 //Defining controller: ButtonController:
 gisControllers.controller('ButtonController', function($scope){
@@ -15,92 +13,13 @@ gisControllers.controller('ButtonController', function($scope){
 
 //Can save dependencies in controller.$inject, or send in
 
+gisControllers.controller("mapController", ["$scope", "$http", function($scope, $http){
 
-gisControllers.controller("cartoController", ["$scope", "$http", function($scope, $http){
+    initMap();
 
-
-    var map;
-    function init(){
-        // initiate leaflet map
-        map = new L.Map('cartodb-map', {
-            center: [0,0],
-            zoom: 2
-        });
-
-        var layerUrl = 'http://documentation.cartodb.com/api/v2/viz/836e37ca-085a-11e4-8834-0edbca4b5057/viz.json';
-
-        cartodb.createLayer(map, layerUrl)
-            .addTo(map)
-            .on('done', function(layer) {
-
-            }).on('error', function() {
-            //log the error
-        });
-    }
+    
 
 }]);
-
-
-/*
-gisControllers.controller("mapController", [ "$scope", '$http', "leafletData", function($scope, $http, leafletData) {
-
-
-    angular.extend($scope, {
-        defaults:{
-            zoomControlPosition: 'bottomright'
-        },
-        trd: {
-            lat: 63.387523,
-            lng: 10.39066,
-            zoom: 11
-        },
-        layers:{
-            baselayers:{
-                osm: {
-                    name: 'OpenStreetMap',
-                    url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    type: 'xyz'
-                },
-            },
-            overlays:{}
-        }
-    });
-
-    $http.get('/user/layer')
-        .success(function(data, status){
-            console.log('success in get req');
-            angular.extend($scope.layers.overlays, {
-                countries: {
-                    name:'World Country Boundaries',
-                    type: 'geoJSONShape',
-                    data: data,
-                    visible: true,
-                    layerOptions: {
-                        style: {
-                            color: '#00D',
-                            fillColor: 'yellow',
-                            weight: 2.0,
-                            opacity: 0.6,
-                            fillOpacity: 0.2
-                        }
-                    }
-                }
-            });
-        })
-        .error(function (data) {
-            console.log('error getting layer');
-        });
-
-
-
-    $scope.fitBounds = function() {
-        leafletData.getMap().then(function(map) {
-            //map.fitBounds([ [40.712, -74.227], [40.774, -74.125] ]);
-        });
-    };
-
-}]);
-*/
 
 angular.module('gisApp').controller('loginController',
     ['$scope', '$location', 'AuthService',
