@@ -1,4 +1,35 @@
+<div id="overlay"></div>
 
+<div id="dialog">
+    <p id="close" href="" onclick="popupClose()">x</p>
+    <ul>
+        <li id="bufferHeader">
+            <div class="line"></div>
+            <h1>BUFFER</h1>
+            <div class="line"></div>
+        </li>
+        <li id="chooseLayer">
+            <h2>Choose layer:</h2>
+            <div class="layerDropdown">
+                <a id="dropdown-toggle" onclick="toggle()" value="close">Choose layer from menu<span class="caret"></span></a>
+                <ul id="layerDropdown-content"></ul>
+            </div>
+        </li>
+        <li>
+            <h2>Choose buffer distance:</h2>
+        </li>
+        <li>
+            <input id="bufferDistance" placeholder="Write a distance in meter">
+        </li>
+        <li>
+            <h2>Buffer color:<input type="color" id="bufferColor"></h2>
+        </li>
+        <li>
+            <button id="createBuffer" onclick="createBuffer()">Create buffer</button>
+        </li>
+    </ul>
+
+</div>
 
 <div id="cartodb-map">
 
@@ -8,7 +39,10 @@
     <leaflet id="map" layers="layers" lf-center="trd" defaults="defaults" ng-click="fitBounds()"></leaflet>
 </div>-->
 
+
+
 <div class="menus">
+
     <div class="container-fluid">
 
         <nav class="col-sm-12 navbar navbar-fixed-top">
@@ -42,22 +76,22 @@
                     <div id="sidebar">
                         <ul class="sidebar-brand">
                             <a href="" >Visible layers: <img src="../../images/triangle_down.png"/></a>
-                            <div class="dropdown">
-                                <ul>
+                            <div class="dropdown" >
+                                <ul id="menuLayerDropdown">
                                     <li>
-                                        <a> River</a>
-                                        <input onClick="handleLayers()" checked class= "rivers" id="0" type="checkbox">
+                                        <a> Rivers</a>
+                                        <input onClick="handleLayers()" checked class="Rivers" id="0" type="checkbox">
                                     </li>
                                     <li>
                                         <a> Buildings</a>
-                                        <input  onClick="handleLayers()" checked  class= "buildings" id="1" type="checkbox">
+                                        <input onClick="handleLayers()" checked  class="Buildings" id="1" type="checkbox">
                                     </li>
                                 </ul>
                             </div>
 
                             <div class="operators">
                                 <li>
-                                  <a  href="" ng-click="buffer()">Buffer</a>
+                                  <a  href="" onclick="buffer()">Buffer</a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="intersection()">Intersection</a>
@@ -70,3 +104,4 @@
         </div>
     </div>
 </div>
+

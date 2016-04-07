@@ -17,7 +17,7 @@ gisControllers.controller("mapController", ["$scope", "$http", function($scope, 
 
     initMap();
 
-    
+
 
 }]);
 
