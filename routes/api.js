@@ -6,6 +6,54 @@ var User = require('../models/user.js');
 var Layer = require('../models/layer.js');
 
 
+router.get("/layers", function(req, res){
+    Layer.find({
+        "username":req.user.username
+    }, function(err, data){
+        if(err){
+            return res.send(err);
+        }
+
+        res.json(data);
+    });
+});
+
+router.post("/layer", function(req, res){
+    console.log("in post layer");
+    var layer= new Layer();
+    console.log(req.user);
+    layer.username=req.user.username;
+    layer.layername=req.body.layername;
+    //layer.id=req.user.username+"_"+req.body.layerName;
+    layer.sqlString=req.body.sql;
+    layer.cartoCss=req.body.carto;
+
+    layer.save(function(err){
+        if(err){
+            res.send(err);
+        } else{
+            res.json({message: 'layer created'});
+        }
+    });
+});
+
+router.delete("/deleteLayer", function(req, res){
+    console.log(req.body.layername);
+   console.log("Trying to delete: "+req.user.username+"_"+req.body.layername);
+    layerId=req.user.username+"_"+req.body.layername;
+    Layer.remove({
+        username: req.user.username,
+        layername: req.body.layername
+   }, function(err){
+       if(err)
+           res.send(err);
+       res.json({message: 'succesfully deleted'});
+   });
+
+});
+
+
+/*
 router.get('/layer', function(req, res){
     console.log('in get /layer');
     Layer.find({name:buildings}, function(err, docs){
@@ -15,7 +63,7 @@ router.get('/layer', function(req, res){
     });
     //console.log('res is: '+res);
 });
-
+*/
 
 router.post('/register', function(req, res) {
     User.register(new User({ username: req.body.username }),

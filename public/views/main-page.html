@@ -1,35 +1,68 @@
 <div id="overlay"></div>
 
-<div id="dialog">
-    <p id="close" href="" onclick="popupClose()">x</p>
+<div id="bufferPopUp" class="dialog">
+    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-buffer'))">x</p>
     <ul>
-        <li id="bufferHeader">
+        <li class="popupHeader">
             <div class="line"></div>
             <h1>BUFFER</h1>
             <div class="line"></div>
         </li>
-        <li id="chooseLayer">
+        <li class="chooseLayer">
             <h2>Choose layer:</h2>
             <div class="layerDropdown">
-                <a id="dropdown-toggle" onclick="toggle()" value="close">Choose layer from menu<span class="caret"></span></a>
-                <ul id="layerDropdown-content"></ul>
+                <a class="dropdown-toggle" id="chosenBuffer" onclick="toggle($('#layerDropdown-content-buffer'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-buffer"></ul>
             </div>
         </li>
         <li>
             <h2>Choose buffer distance:</h2>
         </li>
         <li>
-            <input id="bufferDistance" placeholder="Write a distance in meter">
+            <input class="dialogInput" id="bufferDistance" placeholder="Write a distance in meter">
         </li>
         <li>
-            <h2>Buffer color:<input type="color" id="bufferColor"></h2>
+            <h2>Buffer color:<input class="inputColor" type="color" value="#243CEE" id="bufferColor"></h2>
         </li>
         <li>
-            <button id="createBuffer" onclick="createBuffer()">Create buffer</button>
+            <button class="createButton" id="createBuffer" onclick="createBuffer()">Create buffer</button>
         </li>
     </ul>
-
 </div>
+
+
+<div id="intersectionPopUp" class="dialog">
+    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-intersection'))">x</p>
+    <ul>
+        <li class="popupHeader">
+            <div class="line"></div>
+            <h1>INTERSECTION</h1>
+            <div class="line"></div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add layer to intersection:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenIntersection" onclick="toggle($('#layerDropdown-content-intersection'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-intersection"></ul>
+            </div>
+        </li>
+        <li>
+            <h2>Chosen layers:</h2>
+            <ul class="chosenLayers" id="chosenLayersIntersection">
+
+            </ul>
+        </li>
+            <h2>Set name:</h2>
+            <input class="dialogInput" id="intersectionLayerName">
+        <li>
+            <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="intersectionColor"></h2>
+        </li>
+        <li>
+            <button class="createButton" id="createIntersection" onclick="createIntersection()">Create intersection</button>
+        </li>
+    </ul>
+</div>
+
 
 <div id="cartodb-map">
 
@@ -86,6 +119,19 @@
                                         <a> Buildings</a>
                                         <input onClick="handleLayers()" checked  class="Buildings" id="1" type="checkbox">
                                     </li>
+                                    <li>
+                                        <a> Schools</a>
+                                        <input onClick="handleLayers()" checked  class="Schools" id="2" type="checkbox">
+                                    </li>
+                                    <li>
+                                        <a> Water</a>
+                                        <input onClick="handleLayers()" checked  class="Water" id="3" type="checkbox">
+                                    </li>
+                                    <li>
+                                        <a> Railway</a>
+                                        <input onClick="handleLayers()" checked  class="Railway" id="4" type="checkbox">
+                                    </li>
+
                                 </ul>
                             </div>
 
@@ -94,7 +140,19 @@
                                   <a  href="" onclick="buffer()">Buffer</a>
                                 </li>
                                 <li>
-                                    <a href="" ng-click="intersection()">Intersection</a>
+                                    <a href="" onclick="intersection()">Intersection</a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="">Clip</a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="">Union</a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="">Merge</a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="">Dissolve</a>
                                 </li>
                             </div>
                         </ul>

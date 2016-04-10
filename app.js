@@ -49,11 +49,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // routes
 app.use('/user/', routes);
-//app.use('/', routes);
+app.use('/', routes);
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+
 
 // error handlers
 app.use(function(req, res, next) {
@@ -69,5 +71,19 @@ app.use(function(err, req, res) {
         error: {}
     }));
 });
+
+
+
+
+
+//-------------------------------API-----------------------------------------
+
+var Layer = require('./models/layer.js');
+
+
+
+
+
+
 
 module.exports = app;

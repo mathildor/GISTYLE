@@ -32,6 +32,9 @@ $nav-color:rgba(0,0,0,0.58);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=1 );
 }
 
+.navbar-fixed-top{
+  z-index: 10!important;
+}
 
 .navbar-buttons{
   padding-right: 80px;
@@ -45,7 +48,7 @@ $nav-color:rgba(0,0,0,0.58);
 }
 
 #sidebar{
-  margin-left: 2em;
+  margin-left: 7%;
   padding-top: 2em;
   a{
     color:white;
@@ -61,18 +64,27 @@ $nav-color:rgba(0,0,0,0.58);
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;
     padding-bottom: 0.3em;
-    margin-right: 0.7em;
+    margin-right: 10%;
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
     box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.44);
     a{
       font-size: medium;
-      margin-left: 1em;
+      margin-left: 3%;
+    }
+    img{
+      float: right;
+      margin-right: 7%;
+      width: 14px;
+      margin-top: 5px;
     }
   }
 
   .operators{
-    margin-top: 7vh;
+    margin-top: 20px;
+    li{
+      margin-top: 10px;
+    }
   }
 }
 
@@ -89,29 +101,34 @@ $nav-color:rgba(0,0,0,0.58);
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9;
+  z-index: 99;
   background-color: rgba(0,0,0,0.5); /*dim the background*/
 }
 
-#dialog{
+
+.dialog{
+
   position: absolute;
   color: white;
   background-color: rgba(0, 0, 0, 0.9);
   z-index: 999;
   top: 30%;
   left: 40%;
-  width: 30vw;
-  height: 330px;
+  padding-bottom: 20px;
+  padding-right:5%;
+  padding-left: 5%;
   display: none;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
 
+  .chosenLayer{
+    color:black;
+  }
 
-  #bufferHeader {
+  .popupHeader {
     display: flex;
-    margin-left: 18%;
 
     .line {
-      width: 75px;
+      width: 32%;
       height: 3px;
       background-color: #ee5664;
       margin-top: 35px;
@@ -125,13 +142,10 @@ $nav-color:rgba(0,0,0,0.58);
 
   h2{
     font-size: medium;
-    margin-left: 18%;
   }
   .layerDropdown{
     position: inherit;
-    margin-left: 18%;
     background-color: #c8cbc8;
-    width: 20vw;
     height: 25px;
     border-radius: 3px;
     a {
@@ -140,41 +154,61 @@ $nav-color:rgba(0,0,0,0.58);
     }
   }
 
-  #layerDropdown-content {
+  .chosenLayers{
+    color: black;
+    h2{
+      font-size:100%;
+      margin:0;
+      display: initial;
+    }
+  }
+
+  .layerDropdown-content{
     background-color: #d9dcd9;
     color: black;
     min-width: 160px;
-    padding-right: 20vw;
     overflow: auto;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     display:none;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
+    position: relative;
+    a {
+      color: black;
+      padding-right: 0;
+      text-decoration: none;
+    }
+    a:hover {
+      background-color: rgba(126, 126, 126, 0.85);
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
   }
-  #layerDropdown-content a {
-    color: black;
-    padding-right: 20vw;
-    text-decoration: none;
 
-  }
-  #layerDropdown-content a:hover {
-    background-color: rgba(126, 126, 126, 0.85);
-    padding-top: 2px;
-    padding-bottom: 2px;
-  }
-
-  #close{
+  .popupClose{
     right:0;
     top:0;
+    position: absolute;
     margin-right: 0.5em;
     margin-top: 0.2em;
-    position: absolute;
-    color: #ee5664;
+  }
+  .chosenLayers{
+    background-color:#d9dcd9;
+
+  }
+  img{
+    width: 14px;
+    margin-left: 10px;
+  }
+  .li-layer{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left:3px;
   }
 }
 
-#bufferDistance{
-  margin-left: 18%;
+
+.dialogInput{
   background-color: #c8cbc8;
   width: 20vw;
   height: 25px;
@@ -199,17 +233,24 @@ $nav-color:rgba(0,0,0,0.58);
   color: rgba(96, 95, 93, 0.69);
 }
 
-#bufferColor{
+.inputColor{
   margin-left: 7px;
 }
 
-#createBuffer{
+.createButton{
   color: white;
   background-color: #ee5664;
   border: none;
   width: 35%;
-  margin-left: 35%;
-  margin-top: 5%;
+  margin-left: auto;
+  margin-right:auto;
+  display: block;
+  margin-top: 14%;
   border-radius: 3px;
   height: 30px;
 }
+
+
+
+
+

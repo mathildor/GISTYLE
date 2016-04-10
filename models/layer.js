@@ -5,15 +5,10 @@ var Schema = mongoose.Schema;
 
 var Layer = new Schema({
 
-    name: {type:String},
-    data: {
-
-        geometry: {
-            type: Schema.Types.String,
-            coordinates: Schema.Types.Array
-        },
-        properties: Schema.Types.Mixed
-    }
+    username: {type: String},
+    layername:{type: String},
+    sqlString: {type: String},
+    cartoCss: {type: String}
 });
 
 
