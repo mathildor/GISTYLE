@@ -63,6 +63,96 @@
     </ul>
 </div>
 
+<div id="mergePopUp" class="dialog">
+    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-merge'))">x</p>
+    <ul>
+        <li class="popupHeader">
+            <div class="line"></div>
+            <h1>MERGE</h1>
+            <div class="line"></div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenMerge" onclick="toggle($('#layerDropdown-content-merge'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-merge"></ul>
+            </div>
+        </li>
+        <li>
+            <h2>Chosen layers:</h2>
+            <ul class="chosenLayers" id="chosenLayersMerge">
+
+            </ul>
+        </li>
+        <h2>Set name:</h2>
+        <input class="dialogInput" id="mergeLayerName">
+        <li>
+            <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="mergeColor"></h2>
+        </li>
+        <li>
+            <button class="createButton" id="createMerge" onclick="createMerge()">Merge layers</button>
+        </li>
+    </ul>
+</div>
+
+<div id="clipPopUp" class="dialog">
+    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-clip'))">x</p>
+    <ul>
+        <li class="popupHeader">
+            <div class="line clip"></div>
+            <h1>CLIP</h1>
+            <div class="line clip"></div>
+        </li>
+        <li><img id="clipImg" src="../images/clip_text.png"></li>
+        <li class="chooseLayer">
+            <h2>Add input layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenClipInputLayer" onclick="toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-clip-inputlayer"></ul>
+            </div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add clip layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenClipClipLayer" onclick="toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-clip-cliplayer"></ul>
+            </div>
+        </li>
+        <li id="clipLi">
+            <h2>Set name:</h2>
+            <input class="dialogInput" id="clipLayerName">
+            <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="clipColor"></h2>
+        </li>
+        <li>
+            <button class="createButton" id="createClip" onclick="createClip()">Clip layers</button>
+        </li>
+    </ul>
+</div>
+
+<div id="changeDesignPopUp" class="dialog">
+    <p class="popupClose" href="" onclick="popupClose()">x</p>
+    <div id="changeDesignContent">
+        <ul>
+            <li class="popupHeader">
+                <div class="line clip"></div>
+                <h1>STYLE</h1>
+                <div class="line clip"></div>
+            </li>
+            <li class="inline">
+                <h2>Color:<input type="color" id="color"></h2>
+                <h2 class="secondElement" >Opacity:<input class="inputText" id="opacity"></h2>
+            </li>
+            <li class="inline" id="lineStyle">
+                <h2>Line-color:<input type="color" id="lineColor"></h2>
+                <!--<h2 class="secondElement">Line-width:<input class="inputText"  id="lineWidth"></h2>-->
+            </li>
+            <li>
+                <button class="createButton" id="saveColorChanges" onclick="saveColorChanges()">Save changes</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
 
 <div id="cartodb-map">
 
@@ -114,22 +204,30 @@
                                     <li>
                                         <a> Rivers</a>
                                         <input onClick="handleLayers()" checked class="Rivers" id="0" type="checkbox">
+                                        <img class="editLayer" src="../images/edit.png" onclick="changeSublayerDesign('Rivers')">
                                     </li>
                                     <li>
                                         <a> Buildings</a>
                                         <input onClick="handleLayers()" checked  class="Buildings" id="1" type="checkbox">
+                                        <img class="editLayer" src="../images/edit.png" onclick="changeSublayerDesign('Buildings')">
                                     </li>
                                     <li>
                                         <a> Schools</a>
                                         <input onClick="handleLayers()" checked  class="Schools" id="2" type="checkbox">
+                                        <img class="editLayer" src="../images/edit.png" onclick="changeSublayerDesign('Schools')">
+
                                     </li>
                                     <li>
                                         <a> Water</a>
                                         <input onClick="handleLayers()" checked  class="Water" id="3" type="checkbox">
+                                        <img class="editLayer" src="../images/edit.png" onclick="changeSublayerDesign('Water')">
+
                                     </li>
                                     <li>
                                         <a> Railway</a>
                                         <input onClick="handleLayers()" checked  class="Railway" id="4" type="checkbox">
+                                        <img class="editLayer" src="../images/edit.png" onclick="changeSublayerDesign('Railway')">
+
                                     </li>
 
                                 </ul>
@@ -137,19 +235,21 @@
 
                             <div class="operators">
                                 <li>
-                                  <a  href="" onclick="buffer()">Buffer</a>
+                                    <img class="toolFigure" src="../images/Buffer.png">
+                                    <a  href="" onclick="buffer()">Buffer</a>
                                 </li>
                                 <li>
+                                    <img class="toolFigure" src="../images/intersection.png">
                                     <a href="" onclick="intersection()">Intersection</a>
                                 </li>
                                 <li>
-                                    <a href="" onclick="">Clip</a>
+                                    <a href="" onclick="clip()">Clip</a>
                                 </li>
                                 <li>
                                     <a href="" onclick="">Union</a>
                                 </li>
                                 <li>
-                                    <a href="" onclick="">Merge</a>
+                                    <a href="" onclick="merge()">Merge</a>
                                 </li>
                                 <li>
                                     <a href="" onclick="">Dissolve</a>

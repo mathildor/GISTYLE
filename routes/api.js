@@ -20,14 +20,17 @@ router.get("/layers", function(req, res){
 
 router.post("/layer", function(req, res){
     console.log("in post layer");
-    var layer= new Layer();
-    console.log(req.user);
-    layer.username=req.user.username;
-    layer.layername=req.body.layername;
-    //layer.id=req.user.username+"_"+req.body.layerName;
-    layer.sqlString=req.body.sql;
-    layer.cartoCss=req.body.carto;
 
+    var layer= new Layer();
+    layer.username=req.user.username;
+    layer.name=req.body.name;
+    layer.sql=req.body.sql;
+    layer.cartocss=req.body.cartocss;
+    layer.active=req.body.active;
+    layer.type=req.body.type;
+
+
+    console.log(layer);
     layer.save(function(err){
         if(err){
             res.send(err);
@@ -38,12 +41,11 @@ router.post("/layer", function(req, res){
 });
 
 router.delete("/deleteLayer", function(req, res){
-    console.log(req.body.layername);
-   console.log("Trying to delete: "+req.user.username+"_"+req.body.layername);
-    layerId=req.user.username+"_"+req.body.layername;
+   console.log("Trying to delete: "+req.user.username+"_"+req.body.name);
+
     Layer.remove({
         username: req.user.username,
-        layername: req.body.layername
+        name: req.body.name
    }, function(err){
        if(err)
            res.send(err);

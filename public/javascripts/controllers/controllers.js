@@ -18,7 +18,6 @@ gisControllers.controller("mapController", ["$scope", "$http", function($scope, 
     initMap();
 
 
-
 }]);
 
 angular.module('gisApp').controller('loginController',

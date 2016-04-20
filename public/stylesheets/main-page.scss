@@ -59,6 +59,10 @@ $nav-color:rgba(0,0,0,0.58);
     margin-top: 2px;
     width: 11px;
   }
+  .operators img{
+    width:30px;
+    margin-top: 10px;
+  }
 
   .dropdown{
     background-color: rgba(0, 0, 0, 0.73);
@@ -133,6 +137,9 @@ $nav-color:rgba(0,0,0,0.58);
       background-color: #ee5664;
       margin-top: 35px;
     }
+    .clip{
+      width:40%;
+    }
     h1{
       font-size: 210%;
       margin-right:10px;
@@ -200,6 +207,13 @@ $nav-color:rgba(0,0,0,0.58);
     width: 14px;
     margin-left: 10px;
   }
+  #clipImg{
+    margin-top: 10px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
   .li-layer{
     padding-top: 5px;
     padding-bottom: 5px;
@@ -250,7 +264,66 @@ $nav-color:rgba(0,0,0,0.58);
   height: 30px;
 }
 
+#createClip{ //clip button
+  margin-top: 10%;
+}
+
+#clipPopUp{
+  top: 15%;
+  left: 35%;
+}
 
 
+#clipLi{
+  display: flex;
+  margin-top: 3%;
+}
 
+#clipLayerName{
+  margin-top:4%;
+  width: 55%;
+  margin-left: 2.5%;
+  margin-right: 5%;
+}
+
+#changeDesignPopUp{
+  padding-right: 3%;
+  padding-left: 3%;
+  ::-webkit-input-placeholder {
+    color: #545454;
+  }
+  .popupHeader{
+  }
+  .inputText{
+    width: 35%;
+  }
+  .inline{
+    display: flex;
+    margin-left:20px;
+  }
+  .secondElement{
+    left: 0;
+    margin-left: 25%;
+    width: 35%;
+  }
+  #color{
+    margin-left: 45px;
+  }
+  #lineColor{
+    margin-left: 10px;
+  }
+  #opacity{
+    margin-left: 10px;
+  }
+  #lineWidth{
+    margin-left: 10px;
+  }
+  .active{
+    color:black;
+  }
+  #changeDesignPopUp{
+  display: flex;
+  }
+
+}
 

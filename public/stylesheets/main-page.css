@@ -45,6 +45,9 @@
   #sidebar img {
     margin-top: 2px;
     width: 11px; }
+  #sidebar .operators img {
+    width: 30px;
+    margin-top: 10px; }
   #sidebar .dropdown {
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;
@@ -103,6 +106,8 @@
       height: 3px;
       background-color: #ee5664;
       margin-top: 35px; }
+    .dialog .popupHeader .clip {
+      width: 40%; }
     .dialog .popupHeader h1 {
       font-size: 210%;
       margin-right: 10px;
@@ -152,6 +157,12 @@
   .dialog img {
     width: 14px;
     margin-left: 10px; }
+  .dialog #clipImg {
+    margin-top: 10px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block; }
   .dialog .li-layer {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -198,5 +209,49 @@
   margin-top: 14%;
   border-radius: 3px;
   height: 30px; }
+
+#createClip {
+  margin-top: 10%; }
+
+#clipPopUp {
+  top: 15%;
+  left: 35%; }
+
+#clipLi {
+  display: flex;
+  margin-top: 3%; }
+
+#clipLayerName {
+  margin-top: 4%;
+  width: 55%;
+  margin-left: 2.5%;
+  margin-right: 5%; }
+
+#changeDesignPopUp {
+  padding-right: 3%;
+  padding-left: 3%; }
+  #changeDesignPopUp ::-webkit-input-placeholder {
+    color: #545454; }
+  #changeDesignPopUp .inputText {
+    width: 35%; }
+  #changeDesignPopUp .inline {
+    display: flex;
+    margin-left: 20px; }
+  #changeDesignPopUp .secondElement {
+    left: 0;
+    margin-left: 25%;
+    width: 35%; }
+  #changeDesignPopUp #color {
+    margin-left: 45px; }
+  #changeDesignPopUp #lineColor {
+    margin-left: 10px; }
+  #changeDesignPopUp #opacity {
+    margin-left: 10px; }
+  #changeDesignPopUp #lineWidth {
+    margin-left: 10px; }
+  #changeDesignPopUp .active {
+    color: black; }
+  #changeDesignPopUp #changeDesignPopUp {
+    display: flex; }
 
 /*# sourceMappingURL=main-page.css.map */
