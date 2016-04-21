@@ -68,6 +68,9 @@ $nav-color:rgba(0,0,0,0.58);
     margin-top: 10px;
   }
 
+  #menuLayerDropdown{
+    padding-left: 10px;
+  }
   .dropdown{
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;
@@ -300,6 +303,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
   .inputText{
     width: 35%;
+    color: black;
   }
   .inline{
     display: flex;

@@ -173,7 +173,7 @@ function addToLayerList(newLayer){
 
     var edit=document.createElement("igm");
     edit.className="editLayer";
-    edit.src="../images/edit.png";
+    edit.src="../images/edit-white.png";
     edit.addEventListener("click", function(){
        changeSublayerDesign(newLayer);
     });
@@ -398,11 +398,19 @@ function resetStyleValues(){
 
 
 function saveColorChanges(){
+
+    var sublayerName = "hei";
+
     color=document.getElementById('color').value;
     opacity=document.getElementById('opacity').value;
-    lineWidth=document.getElementById('lineWidth').value;
+    try{
+        lineWidth=document.getElementById('lineWidth').value;
+    }catch(err){
+        console.log('line width is not defined for the layer');
+    }
 
     var carto;
+    var sublayer=getSublayerFromLayerName(sublayerName);
     if(sublayer.type === "line"){
         lineColor=document.getElementById('lineColor').value;
         carto = getCarto(sublayer.type, layerName, color, opacity, lineWidth, lineColor);

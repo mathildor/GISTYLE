@@ -49,6 +49,8 @@
   #sidebar .operators img {
     width: 30px;
     margin-top: 10px; }
+  #sidebar #menuLayerDropdown {
+    padding-left: 10px; }
   #sidebar .dropdown {
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;
@@ -234,7 +236,8 @@
   #changeDesignPopUp ::-webkit-input-placeholder {
     color: #545454; }
   #changeDesignPopUp .inputText {
-    width: 35%; }
+    width: 35%;
+    color: black; }
   #changeDesignPopUp .inline {
     display: flex;
     margin-left: 20px; }
