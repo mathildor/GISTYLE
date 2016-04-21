@@ -48,8 +48,12 @@ $nav-color:rgba(0,0,0,0.58);
 }
 
 #sidebar{
-  margin-left: 7%;
   padding-top: 2em;
+
+  .sidebar-brand{
+    padding-left: 9%;
+  }
+
   a{
     color:white;
     font-size: large;

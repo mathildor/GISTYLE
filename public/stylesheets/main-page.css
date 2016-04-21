@@ -37,8 +37,9 @@
   height: 100vh; }
 
 #sidebar {
-  margin-left: 7%;
   padding-top: 2em; }
+  #sidebar .sidebar-brand {
+    padding-left: 9%; }
   #sidebar a {
     color: white;
     font-size: large; }
