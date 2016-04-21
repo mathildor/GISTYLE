@@ -12,6 +12,8 @@ var activeClipClipLayer;
 var bufferColor;
 var bufferDistance;
 var activeLayers=["Rivers", "Buildings", "Schools", "Water", "Railway"]; //used for side menu
+var activeStyleLayer;
+var activeStyleLayerName;
 
 function initMap(){
     map = new L.Map('cartodb-map', {
@@ -330,7 +332,7 @@ var opacity;
 
 function changeSublayerDesign(layerName){
 
-    resetStyleValues;
+    resetStyleValues();
     
     $("#overlay").show();
     $("#changeDesignPopUp").show();
@@ -342,17 +344,18 @@ function changeSublayerDesign(layerName){
 }
 
 function getAndSetValuesFromCarto(sublayer) {
+
+    activeStyleLayer=sublayer;
+
     var carto = sublayer.cartocss;
     console.log(sublayer.cartocss.split('#'));
-    var name=sublayer.cartocss.split('#')[1].split('{')[0];
+    activeStyleLayerName=sublayer.cartocss.split('#')[1].split('{')[0];
 
     if (sublayer.type === "polygon") {
         color = carto.split('polygon-fill')[1].split(';')[0].split(" ")[1];
         opacity = carto.split('polygon-opacity')[1].split(';')[0].split(" ")[1];
         lineColor = carto.split('line-color')[1].split(';')[0].split(" ")[1];
         lineWidth = carto.split('line-width')[1].split(';')[0].split(" ")[1];
-
-        document.getElementById('lineColor').value = lineColor;
 
     } else if (sublayer.type === "line") {
         color = carto.split('line-color')[1].split(';')[0].split(" ")[1];
@@ -364,7 +367,6 @@ function getAndSetValuesFromCarto(sublayer) {
         opacity = carto.split('marker-fill-opacity')[1].split(';')[0].split(" ")[1];
         lineWidth = carto.split('marker-line-width')[1].split(';')[0].split(" ")[1];
         lineColor = carto.split('marker-line-color')[1].split(';')[0].split(" ")[1];
-        document.getElementById('lineColor').value = lineColor;
     }
 
     console.log(carto);
@@ -374,16 +376,21 @@ function getAndSetValuesFromCarto(sublayer) {
     console.log(lineWidth);
 
     document.getElementById('color').value=color;
-    document.getElementById('opacity').placeholder=opacity;
-    document.getElementById('lineWidth').placeholder=lineWidth;
+    document.getElementById('opacity').value=opacity;
+    document.getElementById('lineWidth').value=lineWidth;
+    if(lineColor){
+        addLineColor();
+        document.getElementById('lineColor').value=lineColor;
+    }
 }
-function addLineWidth(){
+
+//<h2>Line-color:<input type="color" id="lineColor"></h2>
+function addLineColor(){
     var text=document.createElement("h2");
-    text.innerHTML="Line-width:";
-    text.className="secondElement";
+    text.innerHTML="Line-color:";
     var input=document.createElement("input");
-    input.className="inputText";
-    input.id="lineWidth";
+    input.type="color";
+    input.id="lineColor";
     text.appendChild(input);
     document.getElementById("lineStyle").appendChild(text);
 }
@@ -392,14 +399,14 @@ function resetStyleValues(){
     if(document.getElementById("lineStyle").childElementCount>1){
         document.getElementById("lineStyle").lastElementChild.remove();
     }
+    activeStyleLayer=null;
+    activeStyleLayerName="";
 }
 
 //<h2 class="secondElement">Line-width:<input class="inputText"  id="lineWidth"></h2>
 
 
 function saveColorChanges(){
-
-    var sublayerName = "hei";
 
     color=document.getElementById('color').value;
     opacity=document.getElementById('opacity').value;
@@ -410,18 +417,15 @@ function saveColorChanges(){
     }
 
     var carto;
-    var sublayer=getSublayerFromLayerName(sublayerName);
-    if(sublayer.type === "line"){
-        lineColor=document.getElementById('lineColor').value;
-        carto = getCarto(sublayer.type, layerName, color, opacity, lineWidth, lineColor);
+    if(activeStyleLayer.type === "line"){
+        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth);
     }else{
-        carto = getCarto(sublayer.type, layerName, color, opacity, lineWidth);
+        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth, lineColor);
     }
 
     for(var i=0; i<sublayers.length; i++){
-        if(sublayers[i].name===layerName){
+        if(sublayers[i].name===activeStyleLayerName){
             mapLayer.getSublayer(i).setCartoCSS(carto);
-
         }
     }
 
