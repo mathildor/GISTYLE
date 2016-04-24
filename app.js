@@ -78,12 +78,6 @@ app.use(function(err, req, res) {
 
 //-------------------------------API-----------------------------------------
 
-var Layer = require('./models/layer.js');
-
-
-
-
-
 
 
 module.exports = app;

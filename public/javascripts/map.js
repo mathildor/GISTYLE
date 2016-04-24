@@ -3,7 +3,6 @@ var map;
 var mapLayer; //layer to put all sublayers in, read it is more efficient with sublayers
 var sublayers=[]; //contains json objects with info about sublayer
 
-
 var activeBufferLayer;
 var activeIntersectionLayers=[];
 var activeMergeLayers=[];
@@ -28,64 +27,49 @@ function initMap(){
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+
+    cartodb.createLayer(map,{
+            user_name: 'mathildeo',
+            type: 'cartodb',
+            sublayers:[]
+        })
+        .addTo(map)
+        .done(function(layer){
+            mapLayer=layer;
+        });
+
+    //TODO: CAll this function on create account (or on new project) - be aware of sync, probably have to call getallLayersFromDatabase in the other this function
     addDefaultSublayers();
 
 }
 
-//adding default layers, and calling method that adds user specific
+//adding default layers from default tabel, adds them to layerlist for user so user can change styling
 function addDefaultSublayers(){
 
-    sublayers= [
-        {
-            name:'Rivers',
-            sql: "SELECT * FROM rivers",
-            cartocss: '#rivers {line-color: #272CB9; line-width: 3; line-opacity: 0.4;}',
-            subLayer:{},
-            active: true,
-            type: 'line'
-        },
-        {
-            name: 'Buildings',
-            sql: "SELECT * FROM buildings",
-            cartocss: '#buildings {polygon-fill: #FF6600; polygon-opacity: 0.4;}',
-            subLayer:{},
-            active: true,
-            type: 'polygon'
+    /*$.ajax({
+        url:"defaultLayers",
+        type:"get",
+        dataType: "json",
+        data:{},
+        success: "success"
+
+    }).complete(function(data){
+        var layers=JSON.parse(data.responseText);
+        console.log(layers.length);
+        //go through all layers and add them:
+        for(var i=0; i<layers.length; i++){
+            addNewSublayerFromDbLayer(layers[i], true, true);
         }
-    ];
 
-    console.log('in updateMap');
+    });*/
+    getAllLayersFromDb();
 
-    cartodb.createLayer(map,{
-        user_name: 'mathildeo',
-        type: 'cartodb',
-        sublayers:[]
-    })
-        .addTo(map)
-        .done(function(layer){
-            mapLayer=layer;
-            for(var i=0; i<sublayers.length; i++){
-                var subObj={
-                    sql:sublayers[i].sql,
-                    cartocss:sublayers[i].cartocss
-                };
-                //add sublayers actual obj!
-                sublayers[i].subLayer=layer.createSubLayer(subObj);
-            }
-
-            console.log(sublayers[0].subLayer);
-            console.log(sublayers[1].subLayer);
-
-        });
-
-
-
-    getLayersFromDb();
 }
 
-function getLayersFromDb(){
-    $.ajax({
+function getAllLayersFromDb(){
+    $.ajax({ //gets all for specific user
         url:"layers",
+        type:"get",
         dataType: "json",
         data:{},
         success: "success"
@@ -95,24 +79,48 @@ function getLayersFromDb(){
         var layers=JSON.parse(data.responseText);
         //go through all layers and add them:
         for(var i=0; i<layers.length; i++){
-            var newSublayer={
-                name: layers[i].name,
-                sql: layers[i].sql,
-                cartocss: layers[i].cartocss,
-                subLayer:{},
-                active: layers[i].active,
-                type: layers[i].type
-            };
-
-            sublayers.push(newSublayer);
-            sublayers[sublayers.length-1].subLayer = addSublayerToMap(newSublayer);
-            addToLayerList(layers[i].name);
+            addNewSublayerFromDbLayer(layers[i], layers[i].defaultLayer);
         }
     });
 }
 
+//just making a duplicate of the default layers for the specific user
+function addNewSublayerFromDbLayer(layer, defaultLayer, isDuplicatingDefaultLayer){
+    var newSublayer={
+        name: layer.name,
+        sql: layer.sql,
+        cartocss: layer.cartocss,
+        subLayer:{},
+        active: layer.active,
+        type: layer.type,
+        defaultLayer: defaultLayer
+    };
+
+
+    if(isDuplicatingDefaultLayer){
+        //post to db
+        $.ajax({
+            url:"layer",
+            type:"post",
+            data:{
+                name:layer.name,
+                sql: layer.sql,
+                cartocss: layer.cartocss,
+                active: layer.active,
+                layerType: layer.type,
+                defaultLayer: newSublayer.defaultLayer
+            }
+        });
+    }else{
+        sublayers.push(newSublayer);
+        sublayers[sublayers.length-1].subLayer = addSublayerToMap(newSublayer);
+        addToLayerList(layer.name, newSublayer);
+    }
+}
+
 function addSublayerToMap(sublayer){
     console.log('adding sublayer');
+    console.log(sublayer);
     var subObj={
         sql:sublayer.sql,
         cartocss:sublayer.cartocss
@@ -147,45 +155,53 @@ function handleLayers(){
 }
 
 //layerlist in main menu
-function addToLayerList(newLayer){
-    console.log(sublayers);
-    console.log('add to layer list');
+function addToLayerList(newLayer, newSublayer){
+
     activeLayers.push(newLayer);
     var link=document.createElement('a');
     link.innerHTML=newLayer;
     var checkbox=document.createElement('input');
     checkbox.checked=true;
     checkbox.className=newLayer;
+    checkbox.type="checkbox";
     checkbox.addEventListener("click", function(){
         handleLayers();
     });
 
     //TODO: is id ever used? If not - remove it
-    var id=sublayers.length; //set id to nr of sublayers, to get the indexing right
-    console.log('id: '+id);
-    checkbox.id=id;
-    checkbox.type="checkbox";
-
-    var trash=document.createElement("img");
-    trash.className=" trashLayer";
-    trash.src="../images/trash.png";
-    trash.addEventListener("click", function(){
-        deleteLayer(newLayer);
-    });
-
-    var edit=document.createElement("igm");
-    edit.className="editLayer";
-    edit.src="../images/edit-white.png";
-    edit.addEventListener("click", function(){
-       changeSublayerDesign(newLayer);
-    });
+    checkbox.id=sublayers.length;//set id to nr of sublayers, to get the indexing right
 
     var list=document.getElementById("menuLayerDropdown");
     var li=document.createElement('li');
     li.id=newLayer+"Li";
     li.appendChild(link);
     li.appendChild(checkbox);
-    li.appendChild(trash);
+
+    var edit=document.createElement("img");
+    edit.className="editLayer";
+    edit.src="../images/edit-white.png";
+
+    if(true){ //just while working to fast delete from database! :)
+        //if(!newSublayer.defaultLayer){ //the default layers cannot be deleted
+
+        edit.addEventListener("click", function(){ //call differenet api depending on default layer or not
+            changeSublayerDesign(newLayer);
+        });
+
+        var trash=document.createElement("img");
+        trash.className=" trashLayer";
+        trash.src="../images/trash.png";
+        trash.addEventListener("click", function(){
+            deleteLayer(newLayer);
+        });
+        li.appendChild(trash);
+    }else{
+        li.className="defaultLayer";
+        edit.addEventListener("click", function(){
+            changeSublayerDesign(newLayer, true);
+        });
+    }
+    li.appendChild(edit);
     list.appendChild(li);
 }
 
@@ -214,8 +230,6 @@ function deleteLayer(layerName){
         data: {
             name: layerName
         },
-        success: console.log("delete success"),
-        error: console.log("delete error")
     });
 }
 
@@ -278,13 +292,18 @@ function toggle(target){
 
 //close and reset value for layer-content dropdown
 function toggleClose(menu, target){
-    target.hide();
+    try{
+        target.hide();
+    }catch(err){
+        console.log('no target');
+    }
     menu.setAttribute('value', 'close');
 }
 
 //--------------------COMMON TOOLS FUNCTIONS ----------------------------
 
-function getCarto(type, layerName, color, opacity, linecolor, linewidth){
+function getCarto(type, name, color, opacity, linewidth, linecolor){
+    var layerName=name.toLowerCase();
     var cartoString;
     if(!opacity){
         opacity='0.8';
@@ -298,11 +317,11 @@ function getCarto(type, layerName, color, opacity, linecolor, linewidth){
 
     if(type==="polygon"){
         cartoString = '#'+layerName+' {' +
-            'polygon-fill:  '+color+';' +
-            'polygon-opacity: '+opacity+';' +
+            'polygon-fill: '+color+'; ' +
+            'polygon-opacity: '+opacity+'; ' +
             'line-color: '+linecolor+'; ' +
             'line-width: '+linewidth+'; ' +
-            'line-opacity: 1;}'
+            'line-opacity :1;}'
 
     }else if(type==="line"){
         cartoString="#"+layerName+"{" +
@@ -312,14 +331,14 @@ function getCarto(type, layerName, color, opacity, linecolor, linewidth){
 
     }else if(type==="marker") {
         cartoString='#'+layerName+' {' +
-            "marker-fill-opacity: "+opacity+";" +
-            "marker-line-color: "+linecolor+";" +
-            "marker-line-width: "+linewidth+";" +
-            "marker-line-opacity: 1;" +
+            "marker-fill-opacity: "+opacity+"; " +
+            "marker-line-color: "+linecolor+"; " +
+            "marker-line-width: "+linewidth+"; " +
+            "marker-line-opacity: 1; " +
             "marker-placement: point;" +
-            "marker-type: ellipse;" +
-            "marker-width: 10;" +
-            "marker-fill: "+color+";" +
+            "marker-type: ellipse; " +
+            "marker-width: 10; " +
+            "marker-fill: "+color+"; " +
             "marker-allow-overlap: true;"
     }
     return cartoString;
@@ -329,6 +348,7 @@ var color;
 var lineColor;
 var lineWidth;
 var opacity;
+
 
 function changeSublayerDesign(layerName){
 
@@ -348,32 +368,33 @@ function getAndSetValuesFromCarto(sublayer) {
     activeStyleLayer=sublayer;
 
     var carto = sublayer.cartocss;
-    console.log(sublayer.cartocss.split('#'));
     activeStyleLayerName=sublayer.cartocss.split('#')[1].split('{')[0];
 
+    console.log(carto);
+
     if (sublayer.type === "polygon") {
+        console.log('polygon');
         color = carto.split('polygon-fill')[1].split(';')[0].split(" ")[1];
         opacity = carto.split('polygon-opacity')[1].split(';')[0].split(" ")[1];
         lineColor = carto.split('line-color')[1].split(';')[0].split(" ")[1];
         lineWidth = carto.split('line-width')[1].split(';')[0].split(" ")[1];
 
     } else if (sublayer.type === "line") {
+        console.log('line');
         color = carto.split('line-color')[1].split(';')[0].split(" ")[1];
         opacity = carto.split('line-opacity')[1].split(';')[0].split(" ")[1];
         lineWidth = carto.split('line-width')[1].split(';')[0].split(" ")[1];
 
     } else if (sublayer.type === "marker") {
+        console.log('marker');
         color = carto.split('marker-fill')[1].split(';')[0].split(" ")[1];
         opacity = carto.split('marker-fill-opacity')[1].split(';')[0].split(" ")[1];
         lineWidth = carto.split('marker-line-width')[1].split(';')[0].split(" ")[1];
         lineColor = carto.split('marker-line-color')[1].split(';')[0].split(" ")[1];
     }
 
-    console.log(carto);
     console.log(color);
     console.log(opacity);
-    console.log(lineColor);
-    console.log(lineWidth);
 
     document.getElementById('color').value=color;
     document.getElementById('opacity').value=opacity;
@@ -384,7 +405,6 @@ function getAndSetValuesFromCarto(sublayer) {
     }
 }
 
-//<h2>Line-color:<input type="color" id="lineColor"></h2>
 function addLineColor(){
     var text=document.createElement("h2");
     text.innerHTML="Line-color:";
@@ -392,7 +412,7 @@ function addLineColor(){
     input.type="color";
     input.id="lineColor";
     text.appendChild(input);
-    document.getElementById("lineStyle").appendChild(text);
+    $("#lineStyle").prepend(text);
 }
 
 function resetStyleValues(){
@@ -403,32 +423,87 @@ function resetStyleValues(){
     activeStyleLayerName="";
 }
 
-//<h2 class="secondElement">Line-width:<input class="inputText"  id="lineWidth"></h2>
+function saveStyleChanges(){
 
-
-function saveColorChanges(){
+    console.log("in save style changes");
 
     color=document.getElementById('color').value;
     opacity=document.getElementById('opacity').value;
+    lineWidth=document.getElementById('lineWidth').value;
     try{
-        lineWidth=document.getElementById('lineWidth').value;
+        lineColor=document.getElementById('lineColor').value;
     }catch(err){
-        console.log('line width is not defined for the layer');
+        lineColor=null;
     }
 
     var carto;
-    if(activeStyleLayer.type === "line"){
-        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth);
-    }else{
+    if(lineColor){
+        console.log('line color exist');
         carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth, lineColor);
+    }else{
+        console.log('line color does not exist');
+        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth);
     }
 
+    console.log('new carty');
+    console.log(carto);
     for(var i=0; i<sublayers.length; i++){
-        if(sublayers[i].name===activeStyleLayerName){
-            mapLayer.getSublayer(i).setCartoCSS(carto);
+        if(sublayers[i].name===activeStyleLayer.name){
+            mapLayer.getSubLayer(i).setCartoCSS(carto);
+            var mapSublayer=mapLayer.getSubLayer(i);
+            sublayers[i].cartocss=mapLayer.getSubLayer(i).getCartoCSS();
         }
     }
 
+
+    //update css for layer in db
+    var url="updateCss:"+activeStyleLayer.name;
+    $.ajax({
+        type: "PUT",
+        url: "updateCss",
+        data: {
+            name:activeStyleLayer.name,
+            cartocss:carto
+        }
+    });
+
+
+    //add changes to database
+        //add all sublayers to database
+        //have a new table called defaultLayers - cannot delete these layers
+        //on change, update css to the layers
+    //add so that changes is read from db on update
+
+
+    popupClose();
+}
+
+function createNewSublayerFromUserInfo(layerName, sql, cartocss, type, newLayerName){
+    var newSublayer={
+        name: layerName,
+        sql:sql,
+        cartocss:cartocss,
+        subLayer:{},
+        active: true,
+        type: type
+    };
+
+    sublayers.push(newSublayer);
+    sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
+    addToLayerList(newLayerName, newSublayer);
+
+    $.post("/layer",
+        {
+            name: newSublayer.name,
+            sql: newSublayer.sql,
+            cartocss:newSublayer.cartocss,
+            active: newSublayer.active,
+            type: newSublayer.type,
+            defaultLayer:false
+        }
+    ).complete(function(){
+        console.log("completed");
+    });
 }
 
 
@@ -491,7 +566,7 @@ function createClip(){
         sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
         popupClose($('#layerDropdown-content-cliplayer'));
         popupClose($('#layerDropdown-content-inputlayer'));
-        addToLayerList(intLayerName);
+        addToLayerList(intLayerName, newSublayer);
 
         //call post request to save layer to database:
         $.post("/layer",
@@ -500,7 +575,8 @@ function createClip(){
                 sql: newSublayer.sql,
                 cartocss:newSublayer.cartocss,
                 active: newSublayer.active,
-                type: newSublayer.type
+                type: newSublayer.type,
+                defaultLayer:false
             }
         ).complete(function(){
             console.log("completed");
@@ -664,7 +740,7 @@ function createMerge(){
         sublayers.push(newSublayer);
         sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
         popupClose($('#layerDropdown-content-merge'));
-        addToLayerList(intLayerName);
+        addToLayerList(intLayerName, newSublayer);
 
         //call post request to save layer to database:
         $.post("/layer",
@@ -673,7 +749,8 @@ function createMerge(){
                 sql: newSublayer.sql,
                 cartocss:newSublayer.cartocss,
                 active: newSublayer.active,
-                type: newSublayer.type
+                type: newSublayer.type,
+                defaultLayer: false
             }
         ).complete(function(){
             console.log("completed");
@@ -722,12 +799,9 @@ function createMergeSql(layersName, color){
 
 //add to list over "chosen layers" to make sql from
 function addActiveMergeLayer(element){ //element is the html-element
-    //check if already active
-    console.log('what is element? ');
-    console.log(element);
-
     var newSublayer;
     var firstChosenSublayer;
+    //check if already active
     for(var i=0; i<sublayers.length; i++){
         if(sublayers[i].name === element.id){
             newSublayer=sublayers[i];
@@ -837,42 +911,15 @@ function intersection(){
 
 function createIntersection(){
 
+    popupClose($('#layerDropdown-content-intersection'));
+
     var intLayerName=$('#intersectionLayerName').val();
     var intColor=$("#intersectionColor").val();
 
     //check if everything is filled out
     if(activeIntersectionLayers.length>0 && intColor && intLayerName){
-
         var sublayerObj=createIntSql(activeIntersectionLayers, intColor, intLayerName);
-
-        var newSublayer={
-            name: intLayerName,
-            sql:sublayerObj.sql,
-            cartocss:sublayerObj.cartocss,
-            subLayer:{},
-            active: true,
-            type: activeIntersectionLayers[0].type
-        };
-
-        sublayers.push(newSublayer);
-        sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
-        popupClose($('#layerDropdown-content-intersection'));
-        addToLayerList(intLayerName);
-
-        //call post request to save layer to database:
-        $.post("/layer",
-            {
-                name: newSublayer.name,
-                sql: newSublayer.sql,
-                cartocss:newSublayer.cartocss,
-                active: newSublayer.active,
-                type: newSublayer.type
-            }
-        ).complete(function(){
-            console.log("completed");
-        });
-
-
+        createNewSublayerFromUserInfo(intLayerName, sublayerObj.sql, sublayerObj.cartocss,activeIntersectionLayers[0].type, intLayerName);
     }else{
         alert('Fill out all fields first');
     }
@@ -906,9 +953,7 @@ function createIntSql(layersName, color){
 
 //add to list over "chosen layers" to make sql from
 function addActiveLayer(element){ //element is the html-element
-    //check if already active
-    console.log('what is element? ');
-    console.log(element);
+
     //TODO: find how to get information to look up if active in sublayers
 
     if($.inArray(element.id, activeIntersectionLayers)!==-1){ //if layer is active intersection layer
@@ -985,6 +1030,7 @@ function buffer(){
     $("#bufferPopUp").show();
 
     $(".contentLayer").click(function(){
+        target.className=""
         for(var i= 0; i<sublayers.length; i++){
             if(sublayers[i].name===event.currentTarget.id){
                 activeBufferLayer=sublayers[i];
@@ -1008,44 +1054,22 @@ function createBuffer(){
         popupClose($('#layerDropdown-content-buffer'));
 
         var sublayerObj=createBufferSql(activeBufferLayer.name, bufferColor, bufferDistance);
-        var layerNameString=activeBufferLayer.name+'_buffer_'+bufferDistance;
-        var newSublayer={
-            name: layerNameString,
-            sql:sublayerObj.sql,
-            cartocss: sublayerObj.cartocss,
-            subLayer:{},
-            active: true,
-            type: 'polygon'
-        };
-
-        sublayers.push(newSublayer);
-        sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
-        addToLayerList(activeBufferLayer.name+'_buffer_'+bufferDistance);
-
-        $.post("/layer",
-            {
-                name: newSublayer.name,
-                sql: newSublayer.sql,
-                cartocss:newSublayer.cartocss,
-                active: newSublayer.active,
-                type: newSublayer.type
-            }
-        ).complete(function(){
-            console.log("completed");
-        });
+        var layerName=activeBufferLayer.name+'_buffer_'+bufferDistance;
+        var newLayerName=activeBufferLayer.name+'_buffer_'+bufferDistance;
+        createNewSublayerFromUserInfo(layerName,sublayerObj.sql, sublayerObj.cartocss, "polygon", newLayerName);
 
     }else{
         alert('Fill out all fields first');
     }
 
     console.log('empty fields');
-    //when created, empty fields:
+    //when created -> empty values:
     activeBufferLayer=null;
     bufferColor=null;
     bufferDistance=null;
 }
 
-//Creates sql and calls post request to database
+
 function createBufferSql(layer, color, distance){
     var sqlString="SELECT ST_Transform(ST_Buffer(the_geom::geography,"+distance+")::geometry, 3857) As the_geom_webmercator, cartodb_id FROM "+layer;
     var cartoString= getCarto("polygon", layer, color);

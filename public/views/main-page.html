@@ -1,7 +1,6 @@
-<div id="overlay"></div>
+<div id="overlay" onclick="popupClose()"></div>
 
 <div id="bufferPopUp" class="dialog">
-    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-buffer'))">x</p>
     <ul>
         <li class="popupHeader">
             <div class="line"></div>
@@ -147,7 +146,7 @@
                 <h2 class="secondElement">Line-width:<input class="inputText"  id="lineWidth"></h2>
             </li>
             <li>
-                <button class="createButton" id="saveColorChanges" onclick="saveColorChanges()">Save changes</button>
+                <button class="createButton" id="saveColorChanges" onclick="saveStyleChanges()">Save changes</button>
             </li>
         </ul>
     </div>
@@ -198,38 +197,9 @@
                     <!--SIDE BAR START-->
                     <div id="sidebar">
                         <ul class="sidebar-brand">
-                            <a href="" >Visible layers: <img src="../../images/triangle_down.png"/></a>
+                            <a href="" >Layers: <img src="../../images/triangle_down.png"/></a>
                             <div class="dropdown" >
                                 <ul id="menuLayerDropdown">
-                                    <li>
-                                        <a> Rivers</a>
-                                        <input onClick="handleLayers()" checked class="Rivers" id="0" type="checkbox">
-                                        <img class="editLayer" src="../images/edit-white.png" onclick="changeSublayerDesign('Rivers')">
-                                    </li>
-                                    <li>
-                                        <a> Buildings</a>
-                                        <input onClick="handleLayers()" checked  class="Buildings" id="1" type="checkbox">
-                                        <img class="editLayer" src="../images/edit-white.png" onclick="changeSublayerDesign('Buildings')">
-                                    </li>
-                                    <li>
-                                        <a> Schools</a>
-                                        <input onClick="handleLayers()" checked  class="Schools" id="2" type="checkbox">
-                                        <img class="editLayer" src="../images/edit-white.png" onclick="changeSublayerDesign('Schools')">
-
-                                    </li>
-                                    <li>
-                                        <a> Water</a>
-                                        <input onClick="handleLayers()" checked  class="Water" id="3" type="checkbox">
-                                        <img class="editLayer" src="../images/edit-white.png" onclick="changeSublayerDesign('Water')">
-
-                                    </li>
-                                    <li>
-                                        <a> Railway</a>
-                                        <input onClick="handleLayers()" checked  class="Railway" id="4" type="checkbox">
-                                        <img class="editLayer" src="../images/edit-white.png" onclick="changeSublayerDesign('Railway')">
-
-                                    </li>
-
                                 </ul>
                             </div>
 

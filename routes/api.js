@@ -4,7 +4,61 @@ var passport = require('passport');
 
 var User = require('../models/user.js');
 var Layer = require('../models/layer.js');
+var defaultLayer = require('../models/defaultLayer.js');
 
+
+router.get("/defaultLayers", function(req, res){
+    console.log('default layers');
+    defaultLayer.find({},function(err, data){
+        if(err){
+            return res.send(err);
+        }
+        console.log('data is: ');
+        console.log(data);
+        res.json(data);
+    });
+});
+
+router.post("/defaultLayer", function(req, res){
+    var layer=new defaultLayer();
+    layer.name="Water";
+    layer.sql="SELECT * FROM water";
+    layer.cartocss="#water {line-color: #272CB9; line-width: 3; line-opacity: 0.4;}";
+    layer.active=true;
+    layer.type="polygon";
+
+    layer.save(function(err){
+        if(err){
+            res.send(err);
+        } else{
+            res.json({message: 'layer created'});
+        }
+    });
+});
+
+
+router.put("/updateCss", function(req, res){
+    console.log(req.body.name);
+
+    Layer.find( {name:req.body.name, username: req.user.username}, function(err, layer) {
+        if (err) {
+            console.log('error');
+            return res.send(err);
+        }
+        console.log(layer);
+        console.log('css er: ');
+        console.log(req.body.cartocss);
+        layer[0].cartocss = req.body.cartocss;
+
+        //Save the layer
+        layer[0].save(function (err) {
+            if (err) {
+                res.send(err);
+            }
+            res.send({message: 'layer updated'});
+        });
+    })
+});
 
 router.get("/layers", function(req, res){
     Layer.find({
@@ -13,7 +67,6 @@ router.get("/layers", function(req, res){
         if(err){
             return res.send(err);
         }
-
         res.json(data);
     });
 });
@@ -27,7 +80,8 @@ router.post("/layer", function(req, res){
     layer.sql=req.body.sql;
     layer.cartocss=req.body.cartocss;
     layer.active=req.body.active;
-    layer.type=req.body.type;
+    layer.type=req.body.layerType;
+    layer.defaultLayer=req.body.defaultLayer;
 
 
     console.log(layer);
@@ -54,18 +108,6 @@ router.delete("/deleteLayer", function(req, res){
 
 });
 
-
-/*
-router.get('/layer', function(req, res){
-    console.log('in get /layer');
-    Layer.find({name:buildings}, function(err, docs){
-        res.json(docs);
-        //res(docs);
-        console.log(docs);
-    });
-    //console.log('res is: '+res);
-});
-*/
 
 router.post('/register', function(req, res) {
     User.register(new User({ username: req.body.username }),

@@ -4,7 +4,6 @@ $nav-color:rgba(0,0,0,0.58);
 #cartodb-map{
 
   z-index:1;
-  /*background-image: url("map.jpg");*/
   width: 100%;
   height: 100vh;
   position: fixed;
@@ -44,6 +43,7 @@ $nav-color:rgba(0,0,0,0.58);
   background-color: rgba(0,0,0,0.58);
   margin-top: 60px;
   height: 100vh;
+  width: 120%;
 
 }
 
@@ -69,7 +69,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
 
   #menuLayerDropdown{
-    padding-left: 10px;
+    padding-left: 0%;
   }
   .dropdown{
     background-color: rgba(0, 0, 0, 0.73);
@@ -132,7 +132,7 @@ $nav-color:rgba(0,0,0,0.58);
   box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
 
   .chosenLayer{
-    color:black;
+    color:black!important;
   }
 
   .popupHeader {
@@ -178,6 +178,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
 
   .layerDropdown-content{
+    padding-left:0;
     background-color: #d9dcd9;
     color: black;
     min-width: 160px;
@@ -207,6 +208,7 @@ $nav-color:rgba(0,0,0,0.58);
     margin-top: 0.2em;
   }
   .chosenLayers{
+    padding-left:0;
     background-color:#d9dcd9;
 
   }

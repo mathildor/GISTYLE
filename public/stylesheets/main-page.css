@@ -1,6 +1,5 @@
 #cartodb-map {
   z-index: 1;
-  /*background-image: url("map.jpg");*/
   width: 100%;
   height: 100vh;
   position: fixed;
@@ -34,7 +33,8 @@
 .sidebar-menu {
   background-color: rgba(0, 0, 0, 0.58);
   margin-top: 60px;
-  height: 100vh; }
+  height: 100vh;
+  width: 120%; }
 
 #sidebar {
   padding-top: 2em; }
@@ -50,7 +50,7 @@
     width: 30px;
     margin-top: 10px; }
   #sidebar #menuLayerDropdown {
-    padding-left: 10px; }
+    padding-left: 0%; }
   #sidebar .dropdown {
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;
@@ -101,7 +101,7 @@
   display: none;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.7); }
   .dialog .chosenLayer {
-    color: black; }
+    color: black !important; }
   .dialog .popupHeader {
     display: flex; }
     .dialog .popupHeader .line {
@@ -132,6 +132,7 @@
       margin: 0;
       display: initial; }
   .dialog .layerDropdown-content {
+    padding-left: 0;
     background-color: #d9dcd9;
     color: black;
     min-width: 160px;
@@ -156,6 +157,7 @@
     margin-right: 0.5em;
     margin-top: 0.2em; }
   .dialog .chosenLayers {
+    padding-left: 0;
     background-color: #d9dcd9; }
   .dialog img {
     width: 14px;

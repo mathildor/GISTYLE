@@ -10,6 +10,7 @@ var Layer = new Schema({
     sql: String,
     cartocss: String,
     active: Boolean,
+    defaultLayer: Boolean,
     type: String
 });
 
