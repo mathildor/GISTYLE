@@ -8,6 +8,10 @@ body {
   -o-filter: blur(5px);
   -ms-filter: blur(5px);
   filter: blur(5px);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   z-index: 1;
   width: 100vw;
   height: 100vh;
