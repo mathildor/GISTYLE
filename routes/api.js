@@ -13,8 +13,6 @@ router.get("/defaultLayers", function(req, res){
         if(err){
             return res.send(err);
         }
-        console.log('data is: ');
-        console.log(data);
         res.json(data);
     });
 });
@@ -45,9 +43,6 @@ router.put("/updateCss", function(req, res){
             console.log('error');
             return res.send(err);
         }
-        console.log(layer);
-        console.log('css er: ');
-        console.log(req.body.cartocss);
         layer[0].cartocss = req.body.cartocss;
 
         //Save the layer
@@ -72,7 +67,6 @@ router.get("/layers", function(req, res){
 });
 
 router.post("/layer", function(req, res){
-    console.log("in post layer");
 
     var layer= new Layer();
     layer.username=req.user.username;
@@ -80,11 +74,10 @@ router.post("/layer", function(req, res){
     layer.sql=req.body.sql;
     layer.cartocss=req.body.cartocss;
     layer.active=req.body.active;
-    layer.type=req.body.layerType;
+    layer.type=req.body.type;
     layer.defaultLayer=req.body.defaultLayer;
+    layer.tool=req.body.tool;
 
-
-    console.log(layer);
     layer.save(function(err){
         if(err){
             res.send(err);

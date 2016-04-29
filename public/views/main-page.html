@@ -31,7 +31,6 @@
 
 
 <div id="intersectionPopUp" class="dialog">
-    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-intersection'))">x</p>
     <ul>
         <li class="popupHeader">
             <div class="line"></div>
@@ -39,14 +38,20 @@
             <div class="line"></div>
         </li>
         <li class="chooseLayer">
-            <h2>Add layer to intersection:</h2>
+            <h2>Choose area that the output layer is within:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenIntersection" onclick="toggle($('#layerDropdown-content-intersection'))" value="close"></a>
-                <ul class="layerDropdown-content" id="layerDropdown-content-intersection"></ul>
+                <a class="dropdown-toggle" id="chosenAreaIntersection" onclick="toggle($('#layerDropdown-content-area-intersection'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-area-intersection"></ul>
+            </div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add output layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenOutputIntersection" onclick="toggle($('#layerDropdown-content-output-intersection'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-output-intersection"></ul>
             </div>
         </li>
         <li>
-            <h2>Chosen layers:</h2>
             <ul class="chosenLayers" id="chosenLayersIntersection">
 
             </ul>
@@ -63,7 +68,6 @@
 </div>
 
 <div id="mergePopUp" class="dialog">
-    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-merge'))">x</p>
     <ul>
         <li class="popupHeader">
             <div class="line"></div>
@@ -71,17 +75,18 @@
             <div class="line"></div>
         </li>
         <li class="chooseLayer">
-            <h2>Add layer:</h2>
+            <h2>Add first layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenMerge" onclick="toggle($('#layerDropdown-content-merge'))" value="close"></a>
-                <ul class="layerDropdown-content" id="layerDropdown-content-merge"></ul>
+                <a class="dropdown-toggle" id="chosenMerge1" onclick="toggle($('#layerDropdown-content-merge1'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-merge1"></ul>
             </div>
         </li>
-        <li>
-            <h2>Chosen layers:</h2>
-            <ul class="chosenLayers" id="chosenLayersMerge">
-
-            </ul>
+        <li class="chooseLayer">
+            <h2>Add second layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenMerge2" onclick="toggle($('#layerDropdown-content-merge2'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-merge2"></ul>
+            </div>
         </li>
         <h2>Set name:</h2>
         <input class="dialogInput" id="mergeLayerName">
@@ -94,8 +99,41 @@
     </ul>
 </div>
 
+
+<div id="differencePopUp" class="dialog">
+    <ul>
+        <li class="popupHeader">
+            <div class="line"></div>
+            <h1>DIFFERENCE</h1>
+            <div class="line"></div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add output area:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenDifferenceOutput" onclick="toggle($('#layerDropdown-content-differenceOutput'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-differenceOutput"></ul>
+            </div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add intersecting area:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenDifference2" onclick="toggle($('#layerDropdown-content-difference2'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-difference2"></ul>
+            </div>
+        </li>
+        <h2>Set name:</h2>
+        <input class="dialogInput" id="differenceLayerName">
+        <li>
+            <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="differenceColor"></h2>
+        </li>
+        <li>
+            <button class="createButton" id="createDifference" onclick="createDifference()">Create layer</button>
+        </li>
+    </ul>
+</div>
+
+
 <div id="clipPopUp" class="dialog">
-    <p class="popupClose" href="" onclick="popupClose($('#layerDropdown-content-clip'))">x</p>
     <ul>
         <li class="popupHeader">
             <div class="line clip"></div>
@@ -129,7 +167,6 @@
 </div>
 
 <div id="changeDesignPopUp" class="dialog">
-    <p class="popupClose" href="" onclick="popupClose()">x</p>
     <div id="changeDesignContent">
         <ul>
             <li class="popupHeader">
@@ -139,11 +176,10 @@
             </li>
             <li class="inline">
                 <h2>Color:<input type="color" id="color"></h2>
-                <h2 class="secondElement" >Opacity:<input class="inputText" id="opacity"></h2>
+                <h2 class="secondElement" >Opacity:<input class="inputText" type="range" min="0" max="1" step="0.1" id="opacity"></h2>
             </li>
             <li class="inline" id="lineStyle">
-                <!--<h2>Line-color:<input type="color" id="lineColor"></h2>-->
-                <h2 class="secondElement">Line-width:<input class="inputText"  id="lineWidth"></h2>
+                <h2 class="secondElement">Line-width:<input class="inputText" type="range" min="0" max="100" step="1" id="lineWidth"></h2>
             </li>
             <li>
                 <button class="createButton" id="saveColorChanges" onclick="saveStyleChanges()">Save changes</button>
@@ -197,33 +233,35 @@
                     <!--SIDE BAR START-->
                     <div id="sidebar">
                         <ul class="sidebar-brand">
-                            <a href="" >Layers: <img src="../../images/triangle_down.png"/></a>
+                            <a href="" id="layerHeader">LAYERS <img src="../../images/triangle_down.png"/></a>
                             <div class="dropdown" >
-                                <ul id="menuLayerDropdown">
-                                </ul>
+                                <ul id="menuLayerDropdown"></ul>
                             </div>
 
                             <div class="operators">
+                                <h2>TOOLS</h2>
                                 <li>
-                                    <img class="toolFigure" src="../images/Buffer.png">
+                                    <img id="bufferImg" class="toolFigure" src="../images/Buffer.png">
                                     <a  href="" onclick="buffer()">Buffer</a>
                                 </li>
                                 <li>
-                                    <img class="toolFigure" src="../images/intersection.png">
+                                    <img class="toolFigure" id="intersectionImg" src="../images/intersection.png">
                                     <a href="" onclick="intersection()">Intersection</a>
                                 </li>
                                 <li>
-                                    <a href="" onclick="clip()">Clip</a>
-                                </li>
-                                <li>
-                                    <a href="" onclick="">Union</a>
-                                </li>
-                                <li>
+                                    <img id="mergeImg" class="toolFigure" src="../images/merge.png">
                                     <a href="" onclick="merge()">Merge</a>
                                 </li>
                                 <li>
-                                    <a href="" onclick="">Dissolve</a>
+                                    <img id="differenceImg" class="toolFigure" src="../images/difference.png">
+                                    <a href="" onclick="difference()">Difference</a>
                                 </li>
+                                <!--<li>
+                                    <a href="" onclick="clip()">Clip</a>
+                                </li>
+                                <li>
+                                    <a href="" onclick="">Dissolve</a>
+                                </li>-->
                             </div>
                         </ul>
                     </div>

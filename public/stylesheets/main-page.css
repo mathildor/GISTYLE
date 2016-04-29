@@ -36,19 +36,44 @@
   height: 100vh;
   width: 120%; }
 
+.fa {
+  padding-left: 7px;
+  color: white; }
+
+.inactive {
+  color: grey; }
+
+.fa:hover {
+  cursor: pointer; }
+
 #sidebar {
   padding-top: 2em; }
+  #sidebar h2 {
+    padding-top: 4%;
+    color: white;
+    padding-bottom: 2%;
+    font-size: 150%; }
+  #sidebar input[type=checkbox] {
+    margin-left: 5px; }
   #sidebar .sidebar-brand {
     padding-left: 9%; }
   #sidebar a {
     color: white;
     font-size: large; }
+  #sidebar #layerHeader {
+    font-size: 150%; }
   #sidebar img {
     margin-top: 2px;
     width: 11px; }
   #sidebar .operators img {
     width: 30px;
-    margin-top: 10px; }
+    margin-bottom: 10px; }
+  #sidebar #intersectionImg {
+    transform: rotate(-100deg); }
+  #sidebar #differenceImg {
+    transform: rotate(-20deg); }
+  #sidebar #bufferImg {
+    width: 9%; }
   #sidebar #menuLayerDropdown {
     padding-left: 0%; }
   #sidebar .dropdown {
@@ -64,9 +89,11 @@
       margin-left: 3%; }
     #sidebar .dropdown img {
       float: right;
-      margin-right: 7%;
+      margin-right: 3%;
       width: 14px;
       margin-top: 5px; }
+    #sidebar .dropdown img:hover {
+      cursor: pointer; }
   #sidebar .operators {
     margin-top: 20px; }
     #sidebar .operators li {
@@ -91,9 +118,9 @@
 .dialog {
   position: absolute;
   color: white;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(16, 16, 16, 0.69);
   z-index: 999;
-  top: 30%;
+  top: 20%;
   left: 40%;
   padding-bottom: 20px;
   padding-right: 5%;
@@ -107,7 +134,7 @@
     .dialog .popupHeader .line {
       width: 32%;
       height: 3px;
-      background-color: #ee5664;
+      background-color: #ea6d79;
       margin-top: 35px; }
     .dialog .popupHeader .clip {
       width: 40%; }
@@ -119,9 +146,9 @@
     font-size: medium; }
   .dialog .layerDropdown {
     position: inherit;
-    background-color: #c8cbc8;
+    background-color: #fcfffc;
     height: 25px;
-    border-radius: 3px; }
+    border-radius: 2px; }
     .dialog .layerDropdown a {
       color: rgba(96, 95, 93, 0.69);
       padding-left: 3px; }
@@ -133,7 +160,10 @@
       display: initial; }
   .dialog .layerDropdown-content {
     padding-left: 0;
-    background-color: #d9dcd9;
+    margin-top: 4px;
+    border-top: solid 1px;
+    border-color: grey;
+    background-color: #fcfffc;
     color: black;
     min-width: 160px;
     overflow: auto;
@@ -146,10 +176,13 @@
       color: black;
       padding-right: 0;
       text-decoration: none; }
-    .dialog .layerDropdown-content a:hover {
-      background-color: rgba(126, 126, 126, 0.85);
-      padding-top: 2px;
-      padding-bottom: 2px; }
+    .dialog .layerDropdown-content li:hover {
+      background-color: rgba(181, 181, 181, 0.85); }
+    .dialog .layerDropdown-content li {
+      border-bottom: solid 1px;
+      border-color: grey;
+      height: 30px;
+      padding-top: 5px; }
   .dialog .popupClose {
     right: 0;
     top: 0;
@@ -174,7 +207,7 @@
     padding-left: 3px; }
 
 .dialogInput {
-  background-color: #c8cbc8;
+  background-color: #fcfffc;
   width: 20vw;
   height: 25px;
   border-radius: 3px;
@@ -207,7 +240,7 @@
   color: white;
   background-color: #ee5664;
   border: none;
-  width: 35%;
+  width: 150px;
   margin-left: auto;
   margin-right: auto;
   display: block;
@@ -233,6 +266,7 @@
   margin-right: 5%; }
 
 #changeDesignPopUp {
+  width: 50%;
   padding-right: 3%;
   padding-left: 3%; }
   #changeDesignPopUp ::-webkit-input-placeholder {
@@ -241,11 +275,11 @@
     width: 35%;
     color: black; }
   #changeDesignPopUp .inline {
-    display: flex;
-    margin-left: 20px; }
+    display: flex; }
   #changeDesignPopUp .secondElement {
+    display: flex;
     left: 0;
-    margin-left: 25%;
+    margin-left: 15%;
     width: 35%; }
   #changeDesignPopUp #color {
     margin-left: 45px; }

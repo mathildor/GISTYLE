@@ -47,25 +47,59 @@ $nav-color:rgba(0,0,0,0.58);
 
 }
 
+.fa{
+  padding-left: 7px;
+  color: white;
+}
+
+.inactive{
+  color: grey;
+}
+
+
+.fa:hover{
+  cursor: pointer;
+}
+
 #sidebar{
+  h2{
+    padding-top:4%;
+    color: white;
+    padding-bottom: 2%;
+    font-size:150%;
+  }
   padding-top: 2em;
+
+  input[type=checkbox]{
+    margin-left: 5px;
+  }
 
   .sidebar-brand{
     padding-left: 9%;
   }
-
   a{
     color:white;
     font-size: large;
   }
-
+  #layerHeader{
+    font-size:150%;
+  }
   img{
     margin-top: 2px;
     width: 11px;
   }
   .operators img{
     width:30px;
-    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  #intersectionImg{
+    transform: rotate(-100deg);
+  }
+  #differenceImg{
+    transform: rotate(-20deg);
+  }
+  #bufferImg{
+    width:9%;
   }
 
   #menuLayerDropdown{
@@ -85,9 +119,12 @@ $nav-color:rgba(0,0,0,0.58);
     }
     img{
       float: right;
-      margin-right: 7%;
+      margin-right: 3%;
       width: 14px;
       margin-top: 5px;
+    }
+    img:hover{
+      cursor:pointer;
     }
   }
 
@@ -118,12 +155,11 @@ $nav-color:rgba(0,0,0,0.58);
 
 
 .dialog{
-
   position: absolute;
   color: white;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(16, 16, 16, 0.69);
   z-index: 999;
-  top: 30%;
+  top: 20%;
   left: 40%;
   padding-bottom: 20px;
   padding-right:5%;
@@ -141,7 +177,7 @@ $nav-color:rgba(0,0,0,0.58);
     .line {
       width: 32%;
       height: 3px;
-      background-color: #ee5664;
+      background-color: rgb(234, 109, 121);
       margin-top: 35px;
     }
     .clip{
@@ -159,9 +195,9 @@ $nav-color:rgba(0,0,0,0.58);
   }
   .layerDropdown{
     position: inherit;
-    background-color: #c8cbc8;
+    background-color: #fcfffc;
     height: 25px;
-    border-radius: 3px;
+    border-radius: 2px;
     a {
       color: rgba(96, 95, 93, 0.69);
       padding-left: 3px;
@@ -179,7 +215,10 @@ $nav-color:rgba(0,0,0,0.58);
 
   .layerDropdown-content{
     padding-left:0;
-    background-color: #d9dcd9;
+    margin-top: 4px;
+    border-top: solid 1px;
+    border-color: grey;
+    background-color: #fcfffc;
     color: black;
     min-width: 160px;
     overflow: auto;
@@ -193,10 +232,14 @@ $nav-color:rgba(0,0,0,0.58);
       padding-right: 0;
       text-decoration: none;
     }
-    a:hover {
-      background-color: rgba(126, 126, 126, 0.85);
-      padding-top: 2px;
-      padding-bottom: 2px;
+    li:hover {
+      background-color: rgba(181, 181, 181, 0.85);
+    }
+    li{
+      border-bottom: solid 1px;
+      border-color: grey;
+      height: 30px;
+      padding-top: 5px;
     }
   }
 
@@ -232,7 +275,7 @@ $nav-color:rgba(0,0,0,0.58);
 
 
 .dialogInput{
-  background-color: #c8cbc8;
+  background-color: #fcfffc;
   width: 20vw;
   height: 25px;
   border-radius: 3px;
@@ -264,7 +307,7 @@ $nav-color:rgba(0,0,0,0.58);
   color: white;
   background-color: #ee5664;
   border: none;
-  width: 35%;
+  width: 150px;
   margin-left: auto;
   margin-right:auto;
   display: block;
@@ -296,6 +339,7 @@ $nav-color:rgba(0,0,0,0.58);
 }
 
 #changeDesignPopUp{
+  width:50%;
   padding-right: 3%;
   padding-left: 3%;
   ::-webkit-input-placeholder {
@@ -309,11 +353,12 @@ $nav-color:rgba(0,0,0,0.58);
   }
   .inline{
     display: flex;
-    margin-left:20px;
+    //margin-left:20px;
   }
   .secondElement{
+    display:flex;
     left: 0;
-    margin-left: 25%;
+    margin-left: 15%;
     width: 35%;
   }
   #color{
@@ -332,7 +377,7 @@ $nav-color:rgba(0,0,0,0.58);
     color:black;
   }
   #changeDesignPopUp{
-  display: flex;
+    display: flex;
   }
 
 }

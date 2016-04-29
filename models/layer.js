@@ -11,7 +11,8 @@ var Layer = new Schema({
     cartocss: String,
     active: Boolean,
     defaultLayer: Boolean,
-    type: String
+    type: String,
+    tool: String
 });
 
 
