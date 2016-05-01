@@ -22,7 +22,8 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=1 ); }
   .navbar h1 {
     color: white;
-    margin-top: 10px; }
+    margin-top: 10px;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.42); }
 
 .navbar-fixed-top {
   z-index: 10 !important; }
@@ -34,7 +35,7 @@
   background-color: rgba(0, 0, 0, 0.58);
   margin-top: 60px;
   height: 100vh;
-  width: 120%; }
+  width: 275px; }
 
 .fa {
   padding-left: 7px;

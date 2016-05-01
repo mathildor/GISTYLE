@@ -20,6 +20,13 @@ gisControllers.controller("mapController", ["$scope", "$http", function($scope, 
 
 }]);
 
+gisControllers.controller("projectsController", ["$scope", "$location", function($scope, $location){
+
+    getProjectsForUserFromDB();
+
+}]);
+
+
 angular.module('gisApp').controller('loginController',
     ['$scope', '$location', 'AuthService',
         function ($scope, $location, AuthService) {
@@ -34,7 +41,8 @@ angular.module('gisApp').controller('loginController',
                 AuthService.login($scope.loginForm.username, $scope.loginForm.password)
                     // handle success
                     .then(function () {
-                        $location.path('/mainPage');
+                        //$location.path('/mainPage');
+                        $location.path('/projects');
                         $scope.disabled = false;
                         $scope.loginForm = {};
                     })
@@ -91,7 +99,8 @@ angular.module('gisApp').controller('registerController',
                 AuthService.register($scope.registerForm.username, $scope.registerForm.password)
                     // handle success
                     .then(function () {
-                        $location.path('/mainPage');
+                        //$location.path('/mainPage');
+                        $location.path('/projects');
                         $scope.disabled = false;
                         $scope.registerForm = {};
                     })

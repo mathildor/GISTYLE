@@ -5,6 +5,7 @@ var passport = require('passport');
 var User = require('../models/user.js');
 var Layer = require('../models/layer.js');
 var defaultLayer = require('../models/defaultLayer.js');
+var Project = require('../models/project.js');
 
 
 router.get("/defaultLayers", function(req, res){
@@ -55,8 +56,25 @@ router.put("/updateCss", function(req, res){
     })
 });
 
-router.get("/layers", function(req, res){
+
+router.post("/layers", function(req, res){
+    console.log('projectname: ');
+    console.log(req.body.projectName);
+
     Layer.find({
+        "username":req.user.username,
+        "projectName": req.body.projectName
+    }, function(err, data){
+        if(err){
+            return res.send(err);
+        }
+        res.json(data);
+    });
+});
+
+
+router.get("/projects", function(req, res){
+    Project.find({
         "username":req.user.username
     }, function(err, data){
         if(err){
@@ -77,6 +95,7 @@ router.post("/layer", function(req, res){
     layer.type=req.body.type;
     layer.defaultLayer=req.body.defaultLayer;
     layer.tool=req.body.tool;
+    layer.projectName=req.body.projectName;
 
     layer.save(function(err){
         if(err){
@@ -86,6 +105,23 @@ router.post("/layer", function(req, res){
         }
     });
 });
+
+router.post("/project", function(req, res){
+
+    var project= new Project();
+    project.username=req.user.username;
+    project.projectName=req.body.projectName;
+
+    project.save(function(err){
+        if(err){
+            res.send(err);
+        } else{
+            res.json({message: 'layer created'});
+        }
+    });
+});
+
+
 
 router.delete("/deleteLayer", function(req, res){
    console.log("Trying to delete: "+req.user.username+"_"+req.body.name);

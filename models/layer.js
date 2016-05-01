@@ -12,7 +12,8 @@ var Layer = new Schema({
     active: Boolean,
     defaultLayer: Boolean,
     type: String,
-    tool: String
+    tool: String,
+    projectName: String
 });
 
 
