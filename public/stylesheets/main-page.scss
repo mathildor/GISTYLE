@@ -131,12 +131,12 @@ $nav-color:rgba(0,0,0,0.58);
 
   .operators{
     margin-top: 20px;
+    margin-bottom: 50px;
     li{
       margin-top: 10px;
     }
   }
 }
-
 #col-sidebar{
   z-index: 2;
   padding-left: 0px;
@@ -199,6 +199,7 @@ $nav-color:rgba(0,0,0,0.58);
     background-color: #fcfffc;
     height: 25px;
     border-radius: 2px;
+    cursor: pointer;
     a {
       color: rgba(96, 95, 93, 0.69);
       padding-left: 3px;
@@ -317,50 +318,52 @@ $nav-color:rgba(0,0,0,0.58);
   height: 30px;
 }
 
-#createClip{ //clip button
-  margin-top: 10%;
-}
-
 #clipPopUp{
-  top: 15%;
-  left: 35%;
-}
+  #createClip{ //clip button
+    margin-top: 10%;
+  }
+
+  #clipPopUp{
+    top: 15%;
+    left: 35%;
+  }
 
 
-#clipLi{
-  display: flex;
-  margin-top: 3%;
+  #clipLi{
+    display: flex;
+    margin-top: 3%;
+  }
+
+  #clipLayerName{
+    margin-top:4%;
+    width: 55%;
+    margin-left: 2.5%;
+    margin-right: 5%;
+  }
 }
 
-#clipLayerName{
-  margin-top:4%;
-  width: 55%;
-  margin-left: 2.5%;
-  margin-right: 5%;
-}
 
 #changeDesignPopUp{
-  width:50%;
-  padding-right: 3%;
-  padding-left: 3%;
+  width:500px;
+  padding:0;
+
   ::-webkit-input-placeholder {
     color: #545454;
   }
-  .popupHeader{
+  input[type=range]{
+    width: 60%;
   }
-  .inputText{
-    width: 35%;
-    color: black;
+
+  .popupHeader{
+    margin-right:30px;
   }
   .inline{
     display: flex;
     //margin-left:20px;
   }
   .secondElement{
-    display:flex;
-    left: 0;
-    margin-left: 15%;
-    width: 35%;
+    display:-webkit-inline-box;
+    margin-left: 60px;
   }
   #color{
     margin-left: 45px;
@@ -369,7 +372,7 @@ $nav-color:rgba(0,0,0,0.58);
     margin-left: 10px;
   }
   #opacity{
-    margin-left: 10px;
+    margin-left: 30px;
   }
   #lineWidth{
     margin-left: 10px;
@@ -380,6 +383,40 @@ $nav-color:rgba(0,0,0,0.58);
   #changeDesignPopUp{
     display: flex;
   }
-
 }
 
+
+#addLayer{
+  font-size: 1.5em!important;
+}
+
+#uploadPopUp{
+
+  h1{
+    width: 100%;
+    margin-left: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .line{
+    width: 62%;
+  }
+
+  #inputFile{
+    margin-bottom: 20px;
+  }
+  .inline-div{
+    display: inline-flex;
+  }
+  #newLayerColor{
+    margin-top: 7px;
+    margin-left:10px;
+  }
+  #uploaded-layer-name{
+    color: black;
+    height:23px;
+    margin-top:6px;
+    margin-left:10px;
+    margin-right:20px;
+  }
+}

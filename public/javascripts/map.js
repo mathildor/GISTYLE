@@ -1,15 +1,19 @@
 
 var map;
-var mapLayer; //layer to put all sublayers in, read it is more efficient with sublayers
-var sublayers=[]; //contains json objects with info about sublayer
+var leafletLayers=[];
 
+var fillAgain=false; //used to know if popup should be reset or not, if missed some info the already filled out should stay
 var activeBufferLayer;
-var activeIntersectionArea;
-var activeIntersectionOutput;
+
+var activeWithinArea;
+var activeWithinOutput;
+
 var activeMergeLayer1;
 var activeMergeLayer2;
-var activeDifferenceOutput;
+
+var activeDifference1;
 var activeDifference2;
+
 var activeClipInputLayer;
 var activeClipClipLayer;
 var bufferColor;
@@ -20,12 +24,13 @@ var activeStyleLayerName;
 var projectName;
 
 //method called when project is chosen
+//TODO: how set whan page is updated????? Through controller? Or backend project session like user session is set?
 function setProjectName(name){
     projectName=name;
-    console.log(projectName);
 }
 
 function initMap(){
+    console.log('init map!!!!');
     map = new L.Map('cartodb-map', {
         center: [63.43, 10.39],
         zoom: 14,
@@ -38,86 +43,259 @@ function initMap(){
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    getLayersFromDB();
 
-    cartodb.createLayer(map,{
-            user_name: 'mathildeo',
-            type: 'cartodb',
-            sublayers:[]
-        })
-        .addTo(map)
-        .done(function(layer){
-            mapLayer=layer;
-        });
-
-    //TODO: CAll this function on create account (or on new project) - be aware of sync, probably have to call getallLayersFromDatabase in the other this function
-    getAllLayersFromDb();
 
 }
 
-function getAllLayersFromDb(){
-    console.log(projectName);
+function getLayersFromDB(){
 
-    $.ajax({ //gets all for specific user
-        url:"layers",
+    leafletLayers=[];
+
+    //get all default layers:
+    $.ajax({ //gets all for specific user and project
+        url:"defaultGeojsons",
+        type:"get",
+        dataType: "json",
+        data:{}
+    }).complete(function(data) {
+        var layerStyle;
+        var layers=JSON.parse(data.responseText);
+        var i;
+        for(i=0; i<layers.length;i++) {
+            getStyleAndAddToMap(layers[i].layerName, layers[i], true);
+            var newLayer={
+                name:layers[i].layerName
+            }
+            addToLayerList(newLayer.name, newLayer);
+        }
+    });
+
+    //get user and project specific
+    $.ajax({ //gets all for specific user and project
+        url:"geojsons",
         type:"post",
         dataType: "json",
-        data:{projectName: projectName},
-        success: "success"
-
+        data:{
+            projectName:projectName
+        }
     }).complete(function(data){
-
-        var layers=JSON.parse(data.responseText);
         //go through all layers and add them:
-        for(var i=0; i<layers.length; i++){
-            addNewSublayerFromDbLayer(layers[i], layers[i].defaultLayer);
+        var layerStyle;
+        var layers=JSON.parse(data.responseText);
+        var i;
+        for(i=0; i<layers.length;i++) {
+            getStyleAndAddToMap(layers[i].layerName, layers[i], false);
+            var newLayer={
+                name:layers[i].layerName
+            }
+            addToLayerList(newLayer.name, newLayer);
         }
     });
 }
 
-//just making a duplicate of the default layers for the specific user
-function addNewSublayerFromDbLayer(layer, defaultLayer, isDuplicatingDefaultLayer){
-    var newSublayer={
-        name: layer.name,
-        sql: layer.sql,
-        cartocss: layer.cartocss,
-        subLayer:{},
-        active: layer.active,
-        type: layer.type,
-        defaultLayer: defaultLayer,
-        tool: layer.tool
-    };
+function getStyleAndAddToMap(layerName, layer, defaultLayer){
 
+    $.ajax({ //gets all for specific user and project
+        url:"getStyling",
+        type:"post",
+        dataType: "json",
+        data:{
+            projectName: projectName,
+            layerName: layerName,
+        }
+    }).complete(function(data){
 
-    if(isDuplicatingDefaultLayer){
-        //post to db
-        $.ajax({
-            url:"layer",
-            type:"post",
-            data:{
-                name:layer.name,
-                sql: layer.sql,
-                cartocss: layer.cartocss,
-                active: layer.active,
-                layerType: layer.type,
-                defaultLayer: newSublayer.defaultLayer,
-                tool: layer.tool,
-                projectName:projectName
+        var styling=JSON.parse(data.responseText)[0].layerStyle;
+        addLayerToMap(layer, styling, layerName, defaultLayer);
+    });
+}
+
+function enterProject(projectName){
+    leafletLayers=[];
+    getLayersFromDB();
+}
+
+function addLayerToMap(layer, styling, layerName, defaultLayer){
+
+    console.log('layer: ');
+    console.log(layer);
+    console.log(styling.color);
+    var newLayer;
+    if(layer.features[0].geometry.type === "Point"){
+        var style = {
+            radius: styling.radius,
+            fillColor: styling.color,
+            color: styling.lineColor,
+            weight: styling.weight,
+            fillOpacity: styling.opacity
+        };
+
+        newLayer=L.geoJson(layer, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, style);
             }
-        });
+        }).addTo(map);
     }else{
-        sublayers.push(newSublayer);
-        sublayers[sublayers.length-1].subLayer = addSublayerToMap(newSublayer);
-        addToLayerList(layer.name, newSublayer);
+        newLayer=L.geoJson(layer,{
+            //style:styling
+            style:{
+                "fillColor": styling.color,
+                "fillOpacity": styling.opacity,
+                "weight": styling.weight,
+                "color": styling.lineColor //stroke-color
+            }
+        }).addTo(map);
+    }
+
+
+    //add the layer to leafletLayers list:
+    leafletLayers.push({
+        name: layerName,
+        layer: newLayer,
+        geojsonLayer:layer,
+        defaultLayer:defaultLayer,
+        type: layer.features[0].geometry.type,
+        active:true
+    });
+
+    return newLayer;
+}
+
+function saveLayerStylingToDBAndUpdateView(layerName, projectName, style){
+
+    $.ajax({ //gets all for specific user and project
+        url:"layerStyling",
+        type:"post",
+        dataType: "json",
+        data:{
+            projectName: projectName,
+            layerName:layerName,
+            layerStyle:JSON.stringify(style)
+        }
+    }).complete(function(data){
+        var layer;
+        var geojsonLayer;
+        for(var i=0; i<leafletLayers.length; i++){
+            if(leafletLayers[i].name === layerName){
+                layer=leafletLayers[i].layer;
+                geojsonLayer=leafletLayers[i].geojsonLayer;
+            }
+        }
+        map.removeLayer(layer);
+        removeFromLeafletLayerList(layerName);
+        addLayerToMap(geojsonLayer, style, layerName);
+    });
+}
+
+function removeFromLeafletLayerList(layerName){
+    for(var i=0; i<leafletLayers.length; i++){
+        if(leafletLayers[i].name === layerName){
+            leafletLayers.splice(i,1);
+        }
     }
 }
 
-function addSublayerToMap(sublayer){
-    var subObj={
-        sql:sublayer.sql,
-        cartocss:sublayer.cartocss
+function saveLeafletLayerToDB(geoLayer, layerName){
+
+    console.log('saveLeafletLayerToDB');
+    console.log(geoLayer);
+    $.ajax({
+        "url": "saveGeojson",
+        "type":"post",
+        "data":{
+            layerName:layerName,
+            projectName: projectName,
+            defaultLayer: false,
+            features: geoLayer
+        }
+    });
+}
+
+
+function newLayer(){
+    $("#uploadPopUp").show();
+    $("#overlay").show();
+}
+
+function uploadLayer(){
+    //get file from user
+
+    $("#uploadPopUp").hide();
+    $("#overlay").hide();
+
+    var color=document.getElementById('newLayerColor').value;
+    var layerName=document.getElementById('uploaded-layer-name').value;
+    var file = document.getElementById('inputFile').files[0];
+
+    console.log(file);
+
+    var reader = new FileReader();
+    var text;
+    reader.onload = function(e) {
+        text = reader.result;
+        var layerFeatures = JSON.parse(text).features;
+        console.log(layerFeatures.length);
+        uploadGeoJson(projectName, layerFeatures, layerName, color);
+    }
+    reader.readAsText(file);
+
+}
+function uploadGeoJson(projectName, layerFeatures, layerName, color){
+    console.log(layerFeatures);
+
+    var styling={
+        'color': color,
+        'weight': 3,
+        'opacity':0.6,
+        'radius': 5
     };
-    var sub=mapLayer.createSubLayer(subObj);
-    return sub;
+
+
+    $.ajax({ //gets all for specific user and project
+        url:"layerStyling",
+        type:"post",
+        dataType: "json",
+        data: {
+            layerStyle: JSON.stringify(styling),
+            projectName: projectName,
+            layerName: layerName,
+            defaultLayer: false
+        }
+    }).complete(function(styleData){
+
+        $.ajax({ //gets all for specific user and project
+            url:"saveGeojson",
+            type:"post",
+            dataType: "json",
+            data:{
+                features:JSON.stringify(layerFeatures),
+                projectName: projectName,
+                layerName: layerName,
+                defaultLayer: false
+            }
+        }).complete(function(geolayerData){
+            console.log('uploaded geo layer');
+            var layer=addLayerToMap(JSON.parse(geolayerData.responseText), styling, layerName, false);
+            addToLayerList(layerName, layer);
+        });
+    });
+}
+
+function reorderLayers(){
+    console.log('reorder!!!');
+    var layersInOrder=[];
+    var listOfDomChildren=document.getElementById('menuLayerDropdown').childNodes;
+    for(var i = 0; i<listOfDomChildren.length; i++){
+        layersInOrder.push(listOfDomChildren[i].childNodes[0].innerHTML);
+    }
+    console.log(layersInOrder);
+
+    for(var j=layersInOrder.length-1; j>-1; j--){
+        console.log(layersInOrder[j]);
+        getLeafletLayerFromName(layersInOrder[j]).layer.bringToFront();
+    }
+
 }
 
 //----------------------------Main menu methods -------------------------------------
@@ -126,21 +304,54 @@ function addSublayerToMap(sublayer){
 function toggleLayerView(){
     var layerName=event.currentTarget.className.split('fa-eye ')[1].split(' ')[0];
 
-    for(var i=0; i<sublayers.length;i++){
-        if(sublayers[i].name === layerName){
-            if(sublayers[i].active == true){
+    for(var i=0; i<leafletLayers.length;i++){
+        if(leafletLayers[i].name === layerName){
+            if(leafletLayers[i].active == true){
                 event.currentTarget.className="fa fa-eye "+layerName+" inactive";
-                sublayers[i].active=false;
-                mapLayer.getSubLayer(i).hide();
+                map.removeLayer(leafletLayers[i].layer);
+                leafletLayers[i].active=false;
 
             }else{
-                sublayers[i].active=true;
                 event.currentTarget.className="fa fa-eye "+layerName+" active";
-                mapLayer.getSubLayer(i).show();
+                map.addLayer(leafletLayers[i].layer);
+                leafletLayers[i].active=true;
             }
         }
     }
 }
+
+function getLeafletLayerFromName(layerName){
+    console.log(layerName);
+    console.log(leafletLayers);
+    var layer;
+    for(var i=0; i<leafletLayers.length; i++){
+        if(leafletLayers[i].name === layerName){
+            layer=leafletLayers[i];
+        }
+    }
+    console.log(layer);
+    return layer;
+}
+
+function removeLayerFromMapView(layerName){
+
+    for(var i=0; i<leafletLayers.length; i++){
+        if(leafletLayers[i].name === layerName){
+            map.removeLayer(layer);
+            leafletLayers[i].active=false;
+        }
+    }
+};
+
+function addLayerToMapView(layerName){
+    for(var i=0; i<leafletLayers.length; i++){
+        if(leafletLayers[i].name === layerName){
+            map.addLayer(layer);
+            leafletLayers[i].active=true;
+        }
+    }
+};
+
 
 //layerlist in main menu
 function addToLayerList(newLayer, newSublayer){
@@ -150,9 +361,6 @@ function addToLayerList(newLayer, newSublayer){
     var link=document.createElement('a');
     link.innerHTML=newLayer;
 
-    /*var checkbox=document.createElement('input');
-    checkbox.type="checkbox";
-    */
     var checkbox=document.createElement('i');
 
     checkbox.className="fa fa-eye "+newLayer+" active";
@@ -162,14 +370,20 @@ function addToLayerList(newLayer, newSublayer){
         toggleLayerView();
     });
 
-    //TODO: is id ever used? If not - remove it
-    checkbox.id=sublayers.length;//set id to nr of sublayers, to get the indexing right
-
     var list=document.getElementById("menuLayerDropdown");
     var li=document.createElement('li');
+    li.draggable="true";
     li.id=newLayer+"Li";
     li.appendChild(link);
     li.appendChild(checkbox);
+
+    //enable drag and drop
+    var sortable=Sortable.create(list,{
+        animation:200,
+        onUpdate: function(){
+            reorderLayers();
+        }
+    });
 
     var edit=document.createElement("img");
     edit.className="editLayer";
@@ -179,7 +393,7 @@ function addToLayerList(newLayer, newSublayer){
         //if(!newSublayer.defaultLayer){ //the default layers cannot be deleted
 
         edit.addEventListener("click", function(){ //call differenet api depending on default layer or not
-            changeSublayerDesign(newLayer);
+            changeLayerDesign(newLayer);
         });
 
         var trash=document.createElement("img");
@@ -192,7 +406,7 @@ function addToLayerList(newLayer, newSublayer){
     }else{
         li.className="defaultLayer";
         edit.addEventListener("click", function(){
-            changeSublayerDesign(newLayer, true);
+            changeLayerDesign(newLayer, true);
         });
     }
     li.appendChild(edit);
@@ -209,31 +423,44 @@ function deleteLayer(layerName){
     layerEl.remove();
 
     //Delete from map
-    for(var i=0; i<sublayers.length; i++){
-        if(sublayers[i].name === layerName){
-            mapLayer.getSubLayer(i).remove(); //remove from map
-            sublayers.splice(i,1);
+    console.log('layerName');
+    console.log(layerName);
+    var layer;
+    console.log(leafletLayers);
+    for(var i=0; i<leafletLayers.length; i++){
+        if(leafletLayers[i].name === layerName){
+            console.log('removing:');
+            leafletLayers[i];
+            map.removeLayer(leafletLayers[i].layer) //remove from map
+
+            //Delete from DB
+            if(leafletLayers[i].defaultLayer == false){
+                //Delete from database
+                $.ajax({
+                    url: "deleteLayer",
+                    type: 'DELETE',
+                    data: {
+                        layerName: layerName,
+                        projectName: projectName
+                    }
+                });
+
+                $.ajax({
+                    url: "deleteStyling",
+                    type: 'DELETE',
+                    data: {
+                        layerName: layerName,
+                        projectName: projectName
+                    }
+                });
+            }
+            leafletLayers.splice(i,1);
         }
     }
 
-    //Delete from database
-    $.ajax({
-        url: "deleteLayer",
-        type: 'DELETE',
-        data: {
-            name: layerName
-        }
-    });
+
 }
 
-
-function getSublayerFromLayerName(name){
-    for(var i=0; i<sublayers.length; i++){
-        if(sublayers[i].name === name){
-            return sublayers[i];
-        }
-    }
-}
 
 //----------------VIEW DATA------------------------
 
@@ -246,27 +473,42 @@ function getSublayerFromLayerName(name){
 
 function createLayerDropdown(div, type, alreadyChosen){
 
+    //type contains the only type that should be in dropdown:
+    console.log(alreadyChosen);
+    console.log(type);
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
 
+    var validTypes=[];
+    if(type==null){
+        validTypes=["Point","MultiPoint", "Polygon", "MultiPolygon", "LineString", "MultiLineString", "Positions"];
+    }else{
+        for(var i=0; i<type.length; i++){
+            validTypes.push(type[i]);
+            validTypes.push('Multi'+type[i]);
+        }
+    }
 
-    for(var i=0; i<sublayers.length; i++){
-        if(type==="polygon" && sublayers[i].type !== "polygon") {
-            console.log('not same type');
-            //don't add
-        }else if(sublayers[i].name === alreadyChosen){
-            console.log('already chosen and not added anymore');
-            //don't add
-        }else{
-            var li = document.createElement("li");
-            var link = document.createElement("a");
-            link.className = "contentLayer";
-            link.id = sublayers[i].name;
-            var txt = document.createTextNode(sublayers[i].name);
-            link.appendChild(txt);
-            li.appendChild(link);
-            div.appendChild(li);
+    //check if layer has valid type and is not already chosen
+    for(var j=0; j<leafletLayers.length;j++) {
+        for(var k=0; k<validTypes.length;k++) {
+            if(leafletLayers[j].type === validTypes[k]) {
+
+                //check if not already chosen
+                if(leafletLayers[j].name !== alreadyChosen){
+                    //console.log(leafletLayers[i].type+' is added when type is: '+type);
+                    var li = document.createElement("li");
+                    li.className='contentLi';
+                    var link = document.createElement("a");
+                    link.className = "contentLayer";
+                    link.id = leafletLayers[j].name;
+                    var txt = document.createTextNode(leafletLayers[j].name);
+                    link.appendChild(txt);
+                    li.appendChild(link);
+                    div.appendChild(li);
+                }
+            }
         }
     }
 }
@@ -293,206 +535,81 @@ function toggle(target){
 function toggleClose(menu, target){
     try{
         target.hide();
+        menu.setAttribute('value', 'close');
     }catch(err){
         console.log('no target');
     }
-    menu.setAttribute('value', 'close');
 }
 
 //--------------------COMMON TOOLS FUNCTIONS ----------------------------
 
-function getCarto(type, name, color, opacity, linewidth, linecolor){
-    var layerName=name.toLowerCase();
-    var cartoString;
-    if(!opacity){
-        opacity='0.8';
-    }
-    if(!linecolor){
-        linecolor=color;
-    }
-    if(!linewidth){
-        linewidth='0.5';
-    }
 
-    if(type==="polygon"){
-        cartoString = '#'+layerName+' {' +
-            'polygon-fill: '+color+'; ' +
-            'polygon-opacity: '+opacity+'; ' +
-            'line-color: '+linecolor+'; ' +
-            'line-width: '+linewidth+'; ' +
-            'line-opacity :1;}'
-
-    }else if(type==="line"){
-        cartoString="#"+layerName+"{" +
-            'line-color: '+color+'; ' +
-            'line-width: '+linewidth+'; ' +
-            "line-opacity: 1;}"
-
-    }else if(type==="marker") {
-        cartoString='#'+layerName+' {' +
-            "marker-fill-opacity: "+opacity+"; " +
-            "marker-line-color: "+linecolor+"; " +
-            "marker-line-width: "+linewidth+"; " +
-            "marker-line-opacity: 1; " +
-            "marker-placement: point;" +
-            "marker-type: ellipse; " +
-            "marker-width: 10; " +
-            "marker-fill: "+color+"; " +
-            "marker-allow-overlap: true;"
-    }
-    return cartoString;
-}
-
-var color;
-var lineColor;
-var lineWidth;
-var opacity;
-
-
-function changeSublayerDesign(layerName){
+function changeLayerDesign(layerName){
 
     resetStyleValues();
 
+    activeStyleLayer=getLeafletLayerFromName(layerName).layer;
+    activeStyleLayerName=layerName;
+
+    $.ajax({ //gets all for specific user and project
+        url:"getStyling",
+        type:"post",
+        dataType: "json",
+        data:{
+            projectName: projectName,
+            layerName: layerName
+        }
+    }).complete(function(data){
+        var styling=JSON.parse(data.responseText)[0].layerStyle;
+        var color=styling.color;
+        var lineColor=styling.color;
+        var opacity=styling.opacity;
+        var lineWidth=styling.weight;
+
+        document.getElementById('color').value=color;
+        document.getElementById('opacity').value=opacity;
+        document.getElementById('lineWidth').value=lineWidth;
+        document.getElementById('lineColor').value=lineColor;
+
+    });
+
     $("#overlay").show();
     $("#changeDesignPopUp").show();
-
-    var sublayer=getSublayerFromLayerName(layerName);
-
-    getAndSetValuesFromCarto(sublayer);
-
 }
 
-function getAndSetValuesFromCarto(sublayer) {
-
-    activeStyleLayer=sublayer;
-
-    var carto = sublayer.cartocss;
-    activeStyleLayerName=sublayer.cartocss.split('#')[1].split('{')[0];
-
-    if (sublayer.type === "polygon") {
-        color = carto.split('polygon-fill')[1].split(';')[0].split(" ")[1];
-        opacity = carto.split('polygon-opacity')[1].split(';')[0].split(" ")[1];
-        lineColor = carto.split('line-color')[1].split(';')[0].split(" ")[1];
-        lineWidth = carto.split('line-width')[1].split(';')[0].split(" ")[1];
-
-    } else if (sublayer.type === "line") {
-        color = carto.split('line-color')[1].split(';')[0].split(" ")[1];
-        opacity = carto.split('line-opacity')[1].split(';')[0].split(" ")[1];
-        lineWidth = carto.split('line-width')[1].split(';')[0].split(" ")[1];
-
-    } else if (sublayer.type === "marker") {
-        color = carto.split('marker-fill')[1].split(';')[0].split(" ")[1];
-        opacity = carto.split('marker-fill-opacity')[1].split(';')[0].split(" ")[1];
-        lineWidth = carto.split('marker-line-width')[1].split(';')[0].split(" ")[1];
-        lineColor = carto.split('marker-line-color')[1].split(';')[0].split(" ")[1];
-    }
-
-
-    document.getElementById('color').value=color;
-    document.getElementById('opacity').value=opacity;
-    document.getElementById('lineWidth').value=lineWidth;
-    if(lineColor){
-        addLineColor();
-        document.getElementById('lineColor').value=lineColor;
-    }
-}
-
-function addLineColor(){
-    var text=document.createElement("h2");
-    text.innerHTML="Line-color:";
-    var input=document.createElement("input");
-    input.type="color";
-    input.id="lineColor";
-    text.appendChild(input);
-    $("#lineStyle").prepend(text);
-}
 
 function resetStyleValues(){
-    if(document.getElementById("lineStyle").childElementCount>1){
-        document.getElementById("lineStyle").lastElementChild.remove();
-    }
     activeStyleLayer=null;
     activeStyleLayerName="";
 }
 
 function saveStyleChanges(){
 
+    var color=document.getElementById('color').value;
+    var opacity=document.getElementById('opacity').value;
+    var lineWidth=document.getElementById('lineWidth').value;
+    var lineColor=document.getElementById('lineColor').value;
 
-    color=document.getElementById('color').value;
-    opacity=document.getElementById('opacity').value;
-    lineWidth=document.getElementById('lineWidth').value;
-    try{
-        lineColor=document.getElementById('lineColor').value;
-    }catch(err){
-        lineColor=null;
+    var style={
+        "color":color,
+        "lineColor":lineColor,
+        "opacity": opacity,
+        "weight": lineWidth,
+        "radius":4
     }
 
-    var carto;
-    if(lineColor){
-        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth, lineColor);
-    }else{
-        carto = getCarto(activeStyleLayer.type, activeStyleLayerName, color, opacity, lineWidth);
-    }
-
-    for(var i=0; i<sublayers.length; i++){
-        if(sublayers[i].name===activeStyleLayer.name){
-            mapLayer.getSubLayer(i).setCartoCSS(carto);
-            var mapSublayer=mapLayer.getSubLayer(i);
-            sublayers[i].cartocss=mapLayer.getSubLayer(i).getCartoCSS();
-        }
-    }
-
-
-    //update css for layer in db
-    var url="updateCss:"+activeStyleLayer.name;
+    //delete old style from db
     $.ajax({
-        type: "PUT",
-        url: "updateCss",
-        data: {
-            name:activeStyleLayer.name,
-            cartocss:carto
+        url:"deleteStyling",
+        type:"delete",
+        dataType: "json",
+        data:{
+            projectName: projectName,
+            layerName: activeStyleLayerName
         }
-    });
-
-
-    //add changes to database
-    //add all sublayers to database
-    //have a new table called defaultLayers - cannot delete these layers
-    //on change, update css to the layers
-    //add so that changes is read from db on update
-
-
-    popupClose();
-}
-
-function createNewSublayerFromUserInfo(layerName, sql, cartocss, type, newLayerName, tool){
-    var newSublayer={
-        name: layerName,
-        sql:sql,
-        cartocss:cartocss,
-        subLayer:{},
-        active: true,
-        type: type,
-        tool: tool
-    };
-
-    sublayers.push(newSublayer);
-    sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
-    addToLayerList(newLayerName, newSublayer);
-
-    $.post("/layer",
-        {
-            name: newSublayer.name,
-            sql: newSublayer.sql,
-            cartocss:newSublayer.cartocss,
-            active: newSublayer.active,
-            type: newSublayer.type,
-            tool: newSublayer.tool,
-            defaultLayer:false,
-            projectName:projectName
-        }
-    ).complete(function(){
-        console.log("completed post layer");
+    }).complete(function(data){
+        saveLayerStylingToDBAndUpdateView(activeStyleLayerName, projectName, style);
+        popupClose();
     });
 }
 
@@ -688,7 +805,7 @@ function difference(){
     $('#differenceLayerName').val("");
 
 
-    var target1=document.getElementById('chosenDifferenceOutput');
+    var target1=document.getElementById('chosenDifference1');
     var target2=document.getElementById('chosenDifference2');
     resetDifferenceValuesForLayer(target1);
     resetDifferenceValuesForLayer(target2);
@@ -696,28 +813,28 @@ function difference(){
     $("#overlay").show();
     $("#differencePopUp").show();
 
-    var content1=document.getElementById("layerDropdown-content-differenceOutput");
+    var content1=document.getElementById("layerDropdown-content-difference1");
     var content2=document.getElementById("layerDropdown-content-difference2");
 
-    createLayerDropdown(content1, "polygon");
+    createLayerDropdown(content1, ["Polygon"]);
 
     $(".contentLayer").click(function(){
-        activeDifferenceOutput=(event.target.id);
+        activeDifference1=(event.target.id);
         var chosenLayer=target1;
-        chosenLayer.innerHTML=activeDifferenceOutput;
+        chosenLayer.innerHTML=activeDifference1;
         chosenLayer.className="chosenLayer";
 
         //Remove chosen layer when resetting values!
-        toggleClose(event.target, $('#layerDropdown-content-differenceOutput'));
-        var firstSublayer=getSublayerFromLayerName(activeDifferenceOutput);
+        toggleClose(event.target, $('#layerDropdown-content-difference1'));
+        var firstSublayer=getLeafletLayerFromName(activeDifference1);
         resetDifferenceValuesForLayer(target2);
-        addSecondDifferenceLayer(content2, "polygon", firstSublayer.name);
+        addSecondDifferenceLayer(content2, "Polygon", firstSublayer.name);
     });
 }
 
 function addSecondDifferenceLayer(content2, type, chosen){
     var target2=document.getElementById('chosenDifference2');
-    createLayerDropdown(content2, type, chosen);
+    createLayerDropdown(content2, [type], chosen);
     $(".contentLayer").click(function(){
         activeDifference2=(event.target.id);
         var chosenLayer=target2;
@@ -731,62 +848,51 @@ function addSecondDifferenceLayer(content2, type, chosen){
 
 function createDifference(){
 
-    var intLayerName=$('#differenceLayerName').val();
-    var intColor=$("#differenceColor").val();
-
+    var diffLayerName=$('#differenceLayerName').val();
+    var diffColor=$("#differenceColor").val();
 
     //check if everything is filled out
-    var sublayer1= getSublayerFromLayerName(activeDifferenceOutput);
-    var sublayer2= getSublayerFromLayerName(activeDifference2);
+    var layer1= getLeafletLayerFromName(activeDifference1);
+    var layer2= getLeafletLayerFromName(activeDifference2);
 
-    if(activeMergeLayer1 && activeMergeLayer2 && intColor && intLayerName && (sublayer1.type === sublayer2.type)){
+    if(activeDifference1 && activeDifference2 && diffColor && diffLayerName && (layer1.type === layer2.type)){
 
-        var sublayerObj=createDifferenceSql(sublayer1, sublayer2, intColor, intLayerName);
-
-        var newSublayer={
-            name: intLayerName,
-            sql:sublayerObj.sql,
-            cartocss:sublayerObj.cartocss,
-            subLayer:{},
-            active: true,
-            type: "polygon"
-        };
-
-        sublayers.push(newSublayer);
-        sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
         popupClose($('#layerDropdown-content-difference2'));
-        popupClose($('#layerDropdown-content-differenceOutput'));
+        popupClose($('#layerDropdown-content-difference1'));
 
-        addToLayerList(intLayerName, newSublayer);
 
-        //call post request to save layer to database:
-        $.post("/layer",
-            {
-                name: newSublayer.name,
-                sql: newSublayer.sql,
-                cartocss:newSublayer.cartocss,
-                active: newSublayer.active,
-                type: newSublayer.type,
-                tool: "difference",
-                defaultLayer: false,
-                projectName: projectName
+        $.ajax({ //gets all for specific user and project
+            url:"difference",
+            type:"post",
+            dataType: "json",
+            data:{
+                projectName:projectName,
+                layer1name: activeDifference1,
+                layer1default: layer1.defaultLayer,
+                layer2name:activeDifference2,
+                layer2default: layer2.defaultLayer,
+                color: diffColor,
+                newLayerName: diffLayerName
             }
-        ).complete(function(){
-            console.log("completed post layer in difference");
-        });
+        }).complete(function(data){
 
+            var styling={
+                "color":diffColor
+            }
+            console.log('data: ');
+            console.log(JSON.parse(data.responseText));
+            var layer=addLayerToMap(JSON.parse(data.responseText), styling, diffLayerName, false);
+            addToLayerList(diffLayerName, layer);
+        });
 
     }else{
         alert('Fill out all fields first, and make sure that the two inputs are of same type, example polygon');
     }
     //when created, empty fields:
     activeDifference2=null;
-    activeDifferenceOutput=null;
+    activeDifference1=null;
     intColor=null;
     intLayerName=null;
-}
-
-function createDifferenceSql(){
 
 }
 
@@ -804,8 +910,16 @@ function resetDifferenceValuesForLayer(target){
 //----------------------------MERGE----------------------------
 
 function merge(){
-    $("#mergeColor").val("#243CEE");
-    $('#mergeLayerName').val("");
+
+    if(!fillAgain){
+        $("#mergeColor").val("#243CEE");
+        $('#mergeLayerName').val("");
+    }else{
+        fillAgain=false;
+    }
+
+    popupClose($('#layerDropdown-content-merge1'));
+    popupClose($('#layerDropdown-content-merge2'));
 
 
     var target1=document.getElementById('chosenMerge1');
@@ -821,23 +935,25 @@ function merge(){
 
     createLayerDropdown(content1);
 
-    $(".contentLayer").click(function(){
-        activeMergeLayer1=(event.target.id);
+    $(".contentLi").click(function(){
+        console.log(event.currentTarget.firstChild);
+        var active= event.currentTarget.firstChild;
+        activeMergeLayer1=(active.id);
         var chosenLayer=target1;
         chosenLayer.innerHTML=activeMergeLayer1;
         chosenLayer.className="chosenLayer";
 
         //Remove chosen layer when resetting values!
-        toggleClose(event.target, $('#layerDropdown-content-merge1'));
-        var firstSublayer=getSublayerFromLayerName(activeMergeLayer1);
-        resetMergeValuesForLayer(target2);
-        addSecondMergeLayer(content2, firstSublayer.type, firstSublayer.name);
+        toggleClose(active, $('#layerDropdown-content-merge1'));
+        var firstLayer=getLeafletLayerFromName(activeMergeLayer1);
+        resetMergeValuesForLayer(document.getElementById('chosenMerge2'));
+        addSecondMergeLayer(content2, firstLayer.type, firstLayer.name);
     });
 }
 
 function addSecondMergeLayer(content2, type, chosen){
     var target2=document.getElementById('chosenMerge2');
-    createLayerDropdown(content2, type, chosen);
+    createLayerDropdown(content2, [type], chosen);
     $(".contentLayer").click(function(){
         activeMergeLayer2=(event.target.id);
         var chosenLayer=target2;
@@ -851,268 +967,186 @@ function addSecondMergeLayer(content2, type, chosen){
 
 function createMerge(){
 
-    var intLayerName=$('#mergeLayerName').val();
-    var intColor=$("#mergeColor").val();
-
+    if(!fillAgain) { //unless failed filling info last time
+        var mergeLayerName = $('#mergeLayerName').val();
+        var mergeColor = $("#mergeColor").val();
+    }
 
     //check if everything is filled out
-    var sublayer1= getSublayerFromLayerName(activeMergeLayer1);
-    var sublayer2= getSublayerFromLayerName(activeMergeLayer2);
+    var layer1= getLeafletLayerFromName(activeMergeLayer1);
+    var layer2= getLeafletLayerFromName(activeMergeLayer2);
 
-    if(activeMergeLayer1 && activeMergeLayer2 && intColor && intLayerName && (sublayer1.type === sublayer2.type)){
+    console.log(layer1.type);
+    console.log(layer2.type);
+    console.log(activeMergeLayer1);
+    console.log(activeMergeLayer2);
+    console.log(mergeColor);
+    console.log(mergeLayerName);
 
-        var sublayerObj=createMergeSql(sublayer1, sublayer2, intColor, intLayerName);
+    //ops, multipolygon should be included!
+    //if(activeMergeLayer1 && activeMergeLayer2 && mergeColor && mergeLayerName && (layer1.type === layer2.type)){
+    if(activeMergeLayer1 && activeMergeLayer2 && mergeColor && mergeLayerName){
 
-        var newSublayer={
-            name: intLayerName,
-            sql:sublayerObj.sql,
-            cartocss:sublayerObj.cartocss,
-            subLayer:{},
-            active: true,
-            type: activeMergeLayer1.type
-        };
-
-        sublayers.push(newSublayer);
-        sublayers[sublayers.length-1].subLayer=addSublayerToMap(newSublayer);
         popupClose($('#layerDropdown-content-merge'));
-        addToLayerList(intLayerName, newSublayer);
 
-        //call post request to save layer to database:
-        $.post("/layer",
+        $.post("/merge",
             {
-                name: newSublayer.name,
-                sql: newSublayer.sql,
-                cartocss:newSublayer.cartocss,
-                active: newSublayer.active,
-                type: newSublayer.type,
-                tool: "merge",
-                defaultLayer: false,
+                layer1:activeMergeLayer1,
+                layer2:activeMergeLayer2,
+                default1: layer1.defaultLayer,
+                default2: layer2.defaultLayer,
+                color:mergeColor,
+                newLayerName: mergeLayerName,
                 projectName:projectName
             }
-        ).complete(function(){
+        ).complete(function(data){
             console.log("completed");
         });
 
+        var styling={
+            "color":mergeColor
+        }
+        var layer=addLayerToMap(JSON.parse(data.responseText), styling, mergeLayerName, false);
+        addToLayerList(mergeLayerName, layer);
 
     }else{
         alert('Fill out all fields first, and make sure that the two inputs are of same type, example polygon');
+        fillAgain=true;
     }
     //when created, empty fields:
-    activeMergeLayer1=null;
-    activeMergeLayer2=null;
-    intColor=null;
-    intLayerName=null;
+    mergeColor=null;
+    mergeLayerName=null;
 }
 
-function createMergeSql(sublayer1, sublayer2, color){
-    var layer1;
-    var layer2;
-
-    if(sublayer1.tool==='buffer'){
-       layer1=sublayer1.name.split('_buffer_')[0].toLowerCase();
-    }else{
-       layer1=sublayer1.name.toLowerCase();
-    }
-
-    var sqlString="SELECT a.the_geom_webmercator, a. the_geom, a.cartodb_id " +
-        "FROM "+layer_a_name+" AS a, " +layer_b_name+" AS b " +
-        "WHERE ST_DWithin(a.the_geom, b.the_geom, 33622)";
-
-    var newTableName="";
-    var mergeSublayers=[];
-    for(var i=0; i<layersName.length; i++){
-        mergeSublayers.push(getSublayerFromLayerName(layersName[i]));
-        newTableName=newTableName+"_"+layersName[i];
-    }
-
-    //Merge is always made from layers of same type. Therefor only need to check type of one
-    var type=mergeSublayers[0].type;
-    var cartoString=getCarto(type, newTableName, color);
-
-    var sublayerObj={
-        sql:sqlString,
-        cartocss:cartoString
-    };
-
-    return sublayerObj;
-}
-
-//remove layer from "chosen layers" list - trashcan event
-function removeActiveMergeLayer(){
-    var li=event.target.parentElement.parentElement;
-    var layerName=li.firstChild;
-    activeMergeLayers.splice($.inArray(layerName, activeMergeLayers),1); //remove from list
-
-    while (li.firstChild) {
-        li.removeChild(li.firstChild);
-    }
-    li.remove();
-}
 
 function resetMergeValuesForLayer(target){
-
-    target.innerHTML=("Choose layer from list");
-    target.className="";
+    console.log(target);
+    document.getElementById(target.id).innerHTML="choose layer from list";
+    console.log(document.getElementById(target.id));
 
     var arrow=document.createElement("span");
     arrow.className="caret";
     target.appendChild(arrow);
 
+    //when created, empty fields:
+    activeMergeLayer1=null;
+    activeMergeLayer2=null;
 
 }
 
+//----------------------------WITHIN----------------------------
 
 
-//----------------------------INTERSECTION----------------------------
+function within(){
 
-
-function intersection(){
-
-    popupClose($('#layerDropdown-content-area-intersection'));
-    popupClose($('#layerDropdown-content-output-intersection'));
+    popupClose($('#layerDropdown-content-area-within'));
+    popupClose($('#layerDropdown-content-output-within'));
 
     //Reset prev chosen layers
-    var area=document.getElementById('chosenAreaIntersection');
-    resetIntersectionValues(area);
+    var area=document.getElementById('chosenAreaWithin');
+    var output=document.getElementById('chosenOutputWithin');
 
-    var output=document.getElementById('chosenOutputIntersection');
-    resetIntersectionValues(output);
+    if(!fillAgain){
+        resetWithinValues(area);
+        resetWithinValues(output);
+    }else{
+        fillAgain=false;
+    }
 
-    var contentArea=document.getElementById("layerDropdown-content-area-intersection");
-    createLayerDropdown(contentArea, "polygon");
 
-    var contentOutput=document.getElementById("layerDropdown-content-output-intersection");
+    var contentArea=document.getElementById("layerDropdown-content-area-within");
+    var validTypes=["Polygon", "Point"];
+    createLayerDropdown(contentArea, validTypes);
+
+    var contentOutput=document.getElementById("layerDropdown-content-output-within");
     createLayerDropdown(contentOutput);
 
     $("#overlay").show();
-    $("#intersectionPopUp").show();
+    $("#withinPopUp").show();
 
     $(".contentLayer").click(function(){
 
         //check if pushed layer is from area or output!
-        if(event.target.parentElement.parentElement.id === "layerDropdown-content-area-intersection"){
-            activeIntersectionArea=event.target.id;
-            area.innerHTML=activeIntersectionArea;
+        if(event.target.parentElement.parentElement.id === "layerDropdown-content-area-within"){
+            activeWithinArea=event.target.id;
+            area.innerHTML=activeWithinArea;
             area.className="chosenLayer";
             //when first layer is chosen, remove the layer from the other list
 
         }else{
-            activeIntersectionOutput=event.target.id;
-            output.innerHTML=activeIntersectionOutput;
+            activeWithinOutput=event.target.id;
+            output.innerHTML=activeWithinOutput;
             output.className="chosenLayer";
         }
 
         //Remove chosen layer when resetting values!
-        toggleClose(event.target, $('#layerDropdown-content-area-intersection'));
-        toggleClose(event.target, $('#layerDropdown-content-output-intersection'));
+        toggleClose(event.target, $('#layerDropdown-content-area-within'));
+        toggleClose(event.target, $('#layerDropdown-content-output-within'));
     });
-
 }
 
-function createIntersection(){
 
-    popupClose($('#layerDropdown-content-intersection'));
+function addSecondWithinLayer(content2, type, chosen){
+    var target2=document.getElementById('chosenDifference2');
+    createLayerDropdown(content2, [type], chosen);
+    $(".contentLayer").click(function(){
+        activeDifference2=(event.target.id);
+        var chosenLayer=target2;
+        chosenLayer.innerHTML=activeDifference2;
+        chosenLayer.className="chosenLayer";
 
-    var intLayerName=$('#intersectionLayerName').val();
-    var intColor=$("#intersectionColor").val();
+        //Remove chosen layer when resetting values!
+        toggleClose(event.target, $('#layerDropdown-content-difference2'));
+    });
+}
+
+
+function createWithin(){
+
+    popupClose($('#layerDropdown-content-within'));
+
+    var withinLayerName=$('#withinLayerName').val();
+    var withinColor=$("#withinColor").val();
 
     //check if everything is filled out
-    if(activeIntersectionArea && activeIntersectionOutput && intColor && intLayerName){
-        var sublayerObj=createIntSql(activeIntersectionArea, activeIntersectionOutput, intColor, intLayerName);
-        createNewSublayerFromUserInfo(intLayerName, sublayerObj.sql, sublayerObj.cartocss, activeIntersectionOutput.type, intLayerName, "intersection");
-        //when created, empty fields:
-        activeIntersectionArea=null;
-        activeIntersectionOutput=null;
-        intColor=null;
-        intLayerName=null;
+    if(activeWithinArea && activeWithinOutput && withinColor && withinLayerName){
+
+        var outputLayer=getLeafletLayerFromName(activeWithinOutput);
+        var inputLayer=getLeafletLayerFromName(activeWithinArea);
+        $.ajax({ //gets all for specific user and project
+            url:"within",
+            type:"post",
+            dataType: "json",
+            data:{
+                projectName:projectName,
+                inputArea: activeWithinArea,
+                inputType:inputLayer.type,
+                inputDefault:inputLayer.defaultLayer,
+                outputLayer: activeWithinOutput,
+                outputType:outputLayer.type,
+                outputDefault:outputLayer.defaultLayer,
+                color: withinColor,
+                newLayerName: withinLayerName
+            }
+        }).complete(function(data){
+
+            var styling={
+                "color":withinColor
+            }
+            console.log('data: ');
+            console.log(JSON.parse(data.responseText));
+            var layer=addLayerToMap(JSON.parse(data.responseText), styling, withinLayerName, false);
+            addToLayerList(withinLayerName, layer);
+
+        });
+
     }else{
         alert('Fill out all fields first');
+        fillAgain=true;
     }
 }
 
-function createIntSql(area, output, color){
-    var layer_output=output.toLowerCase();
-    var areaSublayer=getSublayerFromLayerName(area);
-    var layer_area;
-
-    if(areaSublayer.tool === "buffer"){ //Input are is a buffer
-        layer_area=area.split('_buffer_')[0].toLowerCase();
-        var distance=areaSublayer.sql.split(',')[1].split(')')[0];
-        var bufferSql=areaSublayer.sql;
-        //var bufferSqlString="SELECT ST_Transform(ST_Buffer(the_geom::geography,"+distance+")::geometry, 3857) As the_geom_webmercator, cartodb_id FROM "+layer;
-
-        var sqlString="SELECT a.the_geom_webmercator, a.the_geom, a.cartodb_id " +
-            "FROM "+layer_output+" AS a, " +bufferSql+" AS b " +
-            "WHERE ST_DWithin(a.the_geom_webmercator, b.the_geom_webmercator, "+distance+")";
-
-
-    }else{ //type is polygon
-        layer_area=area.toLowerCase();
-        var sqlString="SELECT a.the_geom_webmercator, a.the_geom, a.cartodb_id FROM "+layer_output+" AS a INNER JOIN "+layer_area+" AS b ON ST_Intersects(b.the_geom, a.the_geom)";
-
-        var oldsqlString="SELECT a.the_geom_webmercator, a.cartodb_id FROM "+layer_output+ " AS a, "+layer_area+" AS b WHERE ST_Intersects(a.the_geom, b.the_geom)";
-    }
-
-    //TODO: What type is the output of this?
-    var cartoString= getCarto("polygon", layer_output, color); //the default values of the rest set in the getCarto
-
-    var sublayerObj={
-        sql:sqlString,
-        cartocss:cartoString
-    };
-
-    return sublayerObj;
-
-}
-
-//add to list over "chosen layers" to make sql from
-function addActiveLayer(element){ //element is the html-element
-
-    //TODO: find how to get information to look up if active in sublayers
-
-    if($.inArray(element.id, activeIntersectionLayers)!==-1){ //if layer is active intersection layer
-        alert('Layer is already chosen! Choose another instead'); //Change this so that layer instead is removed from list to choose from
-        activeIntersectionLayers.splice($.inArray(element.id, activeIntersectionLayers),1); //remove from list
-
-    }else {
-        activeIntersectionLayers.push(element.id); //add to active list
-        var li=document.createElement('li');
-        li.className="li-layer";
-
-        var name=document.createElement('h2');
-        name.className="chosenLayer";
-        name.innerHTML=element.id;
-
-        var trashLink= document.createElement('a');
-        trashLink.className="trash";
-        trashLink.addEventListener("click", function(){
-            removeActiveLayer()
-        });
-        var trashImg= document.createElement('img');
-        trashImg.src="../../images/trash-black.png";
-        trashLink.appendChild(trashImg);
-
-        li.appendChild(name);
-        li.appendChild(trashLink);
-
-        document.getElementById('chosenLayersIntersection').appendChild(li);
-    }
-}
-
-//remove layer from "chosen layers" list - trashcan event
-function removeActiveLayer(){
-    var li=event.target.parentElement.parentElement;
-    var layerName=li.firstChild;
-    activeIntersectionLayers.splice($.inArray(layerName, activeIntersectionLayers),1); //remove from list
-
-    while (li.firstChild) {
-        li.removeChild(li.firstChild);
-    }
-    li.remove();
-}
-
-function resetIntersectionValues(target){
-
+function resetWithinValues(target){
 
     //delete chosenLayers from last used
     var ul=target;
@@ -1120,7 +1154,7 @@ function resetIntersectionValues(target){
         ul.removeChild(ul.firstChild);
     }
 
-    $('#intersectionName').val("");
+    $('#withinName').val("");
 
     //Set default text and styling for dropdown menus
     target.innerHTML=("Choose layer from list");
@@ -1129,14 +1163,26 @@ function resetIntersectionValues(target){
     arrow.className="caret";
     target.appendChild(arrow);
 
-    $("#intersectionColor").val("#243CEE");
+    $("#withinColor").val("#243CEE");
+
+    activeWithinArea=null;
+    activeWithinOutput=null;
 }
+
+
 
 //----------------------------BUFFER-----------------------------------
 //action when buffer button click
 function buffer(){
+
+    popupClose($('#layerDropdown-content-buffer'));
     var target=document.getElementById('chosenBuffer');
-    resetBufferValues(target); //target is the buffer layer last chosen that needs to be reset
+
+    if(!fillAgain){
+        resetBufferValues(target); //target is the buffer layer last chosen that needs to be reset
+    }else{
+        fillAgain=false;
+    }
 
     var content=document.getElementById("layerDropdown-content-buffer");
     createLayerDropdown(content);
@@ -1145,9 +1191,9 @@ function buffer(){
 
     $(".contentLayer").click(function(){
         target.className=""
-        for(var i= 0; i<sublayers.length; i++){
-            if(sublayers[i].name===event.currentTarget.id){
-                activeBufferLayer=sublayers[i];
+        for(var i= 0; i<leafletLayers.length; i++){
+            if(leafletLayers[i].name===event.currentTarget.id){
+                activeBufferLayer=leafletLayers[i];
             }
         }
         var chosenLayer=target;
@@ -1167,33 +1213,54 @@ function createBuffer(){
 
         popupClose($('#layerDropdown-content-buffer'));
 
-        var sublayerObj=createBufferSql(activeBufferLayer.name, bufferColor, bufferDistance);
-        var layerName=activeBufferLayer.name+'_buffer_'+bufferDistance;
+
         var newLayerName=activeBufferLayer.name+'_buffer_'+bufferDistance;
-        createNewSublayerFromUserInfo(layerName, sublayerObj.sql, sublayerObj.cartocss, "polygon", newLayerName, "buffer");
+        var layer=getLeafletLayerFromName(activeBufferLayer.name);
+
+
+        //if layer to create buffer from is default, get method is different
+        var url;
+        if(layer.defaultLayer==true){
+            url="BufferDefaultGeojson";
+        }else{
+            url="BufferGetGeojson";
+        }
+
+        $.ajax({ //get geojson layer
+            url:url,
+            type:"post",
+            dataType: "json",
+            data:{
+                layerName:activeBufferLayer.name,
+                bufferDistance: bufferDistance,
+                projectName: projectName,
+                newLayerName:newLayerName,
+                bufferColor: bufferColor
+            }
+        }).complete(function(data){
+            //post to db and add to map
+            var styling={
+                "color":bufferColor
+            }
+            console.log('data: ');
+            console.log(data);
+            var layer=addLayerToMap(JSON.parse(data.responseText), styling, newLayerName, false);
+            addToLayerList(newLayerName, layer);
+        });
+
+        //Add styling to map
+
 
     }else{
         alert('Fill out all fields first');
+        fillAgain=true;
     }
-
-    console.log('empty fields');
-    //when created -> empty values:
-    activeBufferLayer=null;
-    bufferColor=null;
-    bufferDistance=null;
 }
 
-
-function createBufferSql(layer, color, distance){
-    var sqlString="SELECT ST_Transform(ST_Buffer(the_geom::geography,"+distance+")::geometry, 3857) As the_geom_webmercator, cartodb_id FROM "+layer;
-    var cartoString= getCarto("polygon", layer, color);
-    return {
-        sql: sqlString,
-        cartocss: cartoString
-    };
-}
 
 function resetBufferValues(target){
+    activeBufferLayer=null;
+
     $('#bufferDistance').val("");
     target.innerHTML=("Choose layer from list");
 

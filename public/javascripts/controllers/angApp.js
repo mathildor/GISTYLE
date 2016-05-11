@@ -31,6 +31,12 @@ gisApp.config(['$routeProvider',
             access: {restricted: false}
 
         }).
+        when('/tutorial',{
+            templateUrl: 'views/tutorial.html',
+            controller:'tutorialController',
+            access: {restricted: false}
+
+        }).
         when('/login',{
             templateUrl:'views/login.html',
             controller:'loginController',

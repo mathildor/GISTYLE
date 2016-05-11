@@ -21,6 +21,10 @@
   }
 }
 
+#col-sidebar{
+  width:300px;
+}
+
 .projectDiv{
   margin-top: 100px;
   margin-left: 50px;
@@ -75,6 +79,21 @@
   position: absolute;
 }
 
+#deleteProjectPopUp{
+  color:white;
+  height: 180px;
+  width:500px;
+}
+
+#newProjectPopUp{
+  color:black;
+  height: 230px;
+  width: 500px;
+  button{
+    width:200px;
+  }
+}
+
 #newProjectPopUp, #deleteProjectPopUp{
   z-index:100;
   position: absolute;
@@ -83,14 +102,18 @@
   left: 45%;
   top: 40%;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
-  width:30%;
   display: none;
+  font-size: 17px;
 
 
   .popupContent{
     margin-left:10%;
     margin-right:10%;
+    margin-top: 10%;
     text-align: center;
+    button{
+      margin-top: 40px;
+    }
   }
   .popupHeader{
     color: white;

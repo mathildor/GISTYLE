@@ -53,6 +53,7 @@ function closePopup(){
 
 
 function newProject(){
+    document.getElementById("newProjectName").value="";
     openPopup("newProjectPopUp");
 }
 
@@ -63,7 +64,8 @@ function createNewProject(){
     addProjectToDB(projectName);
     closePopup();
     $('#noProjects').hide();
-    addDefaultSublayers();
+
+    addDefaultSublayers(projectName);
 }
 
 function addNewProjectElement(projectName){
@@ -85,22 +87,24 @@ function addNewProjectElement(projectName){
     var img=document.createElement('img');
     img.className='projectImg';
     img.setAttribute('src', '../images/map.png');
-    var text=document.createElement('h4');
+    var text=document.createElement('h5');
     text.innerHTML=projectName;
 
-    link.setAttribute('href', "#/mainPage");
-    link.addEventListener('click',function(){
-        setProjectName(event.currentTarget.firstChild.id);
+    //enter project event
+    text.addEventListener('click',function(){
+        setProjectName(event.currentTarget.innerHTML);
+            //when click was on whole area: setProjectName(event.currentTarget.firstChild.id);
+            //happens in init map!
+            //enterProject(event.currentTarget.firstChild.id);
+        window.location.href="#/mainPage";
     });
+
     elementDiv.appendChild(deleteElement);
     elementDiv.appendChild(img);
     elementDiv.appendChild(text);
     link.appendChild(elementDiv);
     div.appendChild(link);
     document.getElementById('projectsView').appendChild(div);
-
-
-
 }
 
 
@@ -116,26 +120,22 @@ function addProjectToDB(projectName){
 
 }
 
-//adding default layers from default tabel, adds them to layerlist for user so user can change styling
-function addDefaultSublayers(){
 
-    $.ajax({
-     url:"defaultLayers",
-     type:"get",
-     dataType: "json",
-     data:{},
-     success: "success"
-
-     }).complete(function(data){
-         var layers=JSON.parse(data.responseText);
-         console.log(layers.length);
-         //go through all layers and add them:
-         for(var i=0; i<layers.length; i++){
-         addNewSublayerFromDbLayer(layers[i], true, true);
-         }
-     });
-
+function addDefaultSublayers(projectName){
+    console.log('projectName:');
+    console.log(projectName);
+    $.ajax({ //get all default styling - saves them to layerStyling
+        url:"defaultStyling",
+        type:"post",
+        dataType: "json",
+        data:{
+            projectName:projectName
+        }
+    }).complete(function(){
+        console.log('copied default sublayers');
+    });
 }
+
 
 function deleteProject(){
     console.log('delete');
@@ -143,8 +143,12 @@ function deleteProject(){
     deleteProjectElement(id);
     deleteProjectFromDB(id);
 
+    console.log(activeProjects);
+    console.log(activeProjects.length);
+
     //delete from active list:
-    for(var i =0; activeProjects.length; i++){
+    for(var i =0; i<activeProjects.length; i++){
+        console.log('for loop');
         if(activeProjects[i]===id){
             activeProjects.splice(i, 1);
         }
@@ -153,9 +157,21 @@ function deleteProject(){
 }
 
 function deleteProjectElement(id){
-    $("#"+id).remove();
+    $("#"+id).parent().parent().remove();
 }
 
 function deleteProjectFromDB(projectName){
-    //TODO
+
+    console.log(projectName);
+    console.log('delete project');
+    $.ajax({ //gets all for specific user and project
+        url:"deleteProject",
+        type:"delete",
+        dataType: "json",
+        data:{
+            projectName: projectName
+        }
+    }).complete(function(data){
+
+    });
 }

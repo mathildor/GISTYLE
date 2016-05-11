@@ -96,7 +96,8 @@
     #sidebar .dropdown img:hover {
       cursor: pointer; }
   #sidebar .operators {
-    margin-top: 20px; }
+    margin-top: 20px;
+    margin-bottom: 50px; }
     #sidebar .operators li {
       margin-top: 10px; }
 
@@ -149,7 +150,8 @@
     position: inherit;
     background-color: #fcfffc;
     height: 25px;
-    border-radius: 2px; }
+    border-radius: 2px;
+    cursor: pointer; }
     .dialog .layerDropdown a {
       color: rgba(96, 95, 93, 0.69);
       padding-left: 3px; }
@@ -249,50 +251,69 @@
   border-radius: 3px;
   height: 30px; }
 
-#createClip {
+#clipPopUp #createClip {
   margin-top: 10%; }
-
-#clipPopUp {
+#clipPopUp #clipPopUp {
   top: 15%;
   left: 35%; }
-
-#clipLi {
+#clipPopUp #clipLi {
   display: flex;
   margin-top: 3%; }
-
-#clipLayerName {
+#clipPopUp #clipLayerName {
   margin-top: 4%;
   width: 55%;
   margin-left: 2.5%;
   margin-right: 5%; }
 
 #changeDesignPopUp {
-  width: 50%;
-  padding-right: 3%;
-  padding-left: 3%; }
+  width: 500px;
+  padding: 0; }
   #changeDesignPopUp ::-webkit-input-placeholder {
     color: #545454; }
-  #changeDesignPopUp .inputText {
-    width: 35%;
-    color: black; }
+  #changeDesignPopUp input[type=range] {
+    width: 60%; }
+  #changeDesignPopUp .popupHeader {
+    margin-right: 30px; }
   #changeDesignPopUp .inline {
     display: flex; }
   #changeDesignPopUp .secondElement {
-    display: flex;
-    left: 0;
-    margin-left: 15%;
-    width: 35%; }
+    display: -webkit-inline-box;
+    margin-left: 60px; }
   #changeDesignPopUp #color {
     margin-left: 45px; }
   #changeDesignPopUp #lineColor {
     margin-left: 10px; }
   #changeDesignPopUp #opacity {
-    margin-left: 10px; }
+    margin-left: 30px; }
   #changeDesignPopUp #lineWidth {
     margin-left: 10px; }
   #changeDesignPopUp .active {
     color: black; }
   #changeDesignPopUp #changeDesignPopUp {
     display: flex; }
+
+#addLayer {
+  font-size: 1.5em !important; }
+
+#uploadPopUp h1 {
+  width: 100%;
+  margin-left: 20px;
+  margin-bottom: 30px;
+  text-align: center; }
+#uploadPopUp .line {
+  width: 62%; }
+#uploadPopUp #inputFile {
+  margin-bottom: 20px; }
+#uploadPopUp .inline-div {
+  display: inline-flex; }
+#uploadPopUp #newLayerColor {
+  margin-top: 7px;
+  margin-left: 10px; }
+#uploadPopUp #uploaded-layer-name {
+  color: black;
+  height: 23px;
+  margin-top: 6px;
+  margin-left: 10px;
+  margin-right: 20px; }
 
 /*# sourceMappingURL=main-page.css.map */
