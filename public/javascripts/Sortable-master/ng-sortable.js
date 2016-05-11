@@ -6,7 +6,7 @@
 	'use strict';
 
 	if (typeof define === 'function' && define.amd) {
-		define(['angular', './Sortable'], factory);
+		define(['../../bower_components/angular/angular', './Sortable'], factory);
 	}
 	else if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
 		require('angular');
