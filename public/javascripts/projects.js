@@ -118,7 +118,6 @@ function addProjectToDB(projectName){
         console.log("completed");
     });
 
-
 }
 
 

@@ -188,7 +188,7 @@ function intersectingPoint(polygon, feature, featuresDataType){
     return intersectionFound;
 }
 
-router.post("/within2",function(req, res){
+router.post("/intersect",function(req, res){
 
     var inputCond={
         layerName: req.body.inputArea
@@ -210,44 +210,34 @@ router.post("/within2",function(req, res){
      geojsonLayer.find(outputCond,function(err,outputData){
          geojsonLayer.find(inputCond, function(err, inputArea){
              console.log(req.body.inputType);
-             var dataWithin;
 
-             //POLYGONS
-             if(req.body.inputType === 'MultiPolygon' || req.body.inputType === 'Polygon'){
-                 console.log('multi pol');
-                 var intersections=[];
-                 var features1=inputArea[0].features;
-                 for(var i=0; i<features1.length;i++){ //go through polygons in multi
-                     var pol1=features1[i];
+             var intersections=[];
+             var features1=inputArea[0].features;
 
-                     if(req.body.outputType === 'MultiPolygon' ||req.body.outputType === 'Polygon' ){
-                         var features2=outputData[0].features;
-                         for(var j=0; j<features2.length;j++){
-                             var pol2=features2[j];
-                             var intersection=turf.intersect(pol1, pol2);
-                             if(intersection!=null){
-                                 intersections.push(intersection);
-                             }
-                         }
-                     }else if(req.body.outputType === 'Point'){
-                         var intersectionPoint=turf.within(outputData[0], pol1);
-                         intersections.push(intersectionPoint);
+             for(var i=0; i<features1.length;i++){ //go through all features in input
+                 var pol1=features1[i];
+
+                 var features2 = outputData[0].features;
+                 for (var j = 0; j < features2.length; j++) { //go through all features in output
+                     var pol2 = features2[j];
+
+                     //get intersection between the polygons
+                     var intersection = turf.intersect(pol1, pol2);
+                     if (intersection != null) {
+                         intersections.push(intersection);
                      }
-
                  }
-                 console.log(intersections);
-                 dataWithin=intersections;
-
-                 //POINTS
-             }else if(req.body.outputType === 'Point'){
-                 dataWithin=turf.within(outputData[0], inputArea[0]);
              }
+
+             console.log('intersections');
+             console.log(intersections);
+             console.log(intersections[0]);
 
              var resultLayer=new geojsonLayer();
              resultLayer.layerName=req.body.newLayerName;
              resultLayer.projectName=req.body.projectName;
              resultLayer.username=req.user.username;
-             resultLayer.features=dataWithin;
+             resultLayer.features=intersections;
              resultLayer.defaultLayer=false;
 
              resultLayer.save(function(err) {
@@ -257,47 +247,10 @@ router.post("/within2",function(req, res){
              });
 
              saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
-             res.send(dataWithin);
+             res.send(resultLayer);
          });
      });
 
-});
-
-
-router.post("/intersect", function(req, res){
-
-    var cond1={
-        layerName: req.body.layer1name
-    };
-    if(req.body.layer1default==false){
-        cond1.username=req.user.username;
-        cond1.projectName=req.body.projectName;
-    }
-
-    var cond2={
-        layerName:req.body.layer2name
-    };
-    if(req.body.outputDefault==false){
-        cond2.username=req.user.username;
-        cond2.projectName=req.body.projectName;
-    }
-
-    geojsonLayer.find(
-        cond1
-        ,function(err, layer1){
-            if(err){
-                console.log('error');
-            }else{
-
-                geojsonLayer.find(
-                 cond2
-                 , function(err, layer2){
-                    var intersection=turf.intersect(layer1, layer2);
-                    saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
-                    res.send(intersection);
-                 });
-            }
-        });
 });
 
 

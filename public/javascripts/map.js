@@ -8,6 +8,9 @@ var activeBufferLayer;
 var activeWithinArea;
 var activeWithinOutput;
 
+var activeIntersectionArea;
+var activeIntersectionOutput;
+
 var activeMergeLayer1;
 var activeMergeLayer2;
 
@@ -120,7 +123,6 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
 
     console.log('layer: ');
     console.log(layer);
-    console.log(typeof layer);
     console.log(styling);
     console.log(layerName);
     console.log(defaultLayer);
@@ -1042,8 +1044,8 @@ function resetMergeValuesForLayer(target){
 
 function within(){
 
-    popupClose($('#layerDropdown-content-area-within'));
-    popupClose($('#layerDropdown-content-output-within'));
+    //popupClose($('#layerDropdown-content-area-within'));
+    //popupClose($('#layerDropdown-content-output-within'));
 
     //Reset prev chosen layers
     var area=document.getElementById('chosenAreaWithin');
@@ -1090,23 +1092,24 @@ function within(){
 
 
 function addSecondWithinLayer(content2, type, chosen){
-    var target2=document.getElementById('chosenDifference2');
+    var target2=document.getElementById('chosenOutputWithin');
     createLayerDropdown(content2, [type], chosen);
     $(".contentLayer").click(function(){
-        activeDifference2=(event.target.id);
+        activeWithinOutput=(event.target.id);
         var chosenLayer=target2;
-        chosenLayer.innerHTML=activeDifference2;
+        chosenLayer.innerHTML=activeWithinOutput;
         chosenLayer.className="chosenLayer";
 
         //Remove chosen layer when resetting values!
-        toggleClose(event.target, $('#layerDropdown-content-difference2'));
+        toggleClose(event.target, $('#layerDropdown-content-output-within'));
     });
 }
 
-
 function createWithin(){
 
-    popupClose($('#layerDropdown-content-within'));
+    popupClose($('#layerDropdown-content-area-within'));
+    popupClose($('#layerDropdown-content-output-within'));
+
 
     var withinLayerName=$('#withinLayerName').val();
     var withinColor=$("#withinColor").val();
@@ -1147,6 +1150,7 @@ function createWithin(){
     }
 }
 
+
 function resetWithinValues(target){
 
     //delete chosenLayers from last used
@@ -1179,6 +1183,136 @@ function getStylingObj(color){
         lineColor:color
     }
     return styling;
+}
+
+
+//------------------INTERSECTION -----------------------
+
+
+function intersection(){
+
+    //Reset prev chosen layers
+    var area=document.getElementById('chosenAreaIntersect');
+    var output=document.getElementById('chosenOutputIntersect');
+
+    if(!fillAgain){
+        resetIntersectionValues(area);
+        resetIntersectionValues(output);
+    }else{
+        fillAgain=false;
+    }
+
+
+    var contentArea=document.getElementById("layerDropdown-content-area-intersect");
+    var validTypes=["Polygon"];
+    createLayerDropdown(contentArea, validTypes);
+
+    var contentOutput=document.getElementById("layerDropdown-content-output-intersect");
+    createLayerDropdown(contentOutput, validTypes);
+
+    $("#overlay").show();
+    $("#intersectPopUp").show();
+
+    $(".contentLayer").click(function(){
+
+        //check if pushed layer is from area or output!
+        if(event.target.parentElement.parentElement.id === "layerDropdown-content-area-intersect"){
+            activeIntersectionArea=event.target.id;
+            area.innerHTML=activeIntersectionArea;
+            area.className="chosenLayer";
+            //when first layer is chosen, remove the layer from the other list
+
+        }else{
+            activeIntersectionOutput=event.target.id;
+            output.innerHTML=activeIntersectionOutput;
+            output.className="chosenLayer";
+        }
+
+        //Remove chosen layer when resetting values!
+        toggleClose(event.target, $('#layerDropdown-content-area-intersect'));
+        toggleClose(event.target, $('#layerDropdown-content-output-intersect'));
+    });
+}
+
+function addSecondIntersectionLayer(content2, type, chosen){
+    var target2=document.getElementById('chosenOutputIntersect');
+    createLayerDropdown(content2, [type], chosen);
+    $(".contentLayer").click(function(){
+        activeIntersectionOutput=(event.target.id);
+        var chosenLayer=target2;
+        chosenLayer.innerHTML=activeIntersectionOutput;
+        chosenLayer.className="chosenLayer";
+
+        //Remove chosen layer when resetting values!
+        toggleClose(event.target, $('#layerDropdown-content-output-intersect'));
+    });
+}
+
+function createIntersection(){
+
+    popupClose($('#layerDropdown-content-area-intersect'));
+    popupClose($('#layerDropdown-content-output-intersect'));
+
+    var intLayerName=$('#intersectLayerName').val();
+    var intColor=$("#intersectColor").val();
+
+    //check if everything is filled out
+    if(activeIntersectionArea && activeIntersectionOutput && intColor && intLayerName){
+
+        var outputLayer=getLeafletLayerFromName(activeIntersectionOutput);
+        var inputLayer=getLeafletLayerFromName(activeIntersectionArea);
+        $.ajax({ //gets all for specific user and project
+            url:"intersect",
+            type:"post",
+            dataType: "json",
+            data:{
+                projectName:projectName,
+                inputArea: activeIntersectionArea,
+                inputType:inputLayer.type,
+                inputDefault:inputLayer.defaultLayer,
+                outputLayer: activeIntersectionOutput,
+                outputType:outputLayer.type,
+                outputDefault:outputLayer.defaultLayer,
+                color: intColor,
+                newLayerName: intLayerName
+            }
+        }).complete(function(data){
+
+
+            var styling=getStylingObj(intColor);
+
+            console.log('data: ');
+            var layer=addLayerToMap(JSON.parse(data.responseText), styling, intLayerName, false);
+            addToLayerList(intLayerName, layer);
+        });
+
+    }else{
+        alert('Fill out all fields first');
+        fillAgain=true;
+    }
+}
+
+function resetIntersectionValues(target){
+
+    //delete chosenLayers from last used
+    var ul=target;
+    while (ul.firstChild) {
+        ul.removeChild(ul.firstChild);
+    }
+
+    $('#intersectLayerName').val("");
+
+    //Set default text and styling for dropdown menus
+    target.innerHTML=("Choose layer from list");
+    target.className="";
+    var arrow=document.createElement("span");
+    arrow.className="caret";
+    target.appendChild(arrow);
+
+    $("#intersectColor").val("#243CEE");
+
+    activeIntersectionArea=null;
+    activeIntersectionOutput=null;
 }
 
 

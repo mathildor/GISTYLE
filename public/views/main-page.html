@@ -85,6 +85,46 @@
     </ul>
 </div>
 
+
+<div id="intersectPopUp" class="dialog">
+    <ul>
+        <li class="popupHeader">
+            <div class="line"></div>
+            <h1>INTERSECTION</h1>
+            <div class="line"></div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Choose area that the output layer intersects:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-area-intersect"></ul>
+            </div>
+        </li>
+        <li class="chooseLayer">
+            <h2>Add output layer:</h2>
+            <div class="layerDropdown">
+                <a class="dropdown-toggle" id="chosenOutputIntersect" onclick="toggle($('#layerDropdown-content-output-intersect'))" value="close"></a>
+                <ul class="layerDropdown-content" id="layerDropdown-content-output-intersect"></ul>
+            </div>
+        </li>
+        <li>
+            <ul class="chosenLayers" id="chosenLayersIntersect">
+
+            </ul>
+        </li>
+        <h2>Set name:</h2>
+        <input class="dialogInput" id="intersectLayerName">
+        <li>
+            <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="intersectColor"></h2>
+        </li>
+        <li>
+            <button class="createButton" id="createIntersection" onclick="createIntersection()">Create intersection</button>
+        </li>
+    </ul>
+</div>
+
+
+
 <div id="mergePopUp" class="dialog">
     <ul>
         <li class="popupHeader">
@@ -259,6 +299,10 @@
                                 <li>
                                     <img class="toolFigure" id="intersectionImg" src="../images/intersection.png">
                                     <a href="" onclick="within()">Within</a>
+                                </li>
+                                <li>
+                                    <img class="toolFigure" id="intersectionImg" src="../images/intersection.png">
+                                    <a href="" onclick="intersection()">Intersection</a>
                                 </li>
                                 <li>
                                     <img id="mergeImg" class="toolFigure" src="../images/merge.png">
