@@ -76,7 +76,7 @@
   #sidebar #bufferImg {
     width: 9%; }
   #sidebar #menuLayerDropdown {
-    padding-left: 0%; }
+    padding-left: 0; }
   #sidebar .dropdown {
     background-color: rgba(0, 0, 0, 0.73);
     padding-top: 0.3em;

@@ -120,7 +120,10 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
 
     console.log('layer: ');
     console.log(layer);
-    console.log(styling.color);
+    console.log(typeof layer);
+    console.log(styling);
+    console.log(layerName);
+    console.log(defaultLayer);
     var newLayer;
     if(layer.features[0].geometry.type === "Point"){
         var style = {
@@ -130,7 +133,7 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
             weight: styling.weight,
             fillOpacity: styling.opacity
         };
-
+        console.log('make point layer');
         newLayer=L.geoJson(layer, {
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng, style);
@@ -138,7 +141,6 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
         }).addTo(map);
     }else{
         newLayer=L.geoJson(layer,{
-            //style:styling
             style:{
                 "fillColor": styling.color,
                 "fillOpacity": styling.opacity,
@@ -185,6 +187,7 @@ function saveLayerStylingToDBAndUpdateView(layerName, projectName, style){
         map.removeLayer(layer);
         removeFromLeafletLayerList(layerName);
         addLayerToMap(geojsonLayer, style, layerName);
+        reorderLayers();
     });
 }
 
@@ -1130,14 +1133,12 @@ function createWithin(){
             }
         }).complete(function(data){
 
-            var styling={
-                "color":withinColor
-            }
+
+            var styling=getStylingObj(withinColor);
+
             console.log('data: ');
-            console.log(JSON.parse(data.responseText));
             var layer=addLayerToMap(JSON.parse(data.responseText), styling, withinLayerName, false);
             addToLayerList(withinLayerName, layer);
-
         });
 
     }else{
@@ -1169,6 +1170,16 @@ function resetWithinValues(target){
     activeWithinOutput=null;
 }
 
+function getStylingObj(color){
+    var styling={
+        color: color,
+        weight: 3,
+        opacity: 0.4,
+        radius:3,
+        lineColor:color
+    }
+    return styling;
+}
 
 
 //----------------------------BUFFER-----------------------------------
@@ -1239,9 +1250,7 @@ function createBuffer(){
             }
         }).complete(function(data){
             //post to db and add to map
-            var styling={
-                "color":bufferColor
-            }
+            var styling=getStylingObj(bufferColor);
             console.log('data: ');
             console.log(data);
             var layer=addLayerToMap(JSON.parse(data.responseText), styling, newLayerName, false);

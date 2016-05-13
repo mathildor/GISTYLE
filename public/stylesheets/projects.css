@@ -35,8 +35,9 @@
       width: 160px;
       margin-top: 20px; }
   .projectDiv .projectElement:hover {
-    cursor: pointer;
     box-shadow: 5px 5px 5px rgba(136, 136, 136, 0.48); }
+  .projectDiv h5, .projectDiv img {
+    cursor: pointer; }
   .projectDiv .deleteProject {
     color: #bebebe;
     font-size: 1.2em;

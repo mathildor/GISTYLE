@@ -87,15 +87,16 @@ function addNewProjectElement(projectName){
     var img=document.createElement('img');
     img.className='projectImg';
     img.setAttribute('src', '../images/map.png');
+    img.addEventListener('click', function () {
+        setProjectName(event.currentTarget.innerHTML);
+        window.location.href="#/mainPage";
+    });
     var text=document.createElement('h5');
     text.innerHTML=projectName;
 
     //enter project event
     text.addEventListener('click',function(){
         setProjectName(event.currentTarget.innerHTML);
-            //when click was on whole area: setProjectName(event.currentTarget.firstChild.id);
-            //happens in init map!
-            //enterProject(event.currentTarget.firstChild.id);
         window.location.href="#/mainPage";
     });
 
@@ -153,6 +154,8 @@ function deleteProject(){
             activeProjects.splice(i, 1);
         }
     }
+    //add text:no projects
+    $('#noProjects').show();
     closePopup();
 }
 

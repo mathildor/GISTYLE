@@ -47,9 +47,10 @@
   }
 
   .projectElement:hover{
-    cursor: pointer;
     box-shadow: 5px 5px 5px rgba(136, 136, 136, 0.48);
-
+  }
+  h5, img{
+    cursor: pointer;
   }
   .deleteProject{
     color: #bebebe;

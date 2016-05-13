@@ -89,6 +89,106 @@ function saveStyle(layerName, username, projectName, color){
 
 
 router.post("/within",function(req, res){
+    var intersections=[];
+    var inputCond={
+        layerName: req.body.inputArea
+    };
+    if(req.body.inputDefault==false){
+        inputCond.username=req.user.username;
+        inputCond.projectName=req.body.projectName;
+    }
+
+    var outputCond={
+        layerName:req.body.outputLayer
+    };
+    if(req.body.outputDefault==false){
+        outputCond.username=req.user.username;
+        outputCond.projectName=req.body.projectName;
+    }
+
+    console.log('input area');
+    geojsonLayer.find(outputCond,function(err,outputData){
+        geojsonLayer.find(inputCond, function(err, inputArea){
+            console.log(req.body.inputType);
+
+            var features1=inputArea[0].features;
+            for(var i=0; i<features1.length;i++){ //go through polygons in multi
+                console.log('iteration : '+i);
+                var polygon=features1[i];
+
+                //for all areas: check all points in all features of output data layer, if they are inside
+                var features2=outputData[0].features;
+                for(var j=0; j<features2.length; j++){ //for all features, check if any point is inside
+                    if(intersectingPoint(polygon, features2[j], req.body.outputType) == true){ //at least one point inside
+                        console.log('pushing feature');
+                        intersections.push(features2[j]);
+                    }
+                }
+            }
+            console.log('All features');
+            console.log(intersections);
+
+            var resultLayer=new geojsonLayer();
+            resultLayer.layerName=req.body.newLayerName;
+            resultLayer.projectName=req.body.projectName;
+            resultLayer.username=req.user.username;
+            resultLayer.features=intersections;
+            resultLayer.defaultLayer=false;
+
+            resultLayer.save(function(err) {
+                if (err) {
+                    console.log('error');
+                }
+            });
+            var withinObj={
+                features:intersections
+            };
+            saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+            res.send(withinObj);
+        });
+    });
+
+});
+
+function intersectingPoint(polygon, feature, featuresDataType){
+
+
+    var points=feature.geometry.coordinates;
+    console.log('points');
+    var intersectionFound=false;
+
+    //POINTS
+    if(featuresDataType==="Point"){
+        console.log(points);
+        console.log("type is point");
+        if(turf.inside(feature, polygon)){
+            console.log('INTERSECTION FOUND for this feature');
+            intersectionFound=true;
+        }
+    //Polygons, lines ++
+    }else{
+        console.log('length: ');
+        console.log(points[0].length);
+        console.log(points[0]);
+        console.log(points[0][0]);
+        for(var k=0; k<points[0].length; k++){//for all set of points
+            //create fake obj to send to turf intersection function
+            var pointFeature={
+                geometry:{
+                    coordinates:points[0][k]
+                }
+            };
+            console.log('i for loop: points[k]: ');
+            if(turf.inside(pointFeature, polygon)){
+                console.log('INTERSECTION FOUND');
+                intersectionFound=true;
+            }
+        }
+    }
+    return intersectionFound;
+}
+
+router.post("/within2",function(req, res){
 
     var inputCond={
         layerName: req.body.inputArea
@@ -106,18 +206,9 @@ router.post("/within",function(req, res){
         outputCond.projectName=req.body.projectName;
     }
 
-
     console.log('input area');
      geojsonLayer.find(outputCond,function(err,outputData){
-
          geojsonLayer.find(inputCond, function(err, inputArea){
-
-             /*console.log('output');
-             console.log(JSON.parse(JSON.stringify(outputData[0])));
-
-             console.log('inout');
-             console.log(JSON.parse(JSON.stringify(inputArea[0])));*/
-
              console.log(req.body.inputType);
              var dataWithin;
 
@@ -146,9 +237,6 @@ router.post("/within",function(req, res){
                  }
                  console.log(intersections);
                  dataWithin=intersections;
-                 //dataWithin=turf.featurecollection(intersections);
-                 //console.log('collection');
-                 //console.log(dataWithin);
 
                  //POINTS
              }else if(req.body.outputType === 'Point'){
