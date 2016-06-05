@@ -44,7 +44,67 @@ function initMap(){
 
     L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }
+    ).addTo(map);
+
+    // Initialise the FeatureGroup to store editable layers
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+
+// Initialize the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+        position:'bottomright',
+    });
+    map.addControl(drawControl);
+
+    map.on('draw:created', function (e) {
+        var type = e.layerType,
+            layer = e.layer,
+            layerName= type;
+
+        //save construction to db:
+        console.log(e.layerType);
+        console.log(layer.toGeoJSON());
+
+
+
+        var featureObj=[layer.toGeoJSON()];
+
+        saveLeafletLayerToDB(featureObj, layerName);
+
+        //add the layer to leafletLayers list:
+        leafletLayers.push({
+            name: layerName,
+            layer: layer,
+            geojsonLayer:featureObj,
+            defaultLayer:false,
+            type: 'Polygon', //TODO
+            active:true
+        });
+        addToLayerList(layerName,layer);
+
+        //Save style: get style from e and then save to db
+        var style={
+            color: layer.options.color,
+            lineColor: layer.options.color,
+            opacity: layer.options.fillOpacity,
+            weight: layer.options.weight,
+            radius: 3
+        };
+
+        $.ajax({
+            url:'layerStyling',
+            type: 'post',
+            data:{
+                layerName:layerName,
+                projectName: projectName,
+                layerStyle: JSON.stringify(style)
+            }
+        });
+
+        drawnItems.addLayer(layer);
+    });
 
     getLayersFromDB();
 
@@ -152,7 +212,6 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
         }).addTo(map);
     }
 
-
     //add the layer to leafletLayers list:
     leafletLayers.push({
         name: layerName,
@@ -162,6 +221,9 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
         type: layer.features[0].geometry.type,
         active:true
     });
+
+    console.log('new layer');
+    console.log(newLayer);
 
     return newLayer;
 }
@@ -212,7 +274,7 @@ function saveLeafletLayerToDB(geoLayer, layerName){
             layerName:layerName,
             projectName: projectName,
             defaultLayer: false,
-            features: geoLayer
+            features: JSON.stringify(geoLayer)
         }
     });
 }
@@ -269,7 +331,7 @@ function uploadGeoJson(projectName, layerFeatures, layerName, color){
         }
     }).complete(function(styleData){
 
-        $.ajax({ //gets all for specific user and project
+        $.ajax({
             url:"saveGeojson",
             type:"post",
             dataType: "json",
@@ -365,6 +427,7 @@ function addToLayerList(newLayer, newSublayer){
 
     var link=document.createElement('a');
     link.innerHTML=newLayer;
+    //link.contentEditable='true';
 
     var checkbox=document.createElement('i');
 

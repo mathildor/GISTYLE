@@ -15,7 +15,6 @@ var pg = require('pg');
 
 
 
-
 // mongoose
 mongoose.connect('mongodb://heroku_xmpl1lg6:mgla64r400lt8sek0o6gmq6rlq@ds061248.mongolab.com:61248/heroku_xmpl1lg6');
 

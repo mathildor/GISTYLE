@@ -558,6 +558,8 @@ router.post("/saveGeojson", function(req, res){
 
     //go through all features for layer and check that they are valid features
     var validJson=true;
+    console.log(geo.features);
+
     for(var i=0; i<geo.features.length; i++){
         if(!GJV.valid(geo.features[i])){
             console.log('feature is not valid');
@@ -575,7 +577,6 @@ router.post("/saveGeojson", function(req, res){
             }
         });
     }else{
-        console.log('invalid json');
         res.send(false);
     }
 

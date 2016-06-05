@@ -19,6 +19,9 @@
 #col-sidebar {
   width: 300px; }
 
+@media (max-width: 1200px) {
+  .projectDiv {
+    margin-left: 30px; } }
 .projectDiv {
   margin-top: 100px;
   margin-left: 50px;
