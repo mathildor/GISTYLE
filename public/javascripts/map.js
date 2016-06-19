@@ -32,7 +32,19 @@ function setProjectName(name){
     projectName=name;
 }
 
+function preloader(){
+    $(document).ready(function () {
+
+        // preloader
+        $(window).load(function () {
+            $('.preloader').delay(400).fadeOut(500);
+        })
+
+    })
+}
+
 function initMap(){
+    //preloader();
     console.log('init map!!!!');
     map = new L.Map('cartodb-map', {
         center: [63.43, 10.39],
@@ -55,61 +67,78 @@ function initMap(){
 // Initialize the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
         position:'bottomright',
+        //Adding only support for drawing polygons:
+        draw:{
+            polyline:false,
+            rectangle:false,
+            circle:false,
+            polyline: false,
+            marker:false
+        }
     });
     map.addControl(drawControl);
 
+    var drawnLayerName;
     map.on('draw:created', function (e) {
         var type = e.layerType,
-            layer = e.layer,
-            layerName= type;
+            layer = e.layer;
 
-        //save construction to db:
-        console.log(e.layerType);
-        console.log(layer.toGeoJSON());
+        //User sets name for the layer created:
+        $('#overlay').show();
+        $('#nameForDrawnLayerPopup').show();
+        //on click: close and save the name inserted by user
 
+        $("#saveDrawnLayerName").click(function() {
+            drawnLayerName = $('#drawnLayerName').val();
+            $('#overlay').hide();
+            $('#nameForDrawnLayerPopup').hide();
 
+            //save construction to db:
+            var featureObj=[layer.toGeoJSON()];
+            saveLeafletLayerToDB(featureObj, drawnLayerName);
 
-        var featureObj=[layer.toGeoJSON()];
+            //add the layer to leafletLayers list:
+            leafletLayers.push({
+                name: drawnLayerName,
+                layer: layer,
+                geojsonLayer:featureObj,
+                defaultLayer:false,
+                type: 'Polygon',
+                active:true
+            });
+            addToLayerList(drawnLayerName,layer);
 
-        saveLeafletLayerToDB(featureObj, layerName);
+            //Save style: get style from e and then save to db
+            var style={
+                color: layer.options.color,
+                lineColor: layer.options.color,
+                opacity: layer.options.fillOpacity,
+                weight: layer.options.weight,
+                radius: 3
+            };
 
-        //add the layer to leafletLayers list:
-        leafletLayers.push({
-            name: layerName,
-            layer: layer,
-            geojsonLayer:featureObj,
-            defaultLayer:false,
-            type: 'Polygon', //TODO
-            active:true
-        });
-        addToLayerList(layerName,layer);
-
-        //Save style: get style from e and then save to db
-        var style={
-            color: layer.options.color,
-            lineColor: layer.options.color,
-            opacity: layer.options.fillOpacity,
-            weight: layer.options.weight,
-            radius: 3
-        };
-
-        $.ajax({
-            url:'layerStyling',
-            type: 'post',
-            data:{
-                layerName:layerName,
-                projectName: projectName,
-                layerStyle: JSON.stringify(style)
-            }
+            $.ajax({
+                url:'layerStyling',
+                type: 'post',
+                data:{
+                    layerName:drawnLayerName ,
+                    projectName: projectName,
+                    layerStyle: JSON.stringify(style)
+                }
+            });
         });
 
         drawnItems.addLayer(layer);
     });
 
+    //add on click event:
+    map.on('click', function(e){
+        //alert(e.latlng);
+    });
+
     getLayersFromDB();
-
-
 }
+
 
 function getLayersFromDB(){
 
@@ -209,7 +238,9 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
                 "weight": styling.weight,
                 "color": styling.lineColor //stroke-color
             }
-        }).addTo(map);
+        }).addTo(map).on('click', function(e){
+            console.log(e.layer);
+        });
     }
 
     //add the layer to leafletLayers list:

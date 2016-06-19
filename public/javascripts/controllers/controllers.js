@@ -1,7 +1,7 @@
 
-var gisControllers = angular.module('gisControllers',[]);
+var gisControllers = angular.module('gisControllers', ['angular-loading-bar']);
 
-//Defining controller: ButtonController:
+
 gisControllers.controller('ButtonController', function($scope){
 
     $scope.buttons = [

@@ -366,7 +366,6 @@ router.post("/BufferDefaultGeojson", function(req, res){
         if(err){
             res.send(err);
         } else{
-            console.log(data[0]);
             var geoJson=JSON.stringify(data[0]);
             var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
             saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
@@ -385,6 +384,8 @@ router.post("/BufferGetGeojson", function(req, res){
         if(err){
             res.send(err);
         }else{
+            console.log("buffer-data");
+            console.log(data);
             var geoJson=JSON.stringify(data[0]);
             var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
             saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
@@ -392,8 +393,6 @@ router.post("/BufferGetGeojson", function(req, res){
         }
     });
 });
-
-
 
 
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
@@ -410,7 +409,6 @@ function createBuffer(geoJ, distance, newLayerName, projectName, username){
 
 //copy default to user and project specific
 router.post("/defaultStyling", function(req, res){
-    var projectName=req.body.projectName;
     defaultLayerStyle.find({},function(err, data){
         if(err){
             console.log('error');
@@ -453,6 +451,9 @@ router.post("/getStyling", function(req, res){
 
 //get layers styling for specific layer
 router.delete("/deleteStyling", function(req, res){
+    console.log("deleting style:");
+    console.log(req.body.projectName);
+    console.log(req.body.layerName);
     layerStyle.remove({
         username:req.user.username,
         projectName:req.body.projectName,

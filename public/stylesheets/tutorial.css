@@ -65,4 +65,10 @@
     #tutorial-content .tutorialPoint-right p {
       width: 80%; }
 
+#scrollArea {
+  overflow: auto;
+  overflow-y: scroll;
+  height: 3000px;
+  position: relative; }
+
 /*# sourceMappingURL=tutorial.css.map */

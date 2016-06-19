@@ -1,8 +1,4 @@
 
-body{
-
-}
-
 #tutorial-container{
   overflow: auto;
 }
@@ -85,5 +81,11 @@ body{
     }
   }
 
+}
 
+#scrollArea{
+  overflow: auto;
+  overflow-y:scroll;
+  height:3000px;
+  position: relative;
 }
