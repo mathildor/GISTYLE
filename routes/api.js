@@ -289,13 +289,13 @@ router.post("/difference", function(req, res){
                 client.query('INSERT INTO layers VALUES ('+layer1.layerName+', '+layer1.features+')');
             });
 
-            /*geojsonLayer.find(
+            geojsonLayer.find(
                 cond2
             , function(err, layer2){
-                    //turf.difference(layer1, layer2);
-                    //saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
-                    //res.send(difference);
-                });*/
+                    turf.erase(layer1, layer2);
+                    saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+                    res.send(difference);
+            });
         }
     });
 });
@@ -397,8 +397,29 @@ router.post("/BufferGetGeojson", function(req, res){
 
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
     var geoJson=JSON.parse(geoJ);
-    var buffered=turf.buffer(geoJson, distance, 'meters');
-    saveGeoLayer(buffered, username, projectName, newLayerName);
+    console.log("BUFFER!!!!!");
+    console.log(JSON.stringify(geoJson));
+
+    //var buffered=turf.buffer(geoJson.features[13], distance/1000, 'kilometers');
+    var buffered=turf.buffer(geoJson, distance/1000, 'kilometers');
+
+    //buffer each feature, create buffer that returns a feature(?), and then merge them
+
+    //loop through features;
+    var bufferedFeatures=[];
+    for(var i=0; i<geoJson.features.length; i++){
+        bufferedFeatures.push(turf.buffer(geoJson.features[i]));
+    }
+    console.log(bufferedFeatures[0]);
+
+    var individuallyBuffered = turf.merge({
+        "type": "FeatureCollection",
+        "features": bufferedFeatures
+    });
+
+    console.log("buffered");
+    console.log(buffered);
+    saveGeoLayer(individuallyBuffered, username, projectName, newLayerName);
     return buffered;
 }
 
@@ -554,15 +575,18 @@ router.post("/saveGeojson", function(req, res){
     geo.projectName=req.body.projectName;
     geo.layerName=req.body.layerName;
     geo.defaultLayer= req.body.defaultLayer;
+    //TODO: adding something to the prop feature to see if it makes a difference, if it is saved to db then?
+    //or instead add in front end before sending to turf functions? In case it needs a properties variable to work correctly
     geo.features=JSON.parse(req.body.features);
-    console.log(geo.features[0]);
+    console.log("geo features er!!!!!: ");
+    console.log(geo.features);
+    console.log(geo.features[0].properties);
 
     //go through all features for layer and check that they are valid features
     var validJson=true;
-    console.log(geo.features);
 
     for(var i=0; i<geo.features.length; i++){
-        if(!GJV.valid(geo.features[i])){
+        if(!GJV.valid(geo.features[i])){ //finds if any of the features are invalid json
             console.log('feature is not valid');
             validJson=false;
         }

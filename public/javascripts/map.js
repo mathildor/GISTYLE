@@ -95,6 +95,7 @@ function initMap(){
 
             //save construction to db:
             var featureObj=[layer.toGeoJSON()];
+            console.log(featureObj);
             saveLeafletLayerToDB(featureObj, drawnLayerName);
 
             //add the layer to leafletLayers list:
@@ -252,9 +253,6 @@ function addLayerToMap(layer, styling, layerName, defaultLayer){
         type: layer.features[0].geometry.type,
         active:true
     });
-
-    console.log('new layer');
-    console.log(newLayer);
 
     return newLayer;
 }
@@ -573,8 +571,8 @@ function deleteLayer(layerName){
 function createLayerDropdown(div, type, alreadyChosen){
 
     //type contains the only type that should be in dropdown:
-    console.log(alreadyChosen);
-    console.log(type);
+    console.log("already chosen, if has one: "+alreadyChosen);
+    console.log("Type valid, if one defined: "+type);
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
@@ -1465,7 +1463,7 @@ function createBuffer(){
             url="BufferGetGeojson";
         }
 
-        $.ajax({ //get geojson layer
+        $.ajax({ //get layer to create buffer on
             url:url,
             type:"post",
             dataType: "json",
@@ -1475,12 +1473,11 @@ function createBuffer(){
                 projectName: projectName,
                 newLayerName:newLayerName,
                 bufferColor: bufferColor
+                //TODO: add styling info here?
             }
         }).complete(function(data){
             //post to db and add to map
             var styling=getStylingObj(bufferColor);
-            console.log('data: ');
-            console.log(data);
             var layer=addLayerToMap(JSON.parse(data.responseText), styling, newLayerName, false);
             addToLayerList(newLayerName, layer);
         });
