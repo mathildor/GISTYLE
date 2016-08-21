@@ -1,4 +1,4 @@
-<div id="overlay" onclick="popupClose()"></div>
+<div id="overlay" onclick="tools.dialog.popupClose()"></div>
 
 
 <div id="uploadPopUp" class="dialog">
@@ -45,7 +45,7 @@
         <li class="chooseLayer">
             <h2>Choose layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenBuffer" onclick="toggle($('#layerDropdown-content-buffer'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenBuffer" onclick="tools.dialog.toggle($('#layerDropdown-content-buffer'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-buffer"></ul>
             </div>
         </li>
@@ -59,7 +59,7 @@
             <h2>Buffer color:<input class="inputColor" type="color" value="#243CEE" id="bufferColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createBuffer" onclick="createBuffer()">Create buffer</button>
+            <button class="createButton" id="createBuffer" onclick="buffer.create()">Create buffer</button>
         </li>
     </ul>
 </div>
@@ -75,14 +75,14 @@
         <li class="chooseLayer">
             <h2>Choose area that the output layer is within:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenAreaWithin" onclick="toggle($('#layerDropdown-content-area-within'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenAreaWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-area-within'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-area-within"></ul>
             </div>
         </li>
         <li class="chooseLayer">
             <h2>Add output layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenOutputWithin" onclick="toggle($('#layerDropdown-content-output-within'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenOutputWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-output-within'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-output-within"></ul>
             </div>
         </li>
@@ -97,7 +97,7 @@
             <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="withinColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createWithin" onclick="createWithin()">Create within</button>
+            <button class="createButton" id="createWithin" onclick="within.create()">Create within</button>
         </li>
     </ul>
 </div>
@@ -116,14 +116,14 @@
         <li class="chooseLayer">
             <h2>Choose area that the output layer intersects:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-area-intersect"></ul>
             </div>
         </li>
         <li class="chooseLayer">
             <h2>Add output layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenOutputIntersect" onclick="toggle($('#layerDropdown-content-output-intersect'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenOutputIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-output-intersect'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-output-intersect"></ul>
             </div>
         </li>
@@ -138,7 +138,7 @@
             <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="intersectColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createIntersection" onclick="createIntersection()">Create intersection</button>
+            <button class="createButton" id="createIntersection" onclick="intersection.create()">Create intersection</button>
         </li>
     </ul>
 </div>
@@ -158,14 +158,14 @@
         <li class="chooseLayer">
             <h2>Add first layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenMerge1" onclick="toggle($('#layerDropdown-content-merge1'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenMerge1" onclick="tools.dialog.toggle($('#layerDropdown-content-merge1'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-merge1"></ul>
             </div>
         </li>
         <li class="chooseLayer">
             <h2>Add second layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenMerge2" onclick="toggle($('#layerDropdown-content-merge2'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenMerge2" onclick="tools.dialog.toggle($('#layerDropdown-content-merge2'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-merge2"></ul>
             </div>
         </li>
@@ -175,7 +175,7 @@
             <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="mergeColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createMerge" onclick="createMerge()">Merge layers</button>
+            <button class="createButton" id="createMerge" onclick="merge.create()">Merge layers</button>
         </li>
     </ul>
 </div>
@@ -191,14 +191,14 @@
         <li class="chooseLayer">
             <h2>Add output area:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenDifference1" onclick="toggle($('#layerDropdown-content-difference1'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenDifference1" onclick="tools.dialog.toggle($('#layerDropdown-content-difference1'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-difference1"></ul>
             </div>
         </li>
         <li class="chooseLayer">
             <h2>Add intersecting area:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenDifference2" onclick="toggle($('#layerDropdown-content-difference2'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenDifference2" onclick="tools.dialog.toggle($('#layerDropdown-content-difference2'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-difference2"></ul>
             </div>
         </li>
@@ -208,7 +208,7 @@
             <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="differenceColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createDifference" onclick="createDifference()">Create layer</button>
+            <button class="createButton" id="createDifference" onclick="difference.create()">Create layer</button>
         </li>
     </ul>
 </div>
@@ -225,14 +225,14 @@
         <li class="chooseLayer">
             <h2>Add input layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenClipInputLayer" onclick="toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenClipInputLayer" onclick="tools.dialog.toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-clip-inputlayer"></ul>
             </div>
         </li>
         <li class="chooseLayer">
             <h2>Add clip layer:</h2>
             <div class="layerDropdown">
-                <a class="dropdown-toggle" id="chosenClipClipLayer" onclick="toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
+                <a class="dropdown-toggle" id="chosenClipClipLayer" onclick="tools.dialog.toggle($('#layerDropdown-content-clip-inputlayer'))" value="close"></a>
                 <ul class="layerDropdown-content" id="layerDropdown-content-clip-cliplayer"></ul>
             </div>
         </li>
@@ -242,7 +242,7 @@
             <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="clipColor"></h2>
         </li>
         <li>
-            <button class="createButton" id="createClip" onclick="createClip()">Clip layers</button>
+            <button class="createButton" id="createClip" onclick="clip.create()">Clip layers</button>
         </li>
     </ul>
 </div>
@@ -264,7 +264,7 @@
                 <h2 class="secondElement">Line-width:<input class="inputText" type="range" min="0" max="5" step="0.1" id="lineWidth"></h2>
             </li>
             <li>
-                <button class="createButton" id="saveColorChanges" onclick="saveStyleChanges()">Save changes</button>
+                <button class="createButton" id="saveColorChanges" onclick="main.map.saveStyleChanges()">Save changes</button>
             </li>
         </ul>
     </div>
@@ -315,23 +315,23 @@
                                 <h2>TOOLS</h2>
                                 <li>
                                     <img id="bufferImg" class="toolFigure" src="../images/Buffer.png">
-                                    <a  href="" onclick="buffer()">Buffer</a>
+                                    <a  href="" onclick="buffer.run()">Buffer</a>
                                 </li>
                                 <li>
                                     <img class="toolFigure" id="withinImg" src="../images/within.png">
-                                    <a href="" onclick="within()">Within</a>
+                                    <a href="" onclick="within.run()">Within</a>
                                 </li>
                                 <li>
                                     <img class="toolFigure" id="intersectionImg" src="../images/intersection.png">
-                                    <a href="" onclick="intersection()">Intersection</a>
+                                    <a href="" onclick="intersection.run()">Intersection</a>
                                 </li>
                                 <li>
                                     <img id="mergeImg" class="toolFigure" src="../images/merge.png">
-                                    <a href="" onclick="merge()">Merge</a>
+                                    <a href="" onclick="merge.run()">Merge</a>
                                 </li>
                                 <li>
                                     <img id="differenceImg" class="toolFigure" src="../images/difference.png">
-                                    <a href="" onclick="difference()">Difference</a>
+                                    <a href="" onclick="difference.run()">Difference</a>
                                 </li>
                                 <!--<li>
                                     <a href="" onclick="clip()">Clip</a>
@@ -351,4 +351,3 @@
         </div>
     </div>
 </div>
-

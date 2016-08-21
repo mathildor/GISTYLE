@@ -1,4 +1,4 @@
-<div id="overlay" onclick="closePopup()"></div>
+<div id="overlay" onclick="project.closePopup()"></div>
 <div class="background-img"></div>
 
 <div id="newProjectPopUp">
@@ -13,7 +13,7 @@
                 <input id="newProjectName" placeholder="Project name">
             </li>
             <li>
-                <button class="createButton" id="createNewLayer" onclick="createNewProject()">Create new project</button>
+                <button class="createButton" id="createNewLayer" onclick="project.createNewProject()">Create new project</button>
             </li>
         </ul>
     </div>
@@ -25,7 +25,7 @@
                 <h5>Are you sure you want to delete project ...?</h5>
             </li>
             <li>
-                <button class="createButton" id="deleteProject" onclick="deleteProject()">Delete project</button>
+                <button class="createButton" id="deleteProject" onclick="project.delete()">Delete project</button>
             </li>
         </ul>
     </div>
@@ -50,9 +50,9 @@
                             <div class="form-group">
                                 <a class="navbar-buttons" id="info">Info</a>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <a class="navbar-buttons" id="help">Help</a>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <a id="logOut" href="#/logout">Log out</a>
                             </div>
@@ -62,11 +62,11 @@
             </nav>
         </div>
         <div class="row">
-            <div class="col-sm-3" id="col-sidebar">
+            <div class="col-sm-2" id="col-sidebar">
                 <div class="sidebar-menu">
                     <!--SIDE BAR START-->
                     <div id="projects-sidebar">
-                        <div class="addProject" onclick="newProject()">
+                        <div class="addProject" onclick="project.new()">
                             <i class="fa fa-plus" id="plus"></i>
                             <h4>New project</h4>
                         </div>
@@ -77,8 +77,6 @@
                 <h1 id="noProjects">You have no active projects</h1>
                 <!-- new projects -->
             </div>
-
         </div>
     </div>
 </div>
-

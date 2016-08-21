@@ -8,7 +8,7 @@ var Project = require('../models/project.js');
 var geojsonLayer=require('../models/geojson.js');
 var layerStyle=require('../models/layerStyle.js');
 var defaultLayerStyle=require('../models/defaultLayerStyle.js');
-var turf=require('turf');
+var turf=require('../public/turf.min.js');
 var GJV = require("geojson-validation");
 
 
@@ -67,8 +67,11 @@ function saveGeoLayer(layer, username, projectName, newLayerName){
 
 function saveStyle(layerName, username, projectName, color){
     var styling={
-        "color":color,
-        "stroke":false
+        color:color,
+        weight: 3,
+        opacity: 0.4,
+        lineColor:color,
+        stroke:false
     };
 
     var style=new layerStyle();
@@ -366,6 +369,7 @@ router.post("/BufferDefaultGeojson", function(req, res){
         if(err){
             res.send(err);
         } else{
+          console.log("Found layer to add buffer on");
             var geoJson=JSON.stringify(data[0]);
             var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
             saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
@@ -398,28 +402,29 @@ router.post("/BufferGetGeojson", function(req, res){
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
     var geoJson=JSON.parse(geoJ);
     console.log("BUFFER!!!!!");
-    console.log(JSON.stringify(geoJson));
+    // console.log(JSON.stringify(geoJson));
 
     //var buffered=turf.buffer(geoJson.features[13], distance/1000, 'kilometers');
-    var buffered=turf.buffer(geoJson, distance/1000, 'kilometers');
-
-    //buffer each feature, create buffer that returns a feature(?), and then merge them
-
-    //loop through features;
-    var bufferedFeatures=[];
-    for(var i=0; i<geoJson.features.length; i++){
-        bufferedFeatures.push(turf.buffer(geoJson.features[i]));
-    }
-    console.log(bufferedFeatures[0]);
-
-    var individuallyBuffered = turf.merge({
-        "type": "FeatureCollection",
-        "features": bufferedFeatures
-    });
-
-    console.log("buffered");
-    console.log(buffered);
-    saveGeoLayer(individuallyBuffered, username, projectName, newLayerName);
+    var buffered=turf.buffer(geoJson, distance, 'meters');
+    saveGeoLayer(buffered, username, projectName, newLayerName);
+    // console.log("turf buffer finished");
+    // //buffer each feature, create buffer that returns a feature(?), and then merge them
+    //
+    // //loop through features;
+    // var bufferedFeatures=[];
+    // for(var i=0; i<geoJson.features.length; i++){
+    //     bufferedFeatures.push(turf.buffer(geoJson.features[i]));
+    // }
+    // // console.log(bufferedFeatures[0]);
+    //
+    // var individuallyBuffered = turf.merge({
+    //     "type": "FeatureCollection",
+    //     "features": bufferedFeatures
+    // });
+    //
+    // console.log("buffered");
+    // // console.log(buffered);
+    // // saveGeoLayer(individuallyBuffered, username, projectName, newLayerName);
     return buffered;
 }
 

@@ -1,12 +1,14 @@
 /**
  * Created by mathilde on 29/04/16.
  */
+var project={
+  activeProjects:[],
+  activeDeleteProject:"",
+  current:""
+};
 
-var activeDeleteProject;
-var activeProjects= [];
-
-function getProjectsForUserFromDB(){
-
+project.getProjectsForUserFromDB=function(){
+    console.log("Collecting projects from db");
     $.ajax({ //gets all for specific user
         url:"projects",
         type:"get",
@@ -20,11 +22,11 @@ function getProjectsForUserFromDB(){
         var projects=JSON.parse(data.responseText);
         //go through all layers and add them:
         for(var i=0; i<projects.length; i++){
-            addNewProjectElement(projects[i].projectName);
-            activeProjects.push(projects[i].projectName);
+            project.addNewProjectElement(projects[i].projectName);
+            project.activeProjects.push(projects[i].projectName);
         }
-        console.log(activeProjects.length);
-        if(activeProjects.length<1){
+        console.log(project.activeProjects.length);
+        if(project.activeProjects.length<1){
             $('#noProjects').show();
         }else{
             $('#noProjects').hide();
@@ -34,61 +36,61 @@ function getProjectsForUserFromDB(){
 }
 
 
-function openPopup(id, current){
+project.openPopup=function(id, current){
     $("#overlay").show();
     $('#noProjects').hide();
     $("#"+id).show();
-    activeDeleteProject=current; //to know what element caused the delete popup
+    project.activeDeleteProject=current; //to know what element caused the delete popup
 }
 
-function closePopup(){
+project.closePopup = function (){
     $("#overlay").hide();
     $("#newProjectPopUp").hide();
     $("#deleteProjectPopUp").hide();
 
-    if(activeProjects.length<1){
+    if(project.activeProjects.length<1){
         $('#noProjects').show();
     }
 }
 
 
-function newProject(){
+project.new=function(){ //before named newProject
     document.getElementById("newProjectName").value="";
-    openPopup("newProjectPopUp");
+    project.openPopup("newProjectPopUp");
 }
 
-function createNewProject(){
+project.createNewProject=function(){
     var projectName=document.getElementById("newProjectName").value;
-    setProjectName(projectName);
-    addNewProjectElement(projectName);
-    addProjectToDB(projectName);
-    closePopup();
+    project.current=projectName;
+    project.addNewProjectElement(projectName);
+    project.addToDB(projectName);
+    project.closePopup();
     $('#noProjects').hide();
 
-    addDefaultSublayers(projectName);
+    project.addDefaultSublayers(projectName);
 }
 
-function addNewProjectElement(projectName){
+project.addNewProjectElement=function(projectName){
     var link=document.createElement('a');
     link.className="projectLink";
     var div=document.createElement('div');
     div.className='col-md-2 projectDiv';
+    // div.className='projectDiv';
     var deleteElement=document.createElement('h3');
     deleteElement.className="deleteProject";
     deleteElement.innerHTML="x";
     deleteElement.addEventListener('click', function(){
-        openPopup('deleteProjectPopUp', event.currentTarget);
+        project.openPopup('deleteProjectPopUp', event.currentTarget);
     });
     var elementDiv=document.createElement('div');
     elementDiv.className='projectElement';
     elementDiv.id=projectName;
 
-
     var img=document.createElement('img');
     img.className='projectImg';
     img.setAttribute('src', '../images/map.png');
     img.addEventListener('click', function () {
-        setProjectName(event.currentTarget.innerHTML);
+        project.current=event.currentTarget.innerHTML;
         window.location.href="#/mainPage";
     });
     var text=document.createElement('h5');
@@ -96,7 +98,7 @@ function addNewProjectElement(projectName){
 
     //enter project event
     text.addEventListener('click',function(){
-        setProjectName(event.currentTarget.innerHTML);
+        project.current=event.currentTarget.innerHTML;
         window.location.href="#/mainPage";
     });
 
@@ -108,8 +110,7 @@ function addNewProjectElement(projectName){
     document.getElementById('projectsView').appendChild(div);
 }
 
-
-function addProjectToDB(projectName){
+project.addToDB=function(projectName){
     $.post("/project",
         {
             projectName: projectName
@@ -117,11 +118,9 @@ function addProjectToDB(projectName){
     ).complete(function(){
         console.log("completed");
     });
-
 }
 
-
-function addDefaultSublayers(projectName){
+project.addDefaultSublayers=function(projectName){
     console.log('projectName:');
     console.log(projectName);
     $.ajax({ //get all default styling - saves them to layerStyling
@@ -137,32 +136,34 @@ function addDefaultSublayers(projectName){
 }
 
 
-function deleteProject(){
+project.delete=function(){ //named deleteProject before
     console.log('delete');
-    var id=activeDeleteProject.parentElement.id;
-    deleteProjectElement(id);
-    deleteProjectFromDB(id);
+    var id=project.activeDeleteProject.parentElement.id;
+    project.deleteProjectElement(id);
+    project.deleteFromDB(id);
 
-    console.log(activeProjects);
-    console.log(activeProjects.length);
+    console.log(project.activeProjects);
+    console.log(project.activeProjects.length);
 
     //delete from active list:
-    for(var i =0; i<activeProjects.length; i++){
+    for(var i =0; i<project.activeProjects.length; i++){
         console.log('for loop');
-        if(activeProjects[i]===id){
-            activeProjects.splice(i, 1);
+        if(project.activeProjects[i]===id){
+            project.activeProjects.splice(i, 1);
         }
     }
     //add text:no projects
-    $('#noProjects').show();
-    closePopup();
+    if(project.activeProjects.length<1){
+      $('#noProjects').show();
+    }
+    project.closePopup();
 }
 
-function deleteProjectElement(id){
+project.deleteProjectElement=function(id){
     $("#"+id).parent().parent().remove();
 }
 
-function deleteProjectFromDB(projectName){
+project.deleteFromDB=function(projectName){
 
     console.log(projectName);
     console.log('delete project');

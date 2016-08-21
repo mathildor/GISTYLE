@@ -38,14 +38,14 @@ gisControllers.controller('tutorialController', ['$anchorScroll', '$location', '
 
 gisControllers.controller("mapController", ["$scope", "$http", function($scope, $http){
 
-    initMap();
+    main.map.init();
 
 
 }]);
 
 gisControllers.controller("projectsController", ["$scope", "$location", function($scope, $location){
 
-    getProjectsForUserFromDB();
+    project.getProjectsForUserFromDB();
 
 }]);
 
@@ -138,4 +138,3 @@ angular.module('gisApp').controller('registerController',
             };
 
         }]);
-
