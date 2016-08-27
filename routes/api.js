@@ -231,11 +231,6 @@ router.post("/intersect",function(req, res){
                      }
                  }
              }
-
-             console.log('intersections');
-             console.log(intersections);
-             console.log(intersections[0]);
-
              var resultLayer=new geojsonLayer();
              resultLayer.layerName=req.body.newLayerName;
              resultLayer.projectName=req.body.projectName;
@@ -243,13 +238,14 @@ router.post("/intersect",function(req, res){
              resultLayer.features=intersections;
              resultLayer.defaultLayer=false;
 
-             resultLayer.save(function(err) {
-                 if (err) {
-                     console.log('error');
-                 }
-             });
-
-             saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+             if(intersections.length>0){ //if intersection exist:
+               resultLayer.save(function(err) {
+                   if (err) {
+                       console.log('error');
+                   }
+               });
+               saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+             }
              res.send(resultLayer);
          });
      });

@@ -20,12 +20,16 @@ common.addToolLayer=function(dataObj, reqUrl, type, color, newLayerName){
     url:reqUrl,
     type:type,
     dataType: "json",
-    data:dataObj
-    //TODO: add styling info here?
-  }).complete(function(data){
-    //post to db and add to map
-    var styling=common.getStylingObj(color);
-    var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
-    main.menu.addToLayerList(newLayerName, layer);
+    data:dataObj,
+    complete: function(data){
+      //post to db and add to map
+      if(JSON.parse(data.responseText).features[0].geometry===undefined && reqUrl ==="/intersect"){//if intersection exist
+        alert("There is no intersection between the chosen layers.");
+      }else{
+        var styling=common.getStylingObj(color);
+        var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
+        main.menu.addToLayerList(newLayerName, layer);
+      }
+    }
   });
 }

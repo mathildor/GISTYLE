@@ -91,7 +91,7 @@ intersection.create=function(){
       color: intColor,
       newLayerName: intLayerName
     };
-    common.addToolLayer(intObj, "/intersection", "POST", buffer.color, intLayerName);
+    common.addToolLayer(intObj, "/intersect", "POST", buffer.color, intLayerName);
 
   }else{
     alert('Fill out all fields first');
