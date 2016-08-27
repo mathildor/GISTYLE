@@ -67,7 +67,6 @@ intersection.addSecondLayer = function(content2, type, chosen){
 }
 
 intersection.create=function(){
-
   tools.dialog.popupClose($('#layerDropdown-content-area-intersect'));
   tools.dialog.popupClose($('#layerDropdown-content-output-intersect'));
 
@@ -91,7 +90,7 @@ intersection.create=function(){
       color: intColor,
       newLayerName: intLayerName
     };
-    common.addToolLayer(intObj, "/intersect", "POST", buffer.color, intLayerName);
+    common.addToolLayer(intObj, "/intersect", "POST", intcolor, intLayerName);
 
   }else{
     alert('Fill out all fields first');

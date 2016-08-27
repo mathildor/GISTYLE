@@ -32,10 +32,10 @@ merge.run=function(){
 
   tools.dialog.createLayerDropdown(content1);
 
-  $(".contentLi").click(function(){
+  $(".contentLi").click(function(event){
     console.log(event.currentTarget.firstChild);
     var active= event.currentTarget.firstChild;
-    merge.activeLayer1=(active.id);
+    merge.activeLayer1=event.currentTarget.firstChild.id;
     var chosenLayer=target1;
     chosenLayer.innerHTML=merge.activeLayer1;
     chosenLayer.className="chosenLayer";
@@ -43,7 +43,7 @@ merge.run=function(){
     //Remove chosen layer when resetting values!
     tools.dialog.toggleClose(active, $('#layerDropdown-content-merge1'));
     var firstLayer=main.getLeafletLayerFromName(merge.activeLayer1);
-    merge.resetValuesForLayer(document.getElementById('chosenMerge2'));
+    merge.resetValuesForSecondLayer(document.getElementById('chosenMerge2'));
     merge.addSecondLayer(content2, firstLayer.type, firstLayer.name);
   });
 }
@@ -51,7 +51,8 @@ merge.run=function(){
 merge.addSecondLayer=function(content2, type, chosen){
   var target2=document.getElementById('chosenMerge2');
   tools.dialog.createLayerDropdown(content2, [type], chosen);
-  $(".contentLayer").click(function(){
+  $(".contentLayer").click(function(event){
+    console.log(event.target);
     merge.activeLayer2=(event.target.id);
     var chosenLayer=target2;
     chosenLayer.innerHTML=merge.activeLayer2;
@@ -70,19 +71,12 @@ merge.create=function(){
   }
 
   //check if everything is filled out
-  var layer1= main.getLeafletLayerFromName(merge.activeLayer1);
-  var layer2= main.getLeafletLayerFromName(merge.activeLayer2);
-
-  console.log(layer1.type);
-  console.log(layer2.type);
-  console.log(merge.activeLayer1);
-  console.log(merge.activeLayer2);
-  console.log(mergeColor);
-  console.log(mergeLayerName);
-
   //ops, multipolygon should be included!
   //if(merge.activeLayer1 && merge.activeLayer2 && mergeColor && mergeLayerName && (layer1.type === layer2.type)){
   if(merge.activeLayer1 && merge.activeLayer2 && mergeColor && mergeLayerName){
+
+    var layer1= main.getLeafletLayerFromName(merge.activeLayer1);
+    var layer2= main.getLeafletLayerFromName(merge.activeLayer2);
 
     tools.dialog.popupClose($('#layerDropdown-content-merge'));
     var mergeObj={
@@ -94,7 +88,7 @@ merge.create=function(){
       newLayerName: mergeLayerName,
       projectName:project.current
     };
-    common.addToolLayer(bufferObj, "/merge", "POST", mergeColor, mergeLayerName);
+    common.addToolLayer(mergeObj, "merge", "POST", mergeColor, mergeLayerName);
   }else{
     alert('Fill out all fields first, and make sure that the two inputs are of same type, example polygon');
     fillAgain=true;
@@ -106,16 +100,23 @@ merge.create=function(){
 
 
 merge.resetValuesForLayer=function(target){
-  console.log(target);
   document.getElementById(target.id).innerHTML="choose layer from list";
-  console.log(document.getElementById(target.id));
-
   var arrow=document.createElement("span");
   arrow.className="caret";
   target.appendChild(arrow);
 
   //when created, empty fields:
   merge.activeLayer1=null;
+  merge.activeLayer2=null;
+
+}
+merge.resetValuesForSecondLayer=function(target){
+  document.getElementById(target.id).innerHTML="choose layer from list";
+  var arrow=document.createElement("span");
+  arrow.className="caret";
+  target.appendChild(arrow);
+
+  //when created, empty fields:
   merge.activeLayer2=null;
 
 }

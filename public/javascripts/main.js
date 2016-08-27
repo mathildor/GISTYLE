@@ -50,17 +50,13 @@ main.map.getStyleAndAddToMap=function(layerName, layer, defaultLayer){
   db.getStyle(layerName, function(data){
     var styling=JSON.parse(data.responseText)[0].layerStyle;
     main.map.addLayer(layer, styling, layerName, defaultLayer);
+    main.reorderLayers();
   });
 };
 
 
 main.map.addLayer=function(layer, styling, layerName, defaultLayer){
 
-  console.log('layer: ');
-  console.log(layer);
-  console.log(styling);
-  console.log(layerName);
-  console.log(defaultLayer);
   var newLayer;
   if(layer.features[0].geometry.type === "Point"){
     var style = {
@@ -70,7 +66,6 @@ main.map.addLayer=function(layer, styling, layerName, defaultLayer){
       weight: styling.weight,
       fillOpacity: styling.opacity
     };
-    console.log('make point layer');
     newLayer=L.geoJson(layer, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, style);
@@ -127,14 +122,11 @@ function uploadLayer(){
   var layerName=document.getElementById('uploaded-layer-name').value;
   var file = document.getElementById('inputFile').files[0];
 
-  console.log(file);
-
   var reader = new FileReader();
   var text;
   reader.onload = function(e) {
     text = reader.result;
     var layerFeatures = JSON.parse(text).features;
-    console.log(layerFeatures.length);
     uploadGeoJson(project.current, layerFeatures, layerName, color);
   }
   reader.readAsText(file);
@@ -142,7 +134,6 @@ function uploadLayer(){
 }
 
 function uploadGeoJson(projectName, layerFeatures, layerName, color){
-  console.log(layerFeatures);
 
   var styling={
     'color': color,
@@ -182,19 +173,18 @@ function uploadGeoJson(projectName, layerFeatures, layerName, color){
   });
 }
 
-function reorderLayers(){
-  console.log('reorder!!!');
+main.reorderLayers=function(){
   var layersInOrder=[];
   var listOfDomChildren=document.getElementById('menuLayerDropdown').childNodes;
   for(var i = 0; i<listOfDomChildren.length; i++){
     layersInOrder.push(listOfDomChildren[i].childNodes[0].innerHTML);
   }
-  console.log(layersInOrder);
-
   for(var j=layersInOrder.length-1; j>-1; j--){
-    main.getLeafletLayerFromName(layersInOrder[j]).layer.bringToFront();
+    var l=main.getLeafletLayerFromName(layersInOrder[j])
+    if(l!==undefined){
+      l.layer.bringToFront();
+    }
   }
-
 }
 
 
@@ -268,7 +258,7 @@ main.map.saveStyleChanges=function(){
       map.removeLayer(layer);
       main.map.removeFromLeafletLayerList(main.map.activeStyleLayerName);
       main.map.addLayer(geojsonLayer, style, main.map.activeStyleLayerName);
-      reorderLayers();
+      main.reorderLayers();
     });
 
     // main.map.updateView(); //TODO
@@ -284,10 +274,8 @@ main.map.updateView=function(){
 
 //checkbox action, activate and remove layers from map
 main.menu.toggleLayerView=function(){
-  console.log("eye event");
   var layerName=event.currentTarget.className.split('fa-eye ')[1].split(' ')[0];
 
-  console.log(main.map.layers);
   for(var i=0; i<main.map.layers.length;i++){
     if(main.map.layers[i].name === layerName){
       if(main.map.layers[i].active == true){
@@ -311,7 +299,6 @@ main.getLeafletLayerFromName=function(layerName){
       layer=main.map.layers[i];
     }
   }
-  console.log(layer);
   return layer;
 }
 
@@ -371,7 +358,7 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
   var sortable=Sortable.create(list,{
     animation:200,
     onUpdate: function(){
-      reorderLayers();
+      main.reorderLayers();
     }
   });
 
@@ -413,13 +400,9 @@ main.deleteLayer=function(layerName){
   layerEl.remove();
 
   //Delete from map
-  console.log('layerName');
-  console.log(layerName);
   var layer;
-  console.log(main.map.layers);
   for(var i=0; i<main.map.layers.length; i++){
     if(main.map.layers[i].name === layerName){
-      console.log('removing:');
       main.map.layers[i];
       map.removeLayer(main.map.layers[i].layer) //remove from map
 

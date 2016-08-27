@@ -72,8 +72,6 @@ buffer.create=function(){
 }
 
 
-
-
 buffer.resetValues=function (target){
   buffer.activeLayer=null;
 

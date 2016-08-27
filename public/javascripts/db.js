@@ -47,7 +47,6 @@ db.getLayer=function(layername, callback){
 }
 
 db.getDefaultLayers=function(callback){
-  console.log("Running get default layers");
   $.ajax({ //gets all for specific user and project
     url:"defaultGeojsons",
     type:"get",
@@ -73,7 +72,7 @@ db.getLayersForProject=function(callback){
   });
 }
 
-db.getLayers=function(callback){
+db.getLayers=function(){
   main.map.layers=[];
   db.getDefaultLayers(function(data){
     var layerStyle;
@@ -86,21 +85,24 @@ db.getLayers=function(callback){
       }
       main.menu.addToLayerList(newLayer.name, newLayer);
     }
+
+    db.getLayersForProject(function(data){
+      //go through all layers and add them:
+      var layerStyle;
+      var layers=JSON.parse(data.responseText);
+      var i;
+      for(i=0; i<layers.length;i++) {
+        main.map.getStyleAndAddToMap(layers[i].layerName, layers[i], false);
+        var newLayer={
+          name:layers[i].layerName
+        }
+        main.menu.addToLayerList(newLayer.name, newLayer);
+      }
+    });
+
   });
 
-  db.getLayersForProject(function(data){
-    //go through all layers and add them:
-    var layerStyle;
-    var layers=JSON.parse(data.responseText);
-    var i;
-    for(i=0; i<layers.length;i++) {
-      main.map.getStyleAndAddToMap(layers[i].layerName, layers[i], false);
-      var newLayer={
-        name:layers[i].layerName
-      }
-      main.menu.addToLayerList(newLayer.name, newLayer);
-    }
-  });
+
 }
 
 db.deleteOldStyle=function(callback){

@@ -26,14 +26,14 @@ difference.run=function(){
   tools.dialog.createLayerDropdown(content1, ["Polygon"]);
 
   $(".contentLayer").click(function(){
-    differnce.active1=(event.target.id);
+    difference.active1=(event.target.id);
     var chosenLayer=target1;
-    chosenLayer.innerHTML=differnce.active1;
+    chosenLayer.innerHTML=difference.active1;
     chosenLayer.className="chosenLayer";
 
     //Remove chosen layer when resetting values!
     tools.dialog.toggleClose(event.target, $('#layerDropdown-content-difference1'));
-    var firstSublayer=main.getLeafletLayerFromName(differnce.active1);
+    var firstSublayer=main.getLeafletLayerFromName(difference.active1);
     difference.resetValuesForLayer(target2);
     difference.addSecondLayer(content2, "Polygon", firstSublayer.name);
   });
@@ -59,22 +59,23 @@ difference.create=function(){
   var diffColor=$("#differenceColor").val();
 
   //check if everything is filled out
-  var layer1= main.getLeafletLayerFromName(differnce.active1);
+  var layer1= main.getLeafletLayerFromName(difference.active1);
   var layer2= main.getLeafletLayerFromName(difference.active2);
 
-  if(differnce.active1 && difference.active2 && diffColor && diffLayerName && (layer1.type === layer2.type)){
+  if(difference.active1 && difference.active2 && diffColor && diffLayerName && (layer1.type === layer2.type)){
 
     tools.dialog.popupClose($('#layerDropdown-content-difference2'));
     tools.dialog.popupClose($('#layerDropdown-content-difference1'));
     var diffObj={
       projectName:project.current,
-      layer1name: differnce.active1,
+      layer1name: difference.active1,
       layer1default: layer1.defaultLayer,
       layer2name:difference.active2,
       layer2default: layer2.defaultLayer,
       color: diffColor,
       newLayerName: diffLayerName
     };
+    console.log(diffObj);
     common.addToolLayer(diffObj, "difference", "POST", diffColor, diffLayerName);
 
   }else{
@@ -82,7 +83,7 @@ difference.create=function(){
   }
   //when created, empty fields:
   difference.active2=null;
-  differnce.active1=null;
+  difference.active1=null;
   intColor=null;
   intLayerName=null;
 
