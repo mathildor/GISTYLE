@@ -9,6 +9,7 @@ var geojsonLayer=require('../models/geojson.js');
 var layerStyle=require('../models/layerStyle.js');
 var defaultLayerStyle=require('../models/defaultLayerStyle.js');
 var turf=require('../public/turf.min.js');
+var proj4=require('../public/bower_components/proj4js/dist/proj4.js');
 var GJV = require("geojson-validation");
 
 
@@ -326,37 +327,37 @@ router.post("/merge", function(req, res){
   }
 
   geojsonLayer.find(cond1 ,function(err, layer1){
-      if(err){
-        console.log('error');
-      }else{
-        geojsonLayer.find(cond2, function(err, layer2){
-            var mergedLayer=new geojsonLayer();
-            mergedLayer.layerName=req.body.newLayerName;
-            mergedLayer.username=req.user.username;
-            mergedLayer.projectName=req.body.projectName;
-            mergedLayer.defaultLayer=false;
+    if(err){
+      console.log('error');
+    }else{
+      geojsonLayer.find(cond2, function(err, layer2){
+        var mergedLayer=new geojsonLayer();
+        mergedLayer.layerName=req.body.newLayerName;
+        mergedLayer.username=req.user.username;
+        mergedLayer.projectName=req.body.projectName;
+        mergedLayer.defaultLayer=false;
 
-            var features=[];
-            console.log(layer1[0].features);
-            console.log(layer2[0].features);
+        var features=[];
+        console.log(layer1[0].features);
+        console.log(layer2[0].features);
 
-            for(var i=0; i<layer1[0].features.length; i++){
-              features.push(layer1[0].features[i]);
-            }
-            for(var j=0; j<layer2[0].features.length; j++){
-              features.push(layer2[0].features[j]);
-            }
-            mergedLayer.features=features;
-            mergedLayer.save(function(err) {
-              if (err) {
-                console.log('error');
-              }
-            });
-
-            saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
-            res.send(mergedLayer);
+        for(var i=0; i<layer1[0].features.length; i++){
+          features.push(layer1[0].features[i]);
+        }
+        for(var j=0; j<layer2[0].features.length; j++){
+          features.push(layer2[0].features[j]);
+        }
+        mergedLayer.features=features;
+        mergedLayer.save(function(err) {
+          if (err) {
+            console.log('error');
+          }
         });
-      }
+
+        saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+        res.send(mergedLayer);
+      });
+    }
   });
 });
 
@@ -371,13 +372,37 @@ router.post("/BufferDefaultGeojson", function(req, res){
     } else{
       console.log("Found layer to add buffer on");
       var geoJson=JSON.stringify(data[0]);
-      var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
 
+      // geoJson=projectCoordinatesBeforeCalc(geoJson);
+      var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
       saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
       res.send(buffered);
     }
   });
 });
+
+
+
+projectCoordinatesBeforeCalc=function(json){
+  var toProj=proj4.defs('EPSG:3785');
+  var fromProj=proj4.defs('EPSG:4326');
+
+  console.log(json.features);
+  // console.log(json.features);
+
+  for(var i=0; i<json.features.length; i++){
+    var projCoords=[];
+    var coords=json.features[i].geometry.coordinates;
+    for(var j=0; j<coords[0].length; j++ ){
+      var projCoord=proj4(fromProj, toProj ,coords[0][j] );
+      projCoords.push(projCoord);
+    }
+    json.features[i].geometry.coordinates[0]=projCoords;
+    // console.log(projCoords);
+  }
+  console.log(json.features[0].geometry.coordinates[0][0]);
+  return json;
+}
 
 router.post("/BufferGetGeojson", function(req, res){
   console.log('bufferGetGeojson');
@@ -402,30 +427,8 @@ router.post("/BufferGetGeojson", function(req, res){
 
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
   var geoJson=JSON.parse(geoJ);
-  console.log("BUFFER!!!!!");
-  // console.log(JSON.stringify(geoJson));
-
-  //var buffered=turf.buffer(geoJson.features[13], distance/1000, 'kilometers');
   var buffered=turf.buffer(geoJson, distance, 'meters');
   saveGeoLayer(buffered, username, projectName, newLayerName);
-  // console.log("turf buffer finished");
-  // //buffer each feature, create buffer that returns a feature(?), and then merge them
-  //
-  // //loop through features;
-  // var bufferedFeatures=[];
-  // for(var i=0; i<geoJson.features.length; i++){
-  //     bufferedFeatures.push(turf.buffer(geoJson.features[i]));
-  // }
-  // // console.log(bufferedFeatures[0]);
-  //
-  // var individuallyBuffered = turf.merge({
-  //     "type": "FeatureCollection",
-  //     "features": bufferedFeatures
-  // });
-  //
-  // console.log("buffered");
-  // // console.log(buffered);
-  // // saveGeoLayer(individuallyBuffered, username, projectName, newLayerName);
   return buffered;
 }
 
@@ -737,5 +740,54 @@ router.get('/status', function(req, res) {
   });
 });
 
+
+// getUnusedLayerName=function(username, projectname, name, callback){
+//   console.log("in get unused name");
+//   var newName=name;
+//   console.log(username);
+//   console.log(projectname);
+//   geojsonLayer.find({ //get all layers from user and project
+//     username:username,
+//     projectName: projectname
+//   },function(err, data){
+//     if(err){
+//       console.log("error");
+//       res.send(err);
+//     }else{
+//       console.log("in else after getting all layers");
+//       console.log(data);
+//       var allLayerNames=[];
+//       for(var i=0; i<data.length; i++){
+//         allLayerNames.push(data[i].layerName);
+//       }
+//       console.log(allLayerNames);
+//       var nameTaken=true;
+//       var count=1;
+//       while(nameTaken){
+//         if(exsistsInList(allLayerNames, newName)){
+//           console.log("exists already");
+//           newName=name+"("+count+")";
+//           count++;
+//         }else{
+//           nameTaken=false;
+//           callback(newName);
+//         }
+//         console.log(newName);
+//       }
+//     }
+//   });
+// }
+//
+// exsistsInList=function(list, element){
+//   if(list == undefined){
+//     return(false);
+//   }
+//   for (var i = 0; i < list.length; i++) {
+//     if(list[i]==element){
+//       return(true);
+//     }
+//   }
+//   return(false);
+// }
 
 module.exports = router;

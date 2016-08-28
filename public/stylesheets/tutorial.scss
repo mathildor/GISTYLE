@@ -15,11 +15,13 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  z-index: -1;
 }
 .red-line-tutorial{
   background-color: #ee5664;
   height: 5px;
   width: 88%;
+  display: -webkit-box;
 }
 
 .fixed-menu{
@@ -28,10 +30,16 @@
   padding-top: 5%;
   right:5%;
   font-size: 1.3em;
-  margin-top: 100px;
+  margin-top: 90px;
+
+  .menu-content{
+    margin-left: 42px;
+  }
   a{
     color:black;
     display: table-caption;
+    cursor: hand;
+    margin-top: 20px;
   }
   li{
     padding-left: -5px;
@@ -41,6 +49,7 @@
     height:270px;
     width: 5px;
     background-color: grey;
+    margin-right: -22px;
   }
 }
 
@@ -48,6 +57,14 @@
   z-index: 2;
   margin-top:110px;
   margin-left: 8%;
+  height: 100vh;
+  display: -webkit-inline-box;
+
+  #tutorial-col{
+    width: 80%;
+    height: 80%;
+    overflow-y: scroll;
+  }
 
   h1{
     margin-left:17px;
@@ -59,33 +76,45 @@
     font-size: 1.2em;
   }
   .tutorialPoint-left{
-    display: flex;
+    display: -webkit-inline-box;
     margin-right: 8%;
+    height: 100%;
     p{
-      margin-right:20px;
-      width: 80%;
+      margin-right:0;
     }
     .tutorialText{
-      width:60%;
+      width:45%;
+      margin-right: 28px;
     }
   }
   .tutorialPoint-right{
-    margin-top: 70px;
+    display: -webkit-inline-box;
+    margin-right: 8%;
+    height: 100%;
     float: right;
     .tutorialText{
-      padding-left:10%;
-      width: 100%;
+      width:45%;
+      margin-left: 28px;
     }
-    p{
-      width: 80%;
+    .tutorial{
+      width: 43%;
+    }
+    .video{
+      width: 100%;
+      margin-left: 17px;
     }
   }
 
-}
+  .video{
+    width: 48%;
+    margin-bottom: 10px;
+    margin-top: 15px;
+  }
 
-#scrollArea{
-  overflow: auto;
-  overflow-y:scroll;
-  height:3000px;
-  position: relative;
+  #scrollArea{
+    overflow: auto;
+    overflow-y:scroll;
+    height:3000px;
+    position: relative;
+  }
 }

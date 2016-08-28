@@ -1,6 +1,8 @@
 
 var main={
-  menu:{},
+  menu:{
+    activeLayers:["Rivers", "Buildings", "Schools", "Water", "Railway"] //used for side menu
+  },
   map:{
     layers:[],
     activeStyleLayer:"",
@@ -8,7 +10,7 @@ var main={
   }
 };
 
-var activeLayers=["Rivers", "Buildings", "Schools", "Water", "Railway"]; //used for side menu
+
 // var map;
 var fillAgain=false; //is used to: know if popup should be reset or not, if missed some info the already filled out should stay. Just in all tools dialogs
 
@@ -332,7 +334,7 @@ main.map.addLayerToMapView=function(layer, layerName){
 //layerlist in main menu
 main.menu.addToLayerList=function(newLayer, newSublayer){
 
-  activeLayers.push(newLayer);
+  main.menu.activeLayers.push(newLayer);
 
   var link=document.createElement('a');
   link.innerHTML=newLayer;

@@ -60,7 +60,9 @@ project.new=function(){ //before named newProject
 }
 
 project.createNewProject=function(){
-    var projectName=document.getElementById("newProjectName").value;
+    // var projectName=document.getElementById("newProjectName").value;
+    var projectName=project.getUnusedName(document.getElementById("newProjectName").value);
+    project.activeProjects.push(projectName);
     project.current=projectName;
     project.addNewProjectElement(projectName);
     project.addToDB(projectName);
@@ -68,6 +70,26 @@ project.createNewProject=function(){
     $('#noProjects').hide();
 
     project.addDefaultSublayers(projectName);
+}
+
+project.getUnusedName=function(name){
+  var nameTaken=true;
+  var count=1;
+  var newName=name;
+  while(nameTaken){
+    console.log(project.activeProjects);
+    if(common.exsistsInList(project.activeProjects, newName)){
+      console.log("already in list, need to change to:");
+      newName=name+"_"+count;
+      count++;
+      console.log(newName);
+    }else{
+      console.log("Name does not exist");
+      console.log(newName);
+      nameTaken=false;
+      return newName;
+    }
+  }
 }
 
 project.addNewProjectElement=function(projectName){
@@ -147,10 +169,10 @@ project.delete=function(){ //named deleteProject before
 
     //delete from active list:
     for(var i =0; i<project.activeProjects.length; i++){
-        console.log('for loop');
-        if(project.activeProjects[i]===id){
-            project.activeProjects.splice(i, 1);
-        }
+      console.log('for loop');
+      if(project.activeProjects[i]===id){
+        project.activeProjects.splice(i, 1);
+      }
     }
     //add text:no projects
     if(project.activeProjects.length<1){
