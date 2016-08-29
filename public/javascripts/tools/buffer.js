@@ -5,7 +5,6 @@ color:"",
 distance:""
 };
 
-
 //action when buffer button click
 buffer.run=function(){
 
@@ -42,8 +41,11 @@ buffer.create=function(){
   buffer.distance=$('#bufferDistance').val();
   buffer.color=$("#bufferColor").val();
 
-  //check if everything is filled out
-  if(buffer.activeLayer && buffer.color && buffer.distance){
+
+  if(!Number(buffer.distance)>0){ //input is of correct format
+    alert("Buffer distance must be a number");
+    fillAgain=true;
+  }else if(buffer.activeLayer && buffer.color && buffer.distance){ //everything is filled out
     tools.dialog.popupClose($('#layerDropdown-content-buffer'));
     var newLayerName=buffer.activeLayer.name+'_buffer_'+buffer.distance;
     var layer=main.getLeafletLayerFromName(buffer.activeLayer.name);
@@ -53,7 +55,7 @@ buffer.create=function(){
     if(layer.defaultLayer==true){
       url="BufferDefaultGeojson";
     }else{
-      url="BufferGetGeojson";
+      url="BufferGeojson";
     }
 
     var bufferObj={

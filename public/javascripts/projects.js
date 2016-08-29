@@ -15,10 +15,12 @@ project.getProjectsForUserFromDB=function(){
         dataType: "json",
         data:{},
         success: "success"
-
     }).complete(function(data){
         console.log('data');
         console.log(data);
+        if(data.status===500){
+          window.location="/#login";
+        }
         var projects=JSON.parse(data.responseText);
         //go through all layers and add them:
         for(var i=0; i<projects.length; i++){
@@ -111,17 +113,17 @@ project.addNewProjectElement=function(projectName){
     var img=document.createElement('img');
     img.className='projectImg';
     img.setAttribute('src', '../images/map.png');
-    img.addEventListener('click', function () {
-        project.current=event.currentTarget.innerHTML;
-        window.location.href="#/mainPage";
+    img.addEventListener('click', function (event) {
+      project.current=event.currentTarget.parentNode.id;
+      window.location.href="#/mainPage";
     });
     var text=document.createElement('h5');
     text.innerHTML=projectName;
 
     //enter project event
-    text.addEventListener('click',function(){
-        project.current=event.currentTarget.innerHTML;
-        window.location.href="#/mainPage";
+    text.addEventListener('click',function(event){
+      project.current=event.currentTarget.parentNode.id;
+      window.location.href="#/mainPage";
     });
 
     elementDiv.appendChild(deleteElement);

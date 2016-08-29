@@ -1,6 +1,5 @@
 var common={};
 
-
 common.getStylingObj=function(color){
   var styling={
     color: color,
@@ -11,8 +10,6 @@ common.getStylingObj=function(color){
   }
   return styling;
 }
-
-
 
 // tools.common.create=function(dataObj, url, type, color, newLayerName){
 common.addToolLayer=function(dataObj, reqUrl, type, color, newLayerName){
@@ -25,19 +22,20 @@ common.addToolLayer=function(dataObj, reqUrl, type, color, newLayerName){
     dataType: "json",
     data:dataObj,
     complete: function(data){
-      console.log(data);
       //post to db and add to map
-      if(JSON.parse(data.responseText).features[0].geometry===undefined && reqUrl ==="/intersect"){//if intersection exist
-        alert("There is no intersection between the chosen layers.");
+      // if(JSON.parse(data.responseText).features[0].geometry===undefined){//if intersection exist
+      if(JSON.parse(data.responseText).features[0]===undefined){//if intersection exist
+        alert(reqUrl+" gave no result for the chosen layers.");
       }else{
-        if(reqUrl==="BufferDefaultGeojson"){
-          //Test projections:
-          var projectedJson=projectCoordinates(JSON.parse(data.responseText));
-        }
+        // if(reqUrl==="BufferDefaultGeojson"){
+        //   //Test projections:
+        //   var projectedJson=projectCoordinates(JSON.parse(data.responseText));
+        // }
         var styling=common.getStylingObj(color);
         console.log(JSON.parse(data.responseText));
-        // var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
-        var layer=main.map.addLayer(projectedJson, styling, newLayerName, false);
+
+        var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
+        //var layer=main.map.addLayer(projectedJson, styling, newLayerName, false);
         main.menu.addToLayerList(newLayerName, layer);
       }
     }

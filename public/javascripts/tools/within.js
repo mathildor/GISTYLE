@@ -23,11 +23,11 @@ within.run=function(){
 
 
   var contentArea=document.getElementById("layerDropdown-content-area-within");
-  var validTypes=["Polygon", "Point"];
-  tools.dialog.createLayerDropdown(contentArea, validTypes);
+  var validTypes=["Polygon"];
+  tools.dialog.createLayerDropdown(contentArea,["Polygon"]);
 
   var contentOutput=document.getElementById("layerDropdown-content-output-within");
-  tools.dialog.createLayerDropdown(contentOutput);
+  tools.dialog.createLayerDropdown(contentOutput, ["Point"]);
 
   $("#overlay").show();
   $("#withinPopUp").show();

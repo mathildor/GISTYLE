@@ -17,10 +17,8 @@ var geoJson = new Schema({
     username: String,
     layerName: String,
     features:[features],
-    defaultLayer: Boolean
+    defaultLayer: Boolean,
+    type:String
 });
 
-
-
 module.exports = mongoose.model('geojson', geoJson);
-

@@ -1,6 +1,5 @@
 var draw={};
 
-
 draw.init=function(){
   draw.addController();
   // Initialise the FeatureGroup to store editable layers
@@ -31,8 +30,6 @@ draw.addController=function(){
   map.addControl(drawControl);
 }
 
-
-
 draw.getUserInfoForDrawnElement=function(drawnLayerName, layer){
   //User sets name for the layer created:
   $('#overlay').show();
@@ -41,21 +38,31 @@ draw.getUserInfoForDrawnElement=function(drawnLayerName, layer){
 
   $("#saveDrawnLayerName").click(function() {
     drawnLayerName = $('#drawnLayerName').val();
+    drawnLayerName=common.getUnusedLayerName(drawnLayerName);
     $('#overlay').hide();
     $('#nameForDrawnLayerPopup').hide();
 
     var featureObj=[layer.toGeoJSON()];
-
+    var geoJson={
+      defaultLayer:false,
+      layerName:drawnLayerName,
+      type: "FeatureCollection",
+      features:featureObj
+    };
+    console.log(featureObj);
+    console.log(layer);
     //add the layer to leafletLayers list:
-    leafletLayers.push({
+    main.map.layers.push({
       name: drawnLayerName,
       layer: layer,
-      geojsonLayer:featureObj,
+      geojsonLayer:geoJson,
       defaultLayer:false,
       type: 'Polygon',
       active:true
     });
-    addToLayerList(drawnLayerName,layer);
+    console.log(main.map.layers);
+
+    main.menu.addToLayerList(drawnLayerName,layer);
     var style=draw.getStyleObj(layer);
 
     draw.saveToDb(featureObj, drawnLayerName, style);
@@ -63,7 +70,7 @@ draw.getUserInfoForDrawnElement=function(drawnLayerName, layer){
   });
 }
 
-draw.getStyleObj=function(){
+draw.getStyleObj=function(layer){
   return style={
     color: layer.options.color,
     lineColor: layer.options.color,
@@ -74,7 +81,8 @@ draw.getStyleObj=function(){
 }
 
 draw.saveToDb=function(featureObj, drawnLayerName, style){
-  saveLeafletLayerToDB(featureObj, drawnLayerName);
+  // console.log(main.getLeafletLayerFromName(drawnLayerName));
+  db.saveLeafletLayer(main.getLeafletLayerFromName(drawnLayerName), drawnLayerName);
 
   //save style
   $.ajax({
@@ -82,7 +90,7 @@ draw.saveToDb=function(featureObj, drawnLayerName, style){
     type: 'post',
     data:{
       layerName:drawnLayerName ,
-      projectName: projectName,
+      projectName: project.current,
       layerStyle: JSON.stringify(style)
     }
   });

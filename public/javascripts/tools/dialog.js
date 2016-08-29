@@ -7,8 +7,6 @@ var tools={
 tools.dialog.createLayerDropdown=function(div, type, alreadyChosen){
 
   //type contains the only type that should be in dropdown:
-  console.log("already chosen, if has one: "+alreadyChosen);
-  console.log("Type valid, if one defined: "+type);
   while (div.firstChild) {
     div.removeChild(div.firstChild);
   }
@@ -23,6 +21,7 @@ tools.dialog.createLayerDropdown=function(div, type, alreadyChosen){
     }
   }
 
+  var emptyList=true;
   //check if layer has valid type and is not already chosen
   for(var j=0; j<main.map.layers.length;j++) {
     for(var k=0; k<validTypes.length;k++) {
@@ -31,6 +30,7 @@ tools.dialog.createLayerDropdown=function(div, type, alreadyChosen){
         //check if not already chosen
         if(main.map.layers[j].name !== alreadyChosen){
           //console.log(main.map.layers[i].type+' is added when type is: '+type);
+          emptyList=false;
           var li = document.createElement("li");
           li.className='contentLi';
           var link = document.createElement("a");
@@ -43,6 +43,10 @@ tools.dialog.createLayerDropdown=function(div, type, alreadyChosen){
         }
       }
     }
+  }
+  if(emptyList){
+    var txt = document.createTextNode("There is no layer of correct type");
+    div.appendChild(txt);
   }
 }
 

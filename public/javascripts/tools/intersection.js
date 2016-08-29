@@ -90,7 +90,7 @@ intersection.create=function(){
       color: intColor,
       newLayerName: intLayerName
     };
-    common.addToolLayer(intObj, "/intersect", "POST", intcolor, intLayerName);
+    common.addToolLayer(intObj, "/intersect", "POST", intColor, intLayerName);
 
   }else{
     alert('Fill out all fields first');

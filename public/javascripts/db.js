@@ -47,7 +47,7 @@ db.getLayer=function(layername, callback){
 }
 
 db.getDefaultLayers=function(callback){
-  $.ajax({ //gets all for specific user and project
+  $.ajax({
     url:"defaultGeojsons",
     type:"get",
     dataType: "json",
@@ -87,6 +87,9 @@ db.getLayers=function(){
     }
 
     db.getLayersForProject(function(data){
+      if(data.status===500){ //user not logged in
+        window.location="/#login";
+      }
       //go through all layers and add them:
       var layerStyle;
       var layers=JSON.parse(data.responseText);
@@ -120,15 +123,17 @@ db.deleteOldStyle=function(callback){
   });
 }
 
-// db.saveLeafletLayer=function(geoLayer, layerName){ //TODO check if ever used, prev called saveLeafletLayerToDB
-//   $.ajax({
-//     "url": "saveGeojson",
-//     "type":"post",
-//     "data":{
-//       layerName:layerName,
-//       projectName: projectName,
-//       defaultLayer: false,
-//       features: JSON.stringify(geoLayer)
-//     }
-//   });
-// }
+db.saveLeafletLayer=function(geoLayer, layerName){ //used when saving drawn polygons
+  console.log(geoLayer);
+  console.log(geoLayer.geojsonLayer.features);
+  $.ajax({
+    "url": "saveGeojson",
+    "type":"post",
+    "data":{
+      layerName:layerName,
+      projectName: project.current,
+      defaultLayer: false,
+      features: JSON.stringify(geoLayer.geojsonLayer.features)
+    }
+  });
+}

@@ -109,7 +109,7 @@
   background-color: rgba(1, 1, 1, 0.67);
   margin: 0 auto;
   left: 45%;
-  top: 40%;
+  top: 30%;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
   display: none;
   font-size: 17px;
@@ -118,10 +118,13 @@
   .popupContent{
     margin-left:10%;
     margin-right:10%;
-    margin-top: 10%;
+    margin-top: 3%;
     text-align: center;
     button{
       margin-top: 40px;
+    }
+    ul{
+      width: 100%;
     }
   }
   .popupHeader{
@@ -137,4 +140,5 @@
     margin-left:0;
     padding-left:0;
   }
+
 }

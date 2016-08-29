@@ -48,13 +48,19 @@ function saveGeoLayer(layer, username, projectName, newLayerName){
   console.log('save geolayer');
   console.log(projectName);
   var geo=new geojsonLayer();
-  geo.features=layer.features;
-  console.log('geo.features');
-  console.log(geo.features);
+  var feature=layer.features;
+  feature.properties={};
+
+  geo.type = "FeatureCollection";
+  geo.features=feature;
+  geo.features.properties={};
   geo.layerName=newLayerName;
   geo.projectName=projectName;
   geo.username=username;
   geo.defaultLayer=false;
+
+  console.log("GEO:");
+  console.log(geo);
 
   geo.save(function(err){
     if(err){
@@ -117,14 +123,12 @@ router.post("/within",function(req, res){
 
       var features1=inputArea[0].features;
       for(var i=0; i<features1.length;i++){ //go through polygons in multi
-        console.log('iteration : '+i);
         var polygon=features1[i];
 
         //for all areas: check all points in all features of output data layer, if they are inside
         var features2=outputData[0].features;
         for(var j=0; j<features2.length; j++){ //for all features, check if any point is inside
           if(intersectingPoint(polygon, features2[j], req.body.outputType) == true){ //at least one point inside
-            console.log('pushing feature');
             intersections.push(features2[j]);
           }
         }
@@ -132,22 +136,15 @@ router.post("/within",function(req, res){
       console.log('All features');
       console.log(intersections);
 
-      var resultLayer=new geojsonLayer();
-      resultLayer.layerName=req.body.newLayerName;
-      resultLayer.projectName=req.body.projectName;
-      resultLayer.username=req.user.username;
-      resultLayer.features=intersections;
-      resultLayer.defaultLayer=false;
-
-      resultLayer.save(function(err) {
-        if (err) {
-          console.log('error');
-        }
-      });
       var withinObj={
+        type:"FeatureCollection",
         features:intersections
       };
-      saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+      if(intersections.lengt>0){
+        saveGeoLayer(withinObj,req.user.username,req.body.projectName, req.body.newLayerName);
+        saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+      }
+      console.log(withinObj);
       res.send(withinObj);
     });
   });
@@ -156,25 +153,18 @@ router.post("/within",function(req, res){
 
 function intersectingPoint(polygon, feature, featuresDataType){
 
-
   var points=feature.geometry.coordinates;
-  console.log('points');
+  // console.log('points');
   var intersectionFound=false;
 
   //POINTS
   if(featuresDataType==="Point"){
-    console.log(points);
-    console.log("type is point");
     if(turf.inside(feature, polygon)){
-      console.log('INTERSECTION FOUND for this feature');
+      // console.log('INTERSECTION FOUND for this feature');
       intersectionFound=true;
     }
     //Polygons, lines ++
   }else{
-    console.log('length: ');
-    console.log(points[0].length);
-    console.log(points[0]);
-    console.log(points[0][0]);
     for(var k=0; k<points[0].length; k++){//for all set of points
       //create fake obj to send to turf intersection function
       var pointFeature={
@@ -182,9 +172,9 @@ function intersectingPoint(polygon, feature, featuresDataType){
           coordinates:points[0][k]
         }
       };
-      console.log('i for loop: points[k]: ');
+      // console.log('i for loop: points[k]: ');
       if(turf.inside(pointFeature, polygon)){
-        console.log('INTERSECTION FOUND');
+        // console.log('INTERSECTION FOUND');
         intersectionFound=true;
       }
     }
@@ -227,27 +217,24 @@ router.post("/intersect",function(req, res){
 
           //get intersection between the polygons
           var intersection = turf.intersect(pol1, pol2);
-          if (intersection != null) {
+          console.log("----------INTERSECTION---------------");
+          if(intersection !== null && intersection !== undefined) {
+            console.log(intersection);
             intersections.push(intersection);
           }
         }
       }
-      var resultLayer=new geojsonLayer();
-      resultLayer.layerName=req.body.newLayerName;
-      resultLayer.projectName=req.body.projectName;
-      resultLayer.username=req.user.username;
-      resultLayer.features=intersections;
-      resultLayer.defaultLayer=false;
-
+      console.log("----------ALL INTERSECTIONS---------------");
+      console.log(intersections);
+      var intObj={
+        type:"FeatureCollection",
+        features:intersections
+      };
       if(intersections.length>0){ //if intersection exist:
-        resultLayer.save(function(err) {
-          if (err) {
-            console.log('error');
-          }
-        });
-        saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+          saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
+          saveGeoLayer(intObj, req.user.username, req.body.projectName, req.body.newLayerName);
       }
-      res.send(resultLayer);
+      res.send(intObj);
     });
   });
 
@@ -370,9 +357,9 @@ router.post("/BufferDefaultGeojson", function(req, res){
     if(err){
       res.send(err);
     } else{
-      console.log("Found layer to add buffer on");
+      console.log("Found layer to add buffer on - deafult layer");
+      console.log(data[0]);
       var geoJson=JSON.stringify(data[0]);
-
       // geoJson=projectCoordinatesBeforeCalc(geoJson);
       var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
       saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
@@ -404,19 +391,20 @@ projectCoordinatesBeforeCalc=function(json){
   return json;
 }
 
-router.post("/BufferGetGeojson", function(req, res){
-  console.log('bufferGetGeojson');
+router.post("/BufferGeojson", function(req, res){
+  console.log("BufferGeojson");
   geojsonLayer.find({
     layerName: req.body.layerName,
     username:req.user.username,
-    projectName: req.body.projectName
+    projectName:req.body.projectName
   },function(err, data){
     if(err){
       res.send(err);
     }else{
-      console.log("buffer-data");
-      console.log(data);
+      console.log("returned the layer to create buffer on");
+      console.log(data[0]);
       var geoJson=JSON.stringify(data[0]);
+      // geoJson=projectCoordinatesBeforeCalc(geoJson);
       var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
       saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
       res.send(buffered);
@@ -424,15 +412,19 @@ router.post("/BufferGetGeojson", function(req, res){
   });
 });
 
-
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
   var geoJson=JSON.parse(geoJ);
   var buffered=turf.buffer(geoJson, distance, 'meters');
+  if(buffered.type==="Feature"){
+    buffered={
+      type:"FeatureCollection",
+      features:[buffered]
+    }
+  }
+  console.log(buffered);
   saveGeoLayer(buffered, username, projectName, newLayerName);
   return buffered;
 }
-
-
 
 
 //--------------STYLING-------------------
@@ -578,18 +570,21 @@ router.post("/geojsons", function(req, res){
 
 
 router.post("/saveGeojson", function(req, res){
-  console.log('save geojson');
-  var geo = new geojsonLayer();
-  geo.username=req.user.username;
-  geo.projectName=req.body.projectName;
+
+  var geo=new geojsonLayer();
+  var feature=JSON.parse(req.body.features);
+  feature.properties={};
+
+  geo.type = "FeatureCollection";
+  geo.features=feature;
+  geo.features.properties={};
   geo.layerName=req.body.layerName;
-  geo.defaultLayer= req.body.defaultLayer;
-  //TODO: adding something to the prop feature to see if it makes a difference, if it is saved to db then?
-  //or instead add in front end before sending to turf functions? In case it needs a properties variable to work correctly
-  geo.features=JSON.parse(req.body.features);
-  console.log("geo features er!!!!!: ");
-  console.log(geo.features);
-  console.log(geo.features[0].properties);
+  geo.projectName=req.body.projectName;
+  geo.username=req.user.username;
+  geo.defaultLayer=false;
+
+  console.log("GEO:");
+  console.log(geo);
 
   //go through all features for layer and check that they are valid features
   var validJson=true;

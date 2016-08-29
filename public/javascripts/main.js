@@ -16,9 +16,9 @@ var fillAgain=false; //is used to: know if popup should be reset or not, if miss
 
 //method called when project is chosen
 //TODO: how set whan page is updated????? Through controller? Or backend project session like user session is set?
-// function setProjectName(name){
-//   project.current=name;
-// }
+function setProjectName(name){
+  project.current=name;
+}
 
 function enterProject(){
   main.map.layers=[];
@@ -26,9 +26,11 @@ function enterProject(){
 }
 
 main.map.init=function(){
-  //JUST WHILE WORKING!!
-  project.current="sdfaf";
-  //preloader();
+  console.log(project.current);
+  if(project.current===""){
+    console.log("Project undefined");
+    window.location="/#projects";
+  }
   map = new L.Map('cartodb-map', {
     center: [63.43, 10.39],
     zoom: 14,
@@ -49,7 +51,10 @@ db.getLayers();
 }
 
 main.map.getStyleAndAddToMap=function(layerName, layer, defaultLayer){
+  console.log(layerName);
+  console.log(project.current);
   db.getStyle(layerName, function(data){
+    console.log(JSON.parse(data.responseText));
     var styling=JSON.parse(data.responseText)[0].layerStyle;
     main.map.addLayer(layer, styling, layerName, defaultLayer);
     main.reorderLayers();
@@ -58,16 +63,19 @@ main.map.getStyleAndAddToMap=function(layerName, layer, defaultLayer){
 
 
 main.map.addLayer=function(layer, styling, layerName, defaultLayer){
-
+  console.log(layer);
   var newLayer;
   if(layer.features[0].geometry.type === "Point"){
+    console.log("POINT");
     var style = {
-      radius: styling.radius,
+      // radius: styling.radius,
+      radius: 3,
       fillColor: styling.color,
       color: styling.lineColor,
       weight: styling.weight,
       fillOpacity: styling.opacity
     };
+    console.log(style);
     newLayer=L.geoJson(layer, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, style);
@@ -182,13 +190,23 @@ main.reorderLayers=function(){
     layersInOrder.push(listOfDomChildren[i].childNodes[0].innerHTML);
   }
   for(var j=layersInOrder.length-1; j>-1; j--){
-    var l=main.getLeafletLayerFromName(layersInOrder[j])
-    if(l!==undefined){
-      l.layer.bringToFront();
+    if(main.map.isActive(layersInOrder[j])){
+      var l=main.getLeafletLayerFromName(layersInOrder[j]);
+      console.log(l);
+      if(l!==undefined){
+        l.layer.bringToFront();
+      }
     }
   }
 }
 
+main.map.isActive=function(layerName){
+  for(var i=0; i<main.map.layers.length; i++){
+    if(main.map.layers[i].name===layerName){
+      return main.map.layers[i].active;
+    }
+  }
+}
 
 //--------------------COMMON TOOLS FUNCTIONS ----------------------------
 
@@ -347,6 +365,7 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
   checkbox.setAttribute('aria-hidden','false');
   checkbox.addEventListener("click", function(){
     main.menu.toggleLayerView();
+    main.reorderLayers();
   });
 
   var list=document.getElementById("menuLayerDropdown");
@@ -354,7 +373,7 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
   li.draggable="true";
   li.id=newLayer+"Li";
   li.appendChild(link);
-  li.appendChild(checkbox);
+
 
   //enable drag and drop
   var sortable=Sortable.create(list,{
@@ -363,14 +382,15 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
       main.reorderLayers();
     }
   });
-
+  var btnDiv=document.createElement("div");
   var edit=document.createElement("img");
   edit.className="editLayer";
   edit.src="../images/edit-white.png";
 
+  btnDiv.appendChild(checkbox);
+  btnDiv.appendChild(edit);
   if(true){ //just while working to fast delete from database! :)
     //if(!newSublayer.defaultLayer){ //the default layers cannot be deleted
-
     edit.addEventListener("click", function(){ //call differenet api depending on default layer or not
       changeLayerDesign(newLayer);
     });
@@ -381,15 +401,17 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
     trash.addEventListener("click", function(){
       main.deleteLayer(newLayer);
     });
-    li.appendChild(trash);
+    btnDiv.appendChild(trash);
+    btnDiv.className="btnDiv";
   }else{
     li.className="defaultLayer";
     edit.addEventListener("click", function(){
       changeLayerDesign(newLayer, true);
     });
   }
-  li.appendChild(edit);
+  li.appendChild(btnDiv);
   list.appendChild(li);
+  main.reorderLayers();
 }
 
 main.deleteLayer=function(layerName){
