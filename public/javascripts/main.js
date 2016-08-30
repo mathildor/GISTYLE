@@ -26,7 +26,6 @@ function enterProject(){
 }
 
 main.map.init=function(){
-  console.log(project.current);
   if(project.current===""){
     console.log("Project undefined");
     window.location="/#projects";
@@ -51,10 +50,7 @@ db.getLayers();
 }
 
 main.map.getStyleAndAddToMap=function(layerName, layer, defaultLayer){
-  console.log(layerName);
-  console.log(project.current);
   db.getStyle(layerName, function(data){
-    console.log(JSON.parse(data.responseText));
     var styling=JSON.parse(data.responseText)[0].layerStyle;
     main.map.addLayer(layer, styling, layerName, defaultLayer);
     main.reorderLayers();
@@ -63,10 +59,8 @@ main.map.getStyleAndAddToMap=function(layerName, layer, defaultLayer){
 
 
 main.map.addLayer=function(layer, styling, layerName, defaultLayer){
-  console.log(layer);
   var newLayer;
   if(layer.features[0].geometry.type === "Point"){
-    console.log("POINT");
     var style = {
       // radius: styling.radius,
       radius: 3,
@@ -75,7 +69,6 @@ main.map.addLayer=function(layer, styling, layerName, defaultLayer){
       weight: styling.weight,
       fillOpacity: styling.opacity
     };
-    console.log(style);
     newLayer=L.geoJson(layer, {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, style);
@@ -192,7 +185,6 @@ main.reorderLayers=function(){
   for(var j=layersInOrder.length-1; j>-1; j--){
     if(main.map.isActive(layersInOrder[j])){
       var l=main.getLeafletLayerFromName(layersInOrder[j]);
-      console.log(l);
       if(l!==undefined){
         l.layer.bringToFront();
       }
@@ -293,18 +285,18 @@ main.map.updateView=function(){
 //----------------------------Main menu methods -------------------------------------
 
 //checkbox action, activate and remove layers from map
-main.menu.toggleLayerView=function(){
-  var layerName=event.currentTarget.className.split('fa-eye ')[1].split(' ')[0];
+main.menu.toggleLayerView=function(target){
+  var layerName=target.className.split('fa-eye ')[1].split(' ')[0];
 
   for(var i=0; i<main.map.layers.length;i++){
     if(main.map.layers[i].name === layerName){
       if(main.map.layers[i].active == true){
-        event.currentTarget.className="fa fa-eye "+layerName+" inactive";
+        target.className="fa fa-eye "+layerName+" inactive";
         map.removeLayer(main.map.layers[i].layer);
         main.map.layers[i].active=false;
 
       }else{
-        event.currentTarget.className="fa fa-eye "+layerName+" active";
+        target.className="fa fa-eye "+layerName+" active";
         map.addLayer(main.map.layers[i].layer);
         main.map.layers[i].active=true;
       }
@@ -356,6 +348,10 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
 
   var link=document.createElement('a');
   link.innerHTML=newLayer;
+  link.addEventListener("click",function(){
+    main.menu.toggleLayerView(event.currentTarget.parentNode.children[1].children[0]);
+    main.reorderLayers();
+  });
   //link.contentEditable='true';
 
   var checkbox=document.createElement('i');
@@ -364,7 +360,7 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
   checkbox.setAttribute("checked","true");
   checkbox.setAttribute('aria-hidden','false');
   checkbox.addEventListener("click", function(){
-    main.menu.toggleLayerView();
+    main.menu.toggleLayerView(event.currentTarget);
     main.reorderLayers();
   });
 
