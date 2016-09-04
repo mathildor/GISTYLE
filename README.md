@@ -2,14 +2,14 @@
 
 ## About
 GISTYLE is a Web-GIS created for a course at NTNU (The Norwegian University of Science and Technology), called Programming in Geomatics.
-It's main goal of the project was to create a GIS that contains basic geospatial analysis, and it should be easy to use, also for those without any experience with GIS from before.
+The main goal of the project was to create a GIS that contains basic geospatial analysis, and it should be easy to use, also for those without any experience with GIS from before.
 
 ## Implementation
 #### Mean-stack
 The application is built with the Mean-stack. This means that I've used MongoDB, Express.js, AngularJS and Node.js.
 
 #### Libraries
-For most of the geospatial analysis the Mapbox library [Turf.js](http://turfjs.org/) was used. The interactive map is created by using [Leaflet.js](http://leafletjs.com/).
+For most of the geospatial analysis the Mapbox library [Turf.js](http://turfjs.org/) is used. The interactive map is created by using [Leaflet.js](http://leafletjs.com/).
 
 ## Functionality
 The GIS has log-in functionality, you can create projects and all changes are saved automatically to your user.
@@ -25,7 +25,7 @@ The GIS has log-in functionality, you can create projects and all changes are sa
 - Edit styling of layer
 
 ## Limitations and bugs
-The GIS is still under development, and there are still bugs.
+The GIS is still under development, so there are still bugs.
 - When uploading GeoJSON´s with more than one type is not supported
 - Buffer returns wrong results because of projection errors
 - Deleting default layers are added again if you refresh page
