@@ -63,7 +63,6 @@ $nav-color:rgba(0,0,0,0.58);
   color: grey;
 }
 
-
 .fa:hover{
   cursor: pointer;
 }
@@ -75,7 +74,6 @@ $nav-color:rgba(0,0,0,0.58);
     padding-bottom: 2%;
     font-size:150%;
   }
-  padding-top: 2em;
 
   input[type=checkbox]{
     margin-left: 5px;
@@ -90,6 +88,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
   #layerHeader{
     font-size:150%;
+    padding-top: 24px;
   }
   img{
     margin-top: 2px;
@@ -414,7 +413,7 @@ $nav-color:rgba(0,0,0,0.58);
 #uploadPopUp{
   width: 485px;
   h1{
-    width: 100%;
+    width: 122%;
     margin-left: 20px;
     margin-bottom: 30px;
     text-align: center;
@@ -424,6 +423,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
 
   #inputFile{
+    width: 80%;
     margin-bottom: 20px;
   }
   .inline-div{
@@ -488,5 +488,17 @@ $nav-color:rgba(0,0,0,0.58);
 #mergePopUp, #bufferPopUp{
   ul{
     padding-left:0;
+  }
+}
+
+#overpass-turbo{
+  display: inline-table;
+  a:active{
+    color:white;
+    text-decoration: none;
+  }
+  a:visited{
+    color:white;
+    text-decoration: none;
   }
 }

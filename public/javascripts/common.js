@@ -28,15 +28,17 @@ common.addToolLayer=function(dataObj, reqUrl, type, color, newLayerName){
         alert(reqUrl+" gave no result for the chosen layers.");
       }else{
         // if(reqUrl==="BufferDefaultGeojson"){
-        //   //Test projections:
-        //   var projectedJson=projectCoordinates(JSON.parse(data.responseText));
-        // }
-        var styling=common.getStylingObj(color);
-        console.log(JSON.parse(data.responseText));
+        if(reqUrl===""){
+           //Test projections:
+           var projectedJson=projectCoordinates(JSON.parse(data.responseText));
+        }else{
+          var styling=common.getStylingObj(color);
+          console.log(JSON.parse(data.responseText));
 
-        var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
-        //var layer=main.map.addLayer(projectedJson, styling, newLayerName, false);
-        main.menu.addToLayerList(newLayerName, layer);
+          var layer=main.map.addLayer(JSON.parse(data.responseText), styling, newLayerName, false);
+          //var layer=main.map.addLayer(projectedJson, styling, newLayerName, false);
+          main.menu.addToLayerList(newLayerName, layer);
+        }
       }
     }
   });

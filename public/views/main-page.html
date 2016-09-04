@@ -9,7 +9,9 @@
     </li>
     <div class="inline-div">
       <input type="file" id="inputFile">
-      <a href="https://overpass-turbo.eu/" target="_blank">Find data here</a>
+      <div id="overpass-turbo">
+        <a href="https://overpass-turbo.eu/" target="_blank">Find data here</a>
+      </div>
     </div>
     <div class="inline-div">
         <h5>Layer name:</h5>
@@ -124,7 +126,7 @@
         <div class="content">
           <div class="inputs">
             <li class="chooseLayer">
-                <h2>Find ntersection between:</h2>
+                <h2>Find intersection between:</h2>
                 <div class="layerDropdown">
                     <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
                     <ul class="layerDropdown-content" id="layerDropdown-content-area-intersect"></ul>
