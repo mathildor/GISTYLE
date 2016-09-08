@@ -11,7 +11,7 @@ var defaultLayerStyle=require('../models/defaultLayerStyle.js');
 var turf=require('../public/turf.min.js');
 var proj4=require('../public/bower_components/proj4js/dist/proj4.js');
 var GJV = require("geojson-validation");
-
+var buffer=require("../turf-buffer/index.js");
 
 //-------------POSTGIS---------------------
 
@@ -140,7 +140,7 @@ router.post("/within",function(req, res){
         type:"FeatureCollection",
         features:intersections
       };
-      if(intersections.lengt>0){
+      if(intersections.length>0){
         saveGeoLayer(withinObj,req.user.username,req.body.projectName, req.body.newLayerName);
         saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
       }
@@ -360,7 +360,6 @@ router.post("/BufferDefaultGeojson", function(req, res){
       console.log("Found layer to add buffer on - deafult layer");
       console.log(data[0]);
       var geoJson=JSON.stringify(data[0]);
-      // geoJson=projectCoordinatesBeforeCalc(geoJson);
       var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
       saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
       res.send(buffered);
@@ -368,28 +367,6 @@ router.post("/BufferDefaultGeojson", function(req, res){
   });
 });
 
-
-
-projectCoordinatesBeforeCalc=function(json){
-  var toProj=proj4.defs('EPSG:3785');
-  var fromProj=proj4.defs('EPSG:4326');
-
-  console.log(json.features);
-  // console.log(json.features);
-
-  for(var i=0; i<json.features.length; i++){
-    var projCoords=[];
-    var coords=json.features[i].geometry.coordinates;
-    for(var j=0; j<coords[0].length; j++ ){
-      var projCoord=proj4(fromProj, toProj ,coords[0][j] );
-      projCoords.push(projCoord);
-    }
-    json.features[i].geometry.coordinates[0]=projCoords;
-    // console.log(projCoords);
-  }
-  console.log(json.features[0].geometry.coordinates[0][0]);
-  return json;
-}
 
 router.post("/BufferGeojson", function(req, res){
   console.log("BufferGeojson");
@@ -403,8 +380,7 @@ router.post("/BufferGeojson", function(req, res){
     }else{
       console.log("returned the layer to create buffer on");
       console.log(data[0]);
-      var geoJson=JSON.stringify(data[0]);
-      // geoJson=projectCoordinatesBeforeCalc(geoJson);
+      var geoJson=JSON.stringify(convertedGeoJson);
       var buffered=createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
       saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.bufferColor);
       res.send(buffered);
@@ -414,7 +390,7 @@ router.post("/BufferGeojson", function(req, res){
 
 function createBuffer(geoJ, distance, newLayerName, projectName, username){
   var geoJson=JSON.parse(geoJ);
-  var buffered=turf.buffer(geoJson, distance, 'meters');
+  var buffered=buffer(geoJson, distance, 'meters');
   if(buffered.type==="Feature"){
     buffered={
       type:"FeatureCollection",
