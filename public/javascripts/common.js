@@ -1,6 +1,4 @@
 var common={};
-var web_mercator=proj4.defs('EPSG:3785');
-var unprojected=proj4.defs('EPSG:4326');
 
 common.getStylingObj=function(color){
   var styling={
@@ -57,43 +55,6 @@ common.getUnusedLayerName=function(name){
     }
   }
 }
-projectCoordinates=function(json, fromProj, toProj){
-  console.log(json.features);
-  // console.log(json.features);
-
-  for(var i=0; i<json.features.length; i++){
-    var projCoords=[];
-    var coords=json.features[i].geometry.coordinates;
-    for(var j=0; j<coords[0].length; j++ ){
-      var projCoord=proj4(fromProj, toProj ,coords[0][j] );
-      projCoords.push(projCoord);
-    }
-    json.features[i].geometry.coordinates[0]=Number(projCoords);
-    console.log(projCoords);
-  }
-  console.log(json.features[0].geometry.coordinates[0][0]);
-  return json;
-}
-// projectCoordinates=function(json, fromProj, toProj){
-//   // var projBuffer=proj4(fromProjection[, toProjection, buffered);
-//   console.log(json.features[0].geometry.coordinates[0][0]);
-//
-//   for(var i=0; i<json.features.length; i++){
-//     //TODO: might need to flip the coordinates here
-//     //loop through all the coordinates, make new coord array and replace it whith the one in current feature
-//     var projCoords=[];
-//     var coords=json.features[i].geometry.coordinates;
-//     for(var j=0; j<coords[0].length; j++ ){
-//       var projCoord=proj4(fromProj, toProj ,coords[0][j] );
-//       // console.log(projCoord);
-//       projCoords.push(projCoord);
-//     }
-//     json.features[i].geometry.coordinates[0]=projCoords;
-//     // console.log(projCoords);
-//   }
-//   console.log(json.features[0].geometry.coordinates[0][0]);
-//   return json;
-// }
 
 common.exsistsInList=function(list, element){
   if(list == undefined){
