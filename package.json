@@ -34,7 +34,6 @@
     "passport-local-mongoose": "^4.0.0",
     "pg": "4.5.5",
     "pg-promise": "^3.2.3",
-    "proj4": "^2.3.14",
     "serve-favicon": "~2.3.0",
     "should": "~2.1.0",
     "turf": "^2.0.2"

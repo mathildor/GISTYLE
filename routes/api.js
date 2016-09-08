@@ -9,7 +9,6 @@ var geojsonLayer=require('../models/geojson.js');
 var layerStyle=require('../models/layerStyle.js');
 var defaultLayerStyle=require('../models/defaultLayerStyle.js');
 var turf=require('../public/turf.min.js');
-var proj4=require('../public/bower_components/proj4js/dist/proj4.js');
 var GJV = require("geojson-validation");
 var buffer=require("../turf-buffer/index.js");
 
