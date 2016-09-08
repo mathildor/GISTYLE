@@ -10,35 +10,7 @@ var layerStyle=require('../models/layerStyle.js');
 var defaultLayerStyle=require('../models/defaultLayerStyle.js');
 var turf=require('../public/turf.min.js');
 var GJV = require("geojson-validation");
-var buffer=require("../turf-buffer/index.js");
-
-//-------------POSTGIS---------------------
-
-
-//postgres db:
-
-/*var promise = require('bluebird');
-
-var options = {
-// Initialization Options
-promiseLib: promise
-};
-
-var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/puppies';
-var db = pgp(connectionString);
-
-// add query functions
-
-module.exports = {
-getAllLayers: getAllLayers,
-getSingleLayer: getSingleLayer,
-createNewLayer: createNewLayer,
-updateLayer: updateLayer,
-removeLayer: removeLayer
-};*/
-
-
+var buffer=require("../routes/buffer-turf.js");
 
 //-----------------TOOLS-----------------------
 
