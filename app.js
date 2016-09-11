@@ -11,8 +11,7 @@ var hash = require('bcrypt-nodejs');
 var path = require('path');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
-var pg = require('pg');
-
+const favicon = require('express-favicon');
 
 
 // mongoose
@@ -24,26 +23,11 @@ var User = require('./models/user.js');
 
 // create instance of express
 var app = express();
+app.use(favicon('/images/map-marker-icon.png'));
 
 // require routes - allows for having api in other document
 var routes = require('./routes/api.js');
 
-
-
-
-/*pg.defaults.ssl = true;
-
-var db_URL= 'postgres://cxjvykonlopaxp:tt1w4Ny1X-2f5MTd4Hp47pkzrg@ec2-54-163-226-48.compute-1.amazonaws.com:5432/d7it3v7uj22286';
-pg.connect(db_URL, function(err, client) {
-    if (err) throw err;
-    console.log('Connected to postgres! Getting schemas...');
-
-    client
-        .query('SELECT table_schema,table_name FROM information_schema.tables;')
-        .on('row', function(row) {
-            //console.log(JSON.stringify(row));
-        });
-});*/
 
 
 // define middleware
@@ -92,12 +76,6 @@ app.use(function(err, req, res) {
         error: {}
     }));
 });
-
-
-
-
-//-------------------------------API-----------------------------------------
-
 
 
 module.exports = app;
