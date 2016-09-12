@@ -27,7 +27,7 @@ within.run=function(){
   tools.dialog.createLayerDropdown(contentArea,["Polygon"]);
 
   var contentOutput=document.getElementById("layerDropdown-content-output-within");
-  tools.dialog.createLayerDropdown(contentOutput, ["Point"]);
+  tools.dialog.createLayerDropdown(contentOutput, ["Point", "Polygon"]); //TODO: multipolygon as well?
 
   $("#overlay").show();
   $("#withinPopUp").show();

@@ -131,21 +131,29 @@ function intersectingPoint(polygon, feature, featuresDataType){
   //POINTS
   if(featuresDataType==="Point"){
     if(turf.inside(feature, polygon)){
-      // console.log('INTERSECTION FOUND for this feature');
+      console.log('INTERSECTION FOUND for this feature of type POINT');
       intersectionFound=true;
     }
     //Polygons, lines ++
   }else{
     for(var k=0; k<points[0].length; k++){//for all set of points
-      //create fake obj to send to turf intersection function
+      //create dummy obj to send to turf intersection function
       var pointFeature={
+        type:"Feature",
+        properties:{},
         geometry:{
+          type:"Point",
           coordinates:points[0][k]
         }
       };
       // console.log('i for loop: points[k]: ');
+      console.log("Checking for interesection");
+      console.log("pointFeature");
+      console.log(pointFeature);
+      console.log("polygon");
+      console.log(polygon);
       if(turf.inside(pointFeature, polygon)){
-        // console.log('INTERSECTION FOUND');
+        console.log('INTERSECTION FOUND for a Polygon/line etc');
         intersectionFound=true;
       }
     }
