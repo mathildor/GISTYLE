@@ -98,8 +98,12 @@ router.post("/within",function(req, res){
 
         //for all areas: check all points in all features of output data layer, if they are inside
         var features2=outputData[0].features;
+        console.log("Number of features:");
+        console.log(features2.length);
         for(var j=0; j<features2.length; j++){ //for all features, check if any point is inside
-          if(intersectingPoint(polygon, features2[j], req.body.outputType) == true){ //at least one point inside
+          console.log("feature number: "+j);
+          if(intersectingPoint(polygon, features2[j], req.body.outputType) === true){ //at least one point inside
+            console.log("Found intersection for feature number: "+j);
             intersections.push(features2[j]);
           }
         }
@@ -125,6 +129,7 @@ router.post("/within",function(req, res){
 function intersectingPoint(polygon, feature, featuresDataType){
 
   var points=feature.geometry.coordinates;
+
   // console.log('points');
   var intersectionFound=false;
 
@@ -134,10 +139,13 @@ function intersectingPoint(polygon, feature, featuresDataType){
       console.log('INTERSECTION FOUND for this feature of type POINT');
       intersectionFound=true;
     }
-    //Polygons, lines ++
+    //Polygons, LineString ++
   }else{
+    if(featuresDataType==="LineString"){
+      points=[points]; //Making the Linestring coordinates list similar to polygon list, has more brackets
+    }
     for(var k=0; k<points[0].length; k++){//for all set of points
-      //create dummy obj to send to turf intersection function
+      //create dummy obj to send to turf.inside function
       var pointFeature={
         type:"Feature",
         properties:{},
@@ -147,13 +155,13 @@ function intersectingPoint(polygon, feature, featuresDataType){
         }
       };
       // console.log('i for loop: points[k]: ');
-      console.log("Checking for interesection");
-      console.log("pointFeature");
-      console.log(pointFeature);
-      console.log("polygon");
-      console.log(polygon);
+      // console.log("Checking for interesection");
+      // console.log("pointFeature");
+      // console.log("polygon");
+      // console.log(polygon);
       if(turf.inside(pointFeature, polygon)){
         console.log('INTERSECTION FOUND for a Polygon/line etc');
+        console.log(pointFeature);
         intersectionFound=true;
       }
     }

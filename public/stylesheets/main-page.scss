@@ -68,6 +68,8 @@ $nav-color:rgba(0,0,0,0.58);
 }
 
 #sidebar{
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
   h2{
     padding-top:4%;
     color: white;
@@ -88,7 +90,6 @@ $nav-color:rgba(0,0,0,0.58);
   }
   #layerHeader{
     font-size:150%;
-    padding-top: 24px;
   }
   img{
     margin-top: 2px;
@@ -100,6 +101,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
   #intersectionImg{
     transform: rotate(-100deg);
+
   }
   #differenceImg{
     transform: rotate(-20deg);
@@ -452,7 +454,7 @@ $nav-color:rgba(0,0,0,0.58);
   }
 }
 
-#intersectPopUp{
+#intersectPopUp, #withinPopUp{
   padding-left: 3%;
   padding-right: 3%;
   ul{
@@ -474,7 +476,23 @@ $nav-color:rgba(0,0,0,0.58);
   .createButton{
     margin-top: 4%;
   }
+}
 
+#withinPopUp{
+  img{
+    margin-top: 16px;
+  }
+  .popupHeader{
+    margin-left: 7%;
+  }
+}
+#mergePopUp{
+  img{
+    margin-left: 62px;
+  }
+  .createButton{
+    margin-top: 0;
+  }
 }
 
 .popupContent{
