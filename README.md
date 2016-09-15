@@ -34,8 +34,7 @@ The GIS has log-in functionality, you can create projects and all changes are sa
 
 ## Limitations and bugs
 The GIS is still under development, so there are still bugs.
-- When uploading GeoJSON´s with more than one type is not supported
-- Buffer returns wrong results because of projection errors
+
 - Deleting default layers are added again if you refresh page
 - Tutorial section does still not have explanation of everything, and the correct videos are not added yet.
 
