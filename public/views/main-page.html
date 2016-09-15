@@ -8,15 +8,15 @@
         <div class="line"></div>
     </li>
     <div class="inline-div">
-      <input type="file" id="inputFile">
-      <div id="overpass-turbo">
-        <a href="https://overpass-turbo.eu/" target="_blank">Find data here</a>
-      </div>
+        <input type="file" id="inputFile">
+        <div id="overpass-turbo">
+            <a href="https://overpass-turbo.eu/" target="_blank">Find data here</a>
+        </div>
     </div>
     <div class="inline-div">
         <h5>Layer name:</h5>
         <input type="text" id="uploaded-layer-name">
-        <h5 >Color:</h5>
+        <h5>Color:</h5>
         <input type="color" value="#3E961B" id="newLayerColor">
     </div>
     <button class="createButton" onclick="upload.run()">Upload</button>
@@ -78,36 +78,36 @@
             <div class="line"></div>
         </li>
         <div class="popupContent">
-        <div class="inputContent">
-            <li class="chooseLayer">
-                <h2>Find all:</h2>
-                <div class="layerDropdown">
-                    <a class="dropdown-toggle" id="chosenOutputWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-output-within'))" value="close"></a>
-                    <ul class="layerDropdown-content" id="layerDropdown-content-output-within"></ul>
-                </div>
-            </li>
-            <li class="chooseLayer">
-                <h2>that are within:</h2>
-                <div class="layerDropdown">
-                    <a class="dropdown-toggle" id="chosenAreaWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-area-within'))"  value="close"></a>
-                    <ul class="layerDropdown-content" id="layerDropdown-content-area-within"></ul>
-                </div>
-            </li>
-            <li>
-                <ul class="chosenLayers" id="chosenLayersWithin">
+            <div class="inputContent">
+                <li class="chooseLayer">
+                    <h2>Find all:</h2>
+                    <div class="layerDropdown">
+                        <a class="dropdown-toggle" id="chosenOutputWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-output-within'))" value="close"></a>
+                        <ul class="layerDropdown-content" id="layerDropdown-content-output-within"></ul>
+                    </div>
+                </li>
+                <li class="chooseLayer">
+                    <h2>that are within:</h2>
+                    <div class="layerDropdown">
+                        <a class="dropdown-toggle" id="chosenAreaWithin" onclick="tools.dialog.toggle($('#layerDropdown-content-area-within'))" value="close"></a>
+                        <ul class="layerDropdown-content" id="layerDropdown-content-area-within"></ul>
+                    </div>
+                </li>
+                <li>
+                    <ul class="chosenLayers" id="chosenLayersWithin">
 
-                </ul>
-            </li>
+                    </ul>
+                </li>
                 <h2>Set name:</h2>
                 <input class="dialogInput" id="withinLayerName">
-            <li>
-                <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="withinColor"></h2>
-            </li>
+                <li>
+                    <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="withinColor"></h2>
+                </li>
 
-          </div>
-          <li>
-              <img class="image-info" src="../images/withinPopup2.png">
-          </li>
+            </div>
+            <li>
+                <img class="image-info" src="../images/withinPopup2.png">
+            </li>
         </div>
         <li>
             <button class="createButton" id="createWithin" onclick="within.create()">Create within-layer</button>
@@ -124,36 +124,36 @@
             <div class="line"></div>
         </li>
         <div class="content">
-          <div class="inputs">
-            <li class="chooseLayer">
-                <h2>Find intersection between:</h2>
-                <div class="layerDropdown">
-                    <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
-                    <ul class="layerDropdown-content" id="layerDropdown-content-area-intersect"></ul>
-                </div>
-            </li>
-            <li class="chooseLayer">
-                <h2>and:</h2>
-                <div class="layerDropdown">
-                    <a class="dropdown-toggle" id="chosenOutputIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-output-intersect'))" value="close"></a>
-                    <ul class="layerDropdown-content" id="layerDropdown-content-output-intersect"></ul>
-                </div>
-            </li>
-            <li>
-                <ul class="chosenLayers" id="chosenLayersIntersect">
+            <div class="inputs">
+                <li class="chooseLayer">
+                    <h2>Find intersection between:</h2>
+                    <div class="layerDropdown">
+                        <a class="dropdown-toggle" id="chosenAreaIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-area-intersect'))" value="close"></a>
+                        <ul class="layerDropdown-content" id="layerDropdown-content-area-intersect"></ul>
+                    </div>
+                </li>
+                <li class="chooseLayer">
+                    <h2>and:</h2>
+                    <div class="layerDropdown">
+                        <a class="dropdown-toggle" id="chosenOutputIntersect" onclick="tools.dialog.toggle($('#layerDropdown-content-output-intersect'))" value="close"></a>
+                        <ul class="layerDropdown-content" id="layerDropdown-content-output-intersect"></ul>
+                    </div>
+                </li>
+                <li>
+                    <ul class="chosenLayers" id="chosenLayersIntersect">
 
-                </ul>
-            </li>
-            <h2>Set name:</h2>
-            <input class="dialogInput" id="intersectLayerName">
-            <li>
-                <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="intersectColor"></h2>
-            </li>
+                    </ul>
+                </li>
+                <h2>Set name:</h2>
+                <input class="dialogInput" id="intersectLayerName">
+                <li>
+                    <h2>Color:<input class="inputColor" type="color" value="#243CEE" id="intersectColor"></h2>
+                </li>
 
-          </div>
-          <li>
-              <img class="image-info" src="../images/intersection-info.png">
-          </li>
+            </div>
+            <li>
+                <img class="image-info" src="../images/intersection-info.png">
+            </li>
         </div>
         <li>
             <button class="createButton" id="createIntersection" onclick="intersection.create()">Create intersection</button>
@@ -206,6 +206,7 @@
             <h1>DIFFERENCE</h1>
             <div class="line"></div>
         </li>
+        <li><img id="diffImg" src="../images/difference-3.png"></li>
         <li class="chooseLayer">
             <h2>Add output area:</h2>
             <div class="layerDropdown">
@@ -275,7 +276,7 @@
             </li>
             <li class="inline">
                 <h2>Color:<input type="color" id="color"></h2>
-                <h2 class="secondElement" >Opacity:<input class="inputText" type="range" min="0" max="1" step="0.01" id="opacity"></h2>
+                <h2 class="secondElement">Opacity:<input class="inputText" type="range" min="0" max="1" step="0.01" id="opacity"></h2>
             </li>
             <li class="inline" id="lineStyle">
                 <h2>Line-color:<input type="color" id="lineColor"></h2>
@@ -314,7 +315,8 @@
                             <a id="logOut" href="#/logout">Log out</a>
                         </div>
                     </form>
-                </div><!--/.navbar-collapse -->
+                </div>
+                <!--/.navbar-collapse -->
             </div>
         </nav>
 
@@ -325,7 +327,7 @@
                     <div id="sidebar">
                         <ul class="sidebar-brand">
                             <h2 id="layerHeader">LAYERS</h2>
-                            <div class="dropdown" >
+                            <div class="dropdown">
                                 <ul id="menuLayerDropdown"></ul>
                             </div>
 
@@ -333,7 +335,7 @@
                                 <h2>TOOLS</h2>
                                 <li>
                                     <img id="bufferImg" class="toolFigure" src="../images/Buffer.png">
-                                    <a  href="" onclick="buffer.run()">Buffer</a>
+                                    <a href="" onclick="buffer.run()">Buffer</a>
                                 </li>
                                 <li>
                                     <img class="toolFigure" id="withinImg" src="../images/within.png">

@@ -1,5 +1,13 @@
 # GISTYLE
 
+
+![turf](/public/images/icon.png)
+======
+
+[gistyle.com](http://gistyle.herokuapp.com/#/views/welcome)
+
+ ---
+
 ## About
 GISTYLE is a Web-GIS created for a course at NTNU (The Norwegian University of Science and Technology), called Programming in Geomatics.
 The main goal of the project was to create a GIS that contains basic geospatial analysis, and it should be easy to use, also for those without any experience with GIS from before.

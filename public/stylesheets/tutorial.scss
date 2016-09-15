@@ -55,14 +55,15 @@
 
 #tutorial-content{
   z-index: 2;
-  margin-top:110px;
+  margin-top:70px;
   margin-left: 8%;
   height: 100vh;
   display: -webkit-inline-box;
 
   #tutorial-col{
-    width: 80%;
-    height: 80%;
+    // width: 80%;
+    width: 100%;
+    height: calc(100vh - 70px);
     overflow-y: scroll;
   }
 
