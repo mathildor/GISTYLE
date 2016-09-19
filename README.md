@@ -26,17 +26,11 @@ The GIS has log-in functionality, you can create projects and all changes are sa
 - Buffer
 - Merge
 - Intersection (Between polygons)
-- Within (Points within polygons)
+- Within (Points/Polygons within polygons)
 - Difference
 - Upload new layer (GeoJSON)
 - Draw new layer (Polygon)
 - Edit styling of layer
-
-## Limitations and bugs
-The GIS is still under development, so there are still bugs.
-
-- Deleting default layers are added again if you refresh page
-- Tutorial section does still not have explanation of everything, and the correct videos are not added yet.
 
 ## Demo
 The project was presented at FOSS4G in Norway 2016, and the presentation can be seen in this [video](https://vimeo.com/album/4125736/video/181135135), from time 6:40.
