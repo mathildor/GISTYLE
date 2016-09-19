@@ -1,88 +1,94 @@
-body{
-  margin: 0;
-  overflow: hidden;
-  ul{
-    list-style-type: none;
-  }
-  a:hover{
-    text-decoration: none;
-    color: #DAD8D8;
-  }
-  a{
-    color: white;
-    text-decoration: none;
-  }
+body {
+    margin: 0;
+    overflow: hidden;
+
+    ul {
+        list-style-type: none;
+    }
+
+    a:hover {
+        text-decoration: none;
+        color: #DAD8D8;
+    }
+
+    a {
+        color: white;
+        text-decoration: none;
+    }
 }
 
-.background-img{
-  background-image: url("../images/map.png");
-  -webkit-filter: blur(5px);
-  -moz-filter: blur(5px);
-  -o-filter: blur(5px);
-  -ms-filter: blur(5px);
-  filter: blur(5px);
-  z-index: 1;
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  display: block;
-}
-
-.background{
-  position: fixed;
-  left:0; rigth: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 999;
-}
-
-
-.welcome-page{
-  z-index: 999;
-  color:white;
-
-  .welcome-content{
-    margin-left: 5%;
+.background-img {
+    background-image: url("../images/map.png");
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    z-index: 1;
     width: 100vw;
     height: 100vh;
-  }
-
-  .welcomeText {
-    font-size: 120%;
-    font-weight: 300;
-    width: 30%;
-    margin: auto;
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    padding-top: 40vh;
-  }
+    position: fixed;
+    display: block;
 }
 
-.welcome-top-panel{
-  display: flex;
+.background {
+    position: fixed;
+    left: 0;
+    rigth: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
 }
 
-.top-right{
-   float:right;
-   margin-right: 10%;
-   margin-left: auto;
-   margin-top: 1%;
-   display: flex;
-   font-size: large;
-   a{
-     padding-left: 5px;
-     padding-right: 5px;
-   }
- }
+.welcome-page {
+    z-index: 999;
+    color: white;
 
-.red-line{
+    .welcome-content {
+        margin-left: 5%;
+        width: 100vw;
+        height: 100vh;
+    }
 
-  height: 5px;
-  background-color: #D26269;
-  width: 90vw;
-  display:flex;
-  z-index: 999999;
+    .welcomeText {
+        font-size: 120%;
+        font-weight: 300;
+        width: 30%;
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        padding-top: 40vh;
+    }
 }
 
-#wel-header{
-  padding-bottom: 20px;
+.welcome-top-panel {
+    display: flex;
+}
+
+.top-right {
+    float: right;
+    margin-right: 10%;
+    margin-left: auto;
+    margin-top: 1%;
+    display: flex;
+    font-size: large;
+
+    a {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+.red-line {
+    height: 5px;
+    background-color: #D26269;
+    width: 90vw;
+    display: flex;
+    z-index: 999999;
+}
+
+#wel-header {
+    padding-bottom: 20px;
 }

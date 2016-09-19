@@ -2,6 +2,8 @@
 <html>
 <head>
 
+    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+
     <link rel="stylesheet" type="text/css" href="stylesheets/main-page.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/logAndSign.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/welcome.min.css">
@@ -14,20 +16,12 @@
     <link rel="stylesheet" href="bower_components/Leaflet.draw/dist/leaflet.draw.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
-
-    <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css">-->
-
-
-    <!--<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />-->
-    <!--<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>-->
-
+    <!-- Add all libs here:     -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="javascripts/Sortable-master/Sortable.js"></script>
     <script src="bower_components/leaflet/leaflet.js"></script>
     <script src="bower_components/Leaflet.draw/dist/leaflet.draw.js"></script>
-    <!--<script src="bower_components/cartodb.js/cartodb.js"></script>-->
-
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
 
@@ -36,8 +30,9 @@
     <script src="javascripts/controllers/angApp.js"></script>
     <script src="javascripts/services.js"></script>
     <script src="javascripts/controllers/controllers.js"></script>
-    <!--<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>-->
-    <!--<script src="javascripts/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>-->
+    <script src="turf.min.js" charset="utf-8"></script>
+
+    <!-- Add all js here:     -->
     <script src="javascripts/common.js"></script>
     <script src="javascripts/db.js"></script>
     <script src="javascripts/projects.js"></script>
@@ -52,8 +47,6 @@
     <script src="javascripts/tools/dialog.js"></script>
     <script src="javascripts/tools/upload.js"></script>
 
-    <script src="turf.min.js" charset="utf-8"></script>
-    <!-- <script src="../turf-buffer/index.js" charset="utf-8"></script> -->
     <script src="" charset="utf-8"></script>
 
     <!--Preloader-->
@@ -62,13 +55,9 @@
 
     <title>GISTYLE</title>
 </head>
+
 <body ng-app="gisApp">
-
-
-<ng-view>
-    <h1>Hola</h1>
-</ng-view>
-
-
+    <ng-view>
+    </ng-view>
 </body>
 </html>

@@ -8,7 +8,6 @@ var gisApp = angular.module("gisApp", [
     'gisControllers'
 ]);
 
-
 //Define what controllers to use here, not in html
 
 gisApp.config(['$routeProvider',
@@ -18,7 +17,7 @@ gisApp.config(['$routeProvider',
         when('/mainPage',{
             templateUrl: 'views/main-page.html',
             controller:'mapController',
-            access: {restricted: false} //Change later, just so update doesn't log out
+            access: {restricted: false}
         }).
         when('/views/welcome',{
             templateUrl: 'views/welcome.html',
@@ -64,12 +63,9 @@ gisApp.config(['$routeProvider',
         });
     }]);
 
-
 gisApp.run(function ($rootScope, $location, $route, AuthService) {
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
             AuthService.getUserStatus();
-            //console.log('acc restrict?: '+next.access.restricted);
-            //console.log('logged in?: '+AuthService.isLoggedIn());
 
             if (next.access.restricted && !AuthService.isLoggedIn()) {
                 $location.path('/login');
@@ -77,7 +73,3 @@ gisApp.run(function ($rootScope, $location, $route, AuthService) {
             }
         });
 });
-
-
-//USE for ordering layers by name:
-//&scope.orderProp='name';

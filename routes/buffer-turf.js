@@ -9,7 +9,6 @@ var simplify = require('../node_modules/turf-simplify');
 module.exports = buffer;
 
 function buffer(feature, radius, units, resolution){
-  console.log("In buffer!");
   if (!resolution) resolution = 32; // Same value as JSTS
   if (radius < 0) throw new Error("The buffer radius must be positive");
   if (radius == 0) return feature;

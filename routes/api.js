@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-
 var User = require('../models/user.js');
 var defaultLayer = require('../models/defaultLayer.js');
 var Project = require('../models/project.js');
@@ -14,10 +13,7 @@ var buffer = require("../routes/buffer-turf.js");
 
 //-----------------TOOLS-----------------------
 
-
 function saveGeoLayer(layer, username, projectName, newLayerName) {
-    console.log('save geolayer');
-    console.log(projectName);
     var geo = new geojsonLayer();
     var feature = layer.features;
     feature.properties = {};
@@ -29,10 +25,6 @@ function saveGeoLayer(layer, username, projectName, newLayerName) {
     geo.projectName = projectName;
     geo.username = username;
     geo.defaultLayer = false;
-
-    console.log("GEO:");
-    console.log(geo);
-
     geo.save(function(err) {
         if (err) {
             console.log('error in save geolayer');
@@ -41,7 +33,6 @@ function saveGeoLayer(layer, username, projectName, newLayerName) {
         }
     });
 }
-
 
 function saveStyle(layerName, username, projectName, color) {
     var styling = {
@@ -67,8 +58,6 @@ function saveStyle(layerName, username, projectName, color) {
     });
 }
 
-
-
 router.post("/within", function(req, res) {
     var intersections = [];
     var inputCond = {
@@ -87,10 +76,8 @@ router.post("/within", function(req, res) {
         outputCond.projectName = req.body.projectName;
     }
 
-    console.log('input area');
     geojsonLayer.find(outputCond, function(err, outputData) {
         geojsonLayer.find(inputCond, function(err, inputArea) {
-            console.log(req.body.inputType);
 
             var features1 = inputArea[0].features;
             for (var i = 0; i < features1.length; i++) { //go through polygons in multi
@@ -98,19 +85,12 @@ router.post("/within", function(req, res) {
 
                 //for all areas: check all points in all features of output data layer, if they are inside
                 var features2 = outputData[0].features;
-                console.log("Number of features:");
-                console.log(features2.length);
                 for (var j = 0; j < features2.length; j++) { //for all features, check if any point is inside
-                    console.log("feature number: " + j);
                     if (intersectingPoint(polygon, features2[j], req.body.outputType) === true) { //at least one point inside
-                        console.log("Found intersection for feature number: " + j);
                         intersections.push(features2[j]);
                     }
                 }
             }
-            console.log('All features');
-            console.log(intersections);
-
             var withinObj = {
                 type: "FeatureCollection",
                 features: intersections
@@ -119,24 +99,18 @@ router.post("/within", function(req, res) {
                 saveGeoLayer(withinObj, req.user.username, req.body.projectName, req.body.newLayerName);
                 saveStyle(req.body.newLayerName, req.user.username, req.body.projectName, req.body.color);
             }
-            console.log(withinObj);
             res.send(withinObj);
         });
     });
-
 });
 
 function intersectingPoint(polygon, feature, featuresDataType) {
 
     var points = feature.geometry.coordinates;
-
-    // console.log('points');
     var intersectionFound = false;
-
     //POINTS
     if (featuresDataType === "Point") {
         if (turf.inside(feature, polygon)) {
-            console.log('INTERSECTION FOUND for this feature of type POINT');
             intersectionFound = true;
         }
         //Polygons, LineString ++
@@ -154,14 +128,7 @@ function intersectingPoint(polygon, feature, featuresDataType) {
                     coordinates: points[0][k]
                 }
             };
-            // console.log('i for loop: points[k]: ');
-            // console.log("Checking for interesection");
-            // console.log("pointFeature");
-            // console.log("polygon");
-            // console.log(polygon);
             if (turf.inside(pointFeature, polygon)) {
-                console.log('INTERSECTION FOUND for a Polygon/line etc');
-                console.log(pointFeature);
                 intersectionFound = true;
             }
         }
@@ -187,14 +154,10 @@ router.post("/intersect", function(req, res) {
         outputCond.projectName = req.body.projectName;
     }
 
-    console.log('input area');
     geojsonLayer.find(outputCond, function(err, outputData) {
         geojsonLayer.find(inputCond, function(err, inputArea) {
-            console.log(req.body.inputType);
-
             var intersections = [];
             var features1 = inputArea[0].features;
-
             for (var i = 0; i < features1.length; i++) { //go through all features in input
                 var pol1 = features1[i];
 
@@ -204,15 +167,11 @@ router.post("/intersect", function(req, res) {
 
                     //get intersection between the polygons
                     var intersection = turf.intersect(pol1, pol2);
-                    console.log("----------INTERSECTION---------------");
                     if (intersection !== null && intersection !== undefined) {
-                        console.log(intersection);
                         intersections.push(intersection);
                     }
                 }
             }
-            console.log("----------ALL INTERSECTIONS---------------");
-            console.log(intersections);
             var intObj = {
                 type: "FeatureCollection",
                 features: intersections
@@ -224,12 +183,9 @@ router.post("/intersect", function(req, res) {
             res.send(intObj);
         });
     });
-
 });
 
 router.post("/difference", function(req, res) {
-    console.log("RUNNING DIFFERENCE");
-
     var cond1 = {
         layerName: req.body.layer1name
     };
@@ -252,17 +208,11 @@ router.post("/difference", function(req, res) {
         } else {
             var allDiffPol = [];
             geojsonLayer.find(cond2, function(err, layer2) {
-                console.log(layer1);
-                console.log(layer1[0]);
-                console.log(layer1[0].features);
-                console.log(layer2);
-                console.log(layer2[0]);
                 for (var i = 0; i < layer1[0].features.length; i++) {
                     var currentFeature = layer1[0].features[i];
                     for (var j = 0; j < layer2[0].features.length; j++) {
                         var difference = turf.difference(currentFeature, layer2[0].features[j]);
                         if (difference !== undefined) {
-                            console.log(difference);
                             allDiffPol.push(difference);
                         }
                     }
@@ -270,8 +220,6 @@ router.post("/difference", function(req, res) {
                 if (difference === "undefined") {
                     res.send(false);
                 } else {
-                    //todo: save style and layer
-                    // saveStyle(req.body.newLayerName,req.user.username, req.body.projectName, req.body.color);
                     res.send({
                         features: allDiffPol
                     });
@@ -282,7 +230,6 @@ router.post("/difference", function(req, res) {
 });
 
 router.post("/merge", function(req, res) {
-    console.log("MERGING");
     var cond1 = {
         layerName: req.body.layer1
     };
@@ -290,16 +237,13 @@ router.post("/merge", function(req, res) {
         cond1.username = req.user.username;
         cond1.projectName = req.body.projectName;
     }
-
     var cond2 = {
         layerName: req.body.layer2
     };
-
     if (req.body.default2 == false) {
         cond2.username = req.user.username;
         cond2.projectName = req.body.projectName;
     }
-
     geojsonLayer.find(cond1, function(err, layer1) {
         if (err) {
             console.log('error');
@@ -312,9 +256,6 @@ router.post("/merge", function(req, res) {
                 mergedLayer.defaultLayer = false;
 
                 var features = [];
-                console.log(layer1[0].features);
-                console.log(layer2[0].features);
-
                 for (var i = 0; i < layer1[0].features.length; i++) {
                     features.push(layer1[0].features[i]);
                 }
@@ -327,7 +268,6 @@ router.post("/merge", function(req, res) {
                         console.log('error');
                     }
                 });
-
                 saveStyle(req.body.newLayerName, req.user.username, req.body.projectName, req.body.color);
                 res.send(mergedLayer);
             });
@@ -335,17 +275,13 @@ router.post("/merge", function(req, res) {
     });
 });
 
-
 router.post("/BufferDefaultGeojson", function(req, res) {
-    console.log('bufferDefaultGeojson');
     geojsonLayer.find({
         layerName: req.body.layerName
     }, function(err, data) {
         if (err) {
             res.send(err);
         } else {
-            console.log("Found layer to add buffer on - deafult layer");
-            console.log(data[0]);
             var geoJson = JSON.stringify(data[0]);
             var buffered = createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
             saveStyle(req.body.newLayerName, req.user.username, req.body.projectName, req.body.bufferColor);
@@ -354,9 +290,7 @@ router.post("/BufferDefaultGeojson", function(req, res) {
     });
 });
 
-
 router.post("/BufferGeojson", function(req, res) {
-    console.log("BufferGeojson");
     geojsonLayer.find({
         layerName: req.body.layerName,
         username: req.user.username,
@@ -365,8 +299,6 @@ router.post("/BufferGeojson", function(req, res) {
         if (err) {
             res.send(err);
         } else {
-            console.log("returned the layer to create buffer on");
-            console.log(data[0]);
             var geoJson = JSON.stringify(convertedGeoJson);
             var buffered = createBuffer(geoJson, req.body.bufferDistance, req.body.newLayerName, req.body.projectName, req.user.username);
             saveStyle(req.body.newLayerName, req.user.username, req.body.projectName, req.body.bufferColor);
@@ -384,11 +316,9 @@ function createBuffer(geoJ, distance, newLayerName, projectName, username) {
             features: [buffered]
         }
     }
-    console.log(buffered);
     saveGeoLayer(buffered, username, projectName, newLayerName);
     return buffered;
 }
-
 
 //--------------STYLING-------------------
 
@@ -398,7 +328,6 @@ router.post("/defaultStyling", function(req, res) {
         if (err) {
             console.log('error');
         } else {
-
             for (var i = 0; i < data.length; i++) {
                 var style = new layerStyle();
                 style.username = req.user.username;
@@ -416,8 +345,6 @@ router.post("/defaultStyling", function(req, res) {
     });
 });
 
-
-
 //get layers styling for specific layer
 router.post("/getStyling", function(req, res) {
     layerStyle.find({
@@ -432,13 +359,8 @@ router.post("/getStyling", function(req, res) {
     });
 });
 
-
-
 //get layers styling for specific layer
 router.delete("/deleteStyling", function(req, res) {
-    console.log("deleting style:");
-    console.log(req.body.projectName);
-    console.log(req.body.layerName);
     layerStyle.remove({
         username: req.user.username,
         projectName: req.body.projectName,
@@ -451,15 +373,12 @@ router.delete("/deleteStyling", function(req, res) {
     });
 });
 
-
 router.post("/layerStyling", function(req, res) {
     var style = new layerStyle();
     style.layerName = req.body.layerName;
     style.username = req.user.username;
     style.projectName = req.body.projectName;
     style.layerStyle = JSON.parse(req.body.layerStyle);
-
-
     style.save(function(err) {
         if (err) {
             res.send(err);
@@ -471,13 +390,9 @@ router.post("/layerStyling", function(req, res) {
     });
 });
 
-
 //------------GEOJSON-------------------
 
-
 router.delete("/deleteLayer", function(req, res) {
-    console.log("Trying to delete: " + req.user.username + "_" + req.body.layerName);
-
     geojsonLayer.remove({
         username: req.user.username,
         layerName: req.body.layerName,
@@ -492,7 +407,6 @@ router.delete("/deleteLayer", function(req, res) {
 });
 
 router.post("/getGeojson", function(req, res) {
-
     geojsonLayer.find({
         layerName: req.body.layerName,
         username: req.user.username,
@@ -505,11 +419,9 @@ router.post("/getGeojson", function(req, res) {
             res.json(data);
         }
     });
-
 });
 
 router.get("/defaultGeojsons", function(req, res) {
-    //console.log(req.body.layerName);
     geojsonLayer.find({
         defaultLayer: true
     }, function(err, data) {
@@ -522,7 +434,6 @@ router.get("/defaultGeojsons", function(req, res) {
 
 //get all geojsons for project and user
 router.post("/geojsons", function(req, res) {
-    //console.log(req.body.layerName);
     geojsonLayer.find({
         projectName: req.body.projectName,
         username: req.user.username
@@ -533,8 +444,6 @@ router.post("/geojsons", function(req, res) {
         res.json(data);
     });
 });
-
-
 
 router.post("/saveGeojson", function(req, res) {
 
@@ -550,12 +459,8 @@ router.post("/saveGeojson", function(req, res) {
     geo.username = req.user.username;
     geo.defaultLayer = false;
 
-    console.log("GEO:");
-    console.log(geo);
-
     //go through all features for layer and check that they are valid features
     var validJson = true;
-
     for (var i = 0; i < geo.features.length; i++) {
         if (!GJV.valid(geo.features[i])) { //finds if any of the features are invalid json
             console.log('feature is not valid');
@@ -564,7 +469,6 @@ router.post("/saveGeojson", function(req, res) {
     }
 
     if (validJson == true) { //check if valid features
-        console.log('valid json');
         geo.save(function(err) {
             if (err) {
                 res.send(err);
@@ -575,7 +479,6 @@ router.post("/saveGeojson", function(req, res) {
     } else {
         res.send(false);
     }
-
 });
 
 //------------PROJECTS-------------------
@@ -609,8 +512,6 @@ router.post("/project", function(req, res) {
 });
 
 router.delete("/deleteProject", function(req, res) {
-
-    console.log('delete');
     layerStyle.remove({
         projectName: req.body.projectName,
         username: req.user.username
@@ -640,11 +541,7 @@ router.delete("/deleteProject", function(req, res) {
 
 });
 
-
-
 //------------------ LOG IN --------------------------
-
-
 
 router.post('/register', function(req, res) {
     User.register(new User({
@@ -706,55 +603,4 @@ router.get('/status', function(req, res) {
         status: true
     });
 });
-
-
-// getUnusedLayerName=function(username, projectname, name, callback){
-//   console.log("in get unused name");
-//   var newName=name;
-//   console.log(username);
-//   console.log(projectname);
-//   geojsonLayer.find({ //get all layers from user and project
-//     username:username,
-//     projectName: projectname
-//   },function(err, data){
-//     if(err){
-//       console.log("error");
-//       res.send(err);
-//     }else{
-//       console.log("in else after getting all layers");
-//       console.log(data);
-//       var allLayerNames=[];
-//       for(var i=0; i<data.length; i++){
-//         allLayerNames.push(data[i].layerName);
-//       }
-//       console.log(allLayerNames);
-//       var nameTaken=true;
-//       var count=1;
-//       while(nameTaken){
-//         if(exsistsInList(allLayerNames, newName)){
-//           console.log("exists already");
-//           newName=name+"("+count+")";
-//           count++;
-//         }else{
-//           nameTaken=false;
-//           callback(newName);
-//         }
-//         console.log(newName);
-//       }
-//     }
-//   });
-// }
-//
-// exsistsInList=function(list, element){
-//   if(list == undefined){
-//     return(false);
-//   }
-//   for (var i = 0; i < list.length; i++) {
-//     if(list[i]==element){
-//       return(true);
-//     }
-//   }
-//   return(false);
-// }
-
 module.exports = router;

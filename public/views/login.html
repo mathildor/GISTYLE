@@ -19,17 +19,19 @@
 
             <div class="login-popup popup-background">
                 <div class="login-img">
-                    <img id="icon" src="../images/map-icon-white2.png"/>
+                    <img id="icon" src="../images/map-icon-white2.png" />
                 </div>
                 <div>
-                    <form class="login-form form" ng-submit="login()" >
+                    <form class="login-form form" ng-submit="login()">
                         <ul class="inline-right">
                             <li id="login-text">
                                 <div class="line"></div>
                                 <h4 id="login-head">  LOG IN  </h4>
                                 <div class="line"></div>
                             </li>
-                            <li><div ng-show="error" class="alert alert-danger">{{errorMessage}}</div></li>
+                            <li>
+                                <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
+                            </li>
                             <li><input name="username" class="form-control" ng-model="loginForm.username" id="mail" placeholder="Mail" required /></li>
                             <li><input type="password" class="form-control" name="password" ng-model="loginForm.password" id="password" placeholder="Password" required /></li>
                             <li><button type="submit" id="login-button">Log in</button></li>

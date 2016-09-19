@@ -17,7 +17,7 @@
         <div class="row">
             <div class="signUp-popup popup-background" id="signUpBackground">
                 <div class="login-img">
-                    <img id="icon" src="../images/map-icon-white2.png"/>
+                    <img id="icon" src="../images/map-icon-white2.png" />
                 </div>
                 <form name="form" ng-submit="register()" class="signUp-form">
                     <ul>
@@ -26,11 +26,13 @@
                             <h4 id="login-head">  SIGN UP  </h4>
                             <div class="line"></div>
                         </li>
-                        <li><div ng-show="error" class="alert alert-danger">{{errorMessage}}</div></li>
-                        <li><input id="mail" class="form-control" ng-model="registerForm.username" name="username" required placeholder="Enter email"/></li>
-                        <li><input type="password" class="form-control" ng-model="registerForm.password" name="password" required id="password" placeholder="Password"/></li>
-                        <li><input type="password" class="form-control" ng-model="registerForm.repeatedPassword" name="repeatedPassword" id="passwordAgain" placeholder="Repeat password"/></li>
-                        <li><button type=submit id="login-button" ng-disabled="disabled" class="btn btn-default" > Sign up </button></li>
+                        <li>
+                            <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
+                        </li>
+                        <li><input id="mail" class="form-control" ng-model="registerForm.username" name="username" required placeholder="Enter email" /></li>
+                        <li><input type="password" class="form-control" ng-model="registerForm.password" name="password" required id="password" placeholder="Password" /></li>
+                        <li><input type="password" class="form-control" ng-model="registerForm.repeatedPassword" name="repeatedPassword" id="passwordAgain" placeholder="Repeat password" /></li>
+                        <li><button type=submit id="login-button" ng-disabled="disabled" class="btn btn-default"> Sign up </button></li>
                     </ul>
                 </form>
             </div>
