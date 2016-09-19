@@ -2,6 +2,10 @@
 #tutorial-container{
   overflow: auto;
 }
+.tutorial-row{
+  height: 325px;
+  margin-top: 10px;
+}
 
 .background-img{
   z-index: -1;
@@ -20,7 +24,6 @@
 .red-line-tutorial{
   background-color: #ee5664;
   height: 5px;
-  width: 88%;
   display: -webkit-box;
 }
 
@@ -54,9 +57,10 @@
 }
 
 #tutorial-content{
+  width: 70%;
   z-index: 2;
   margin-top:70px;
-  margin-left: 8%;
+  margin-left: 15%;
   height: 100vh;
   display: -webkit-inline-box;
 
@@ -78,44 +82,39 @@
   }
   .tutorialPoint-left{
     display: -webkit-inline-box;
-    margin-right: 8%;
     height: 100%;
+    width: 100%;
     p{
       margin-right:0;
     }
     .tutorialText{
       width:45%;
-      margin-right: 28px;
+      margin-right: 5%;
     }
   }
   .tutorialPoint-right{
     display: -webkit-inline-box;
-    margin-right: 8%;
-    height: 100%;
-    float: right;
+    width: 100%;
+    // height: 100%;
     .tutorialText{
       width:45%;
-      margin-left: 28px;
+      margin-left: 5%;
     }
-    .tutorial{
-      width: 43%;
-    }
-    .video{
+  }
+  .tutorial{
+    width: 50%;
+    iframe{
       width: 100%;
-      margin-left: 17px;
     }
   }
 
-  .video{
-    width: 48%;
-    margin-bottom: 10px;
-    margin-top: 15px;
-  }
-
-  #scrollArea{
-    overflow: auto;
-    overflow-y:scroll;
-    height:3000px;
-    position: relative;
+  // #scrollArea{
+  //   overflow: auto;
+  //   overflow-y:scroll;
+  //   height:3000px;
+  //   position: relative;
+  // }
+  #endSpace{
+    height: 40px;
   }
 }
