@@ -34,8 +34,8 @@
           <div class="tutorialPoint-left anchor" id="anchorProject">
             <div class="tutorialText">
               <h1>Projects</h1>
-              <p> You can create your own projects by clicking on new projects. All changes you do on the project
-                will be saved. Delete project by clicking x on the project you want to delete.
+              <p> You can create your own projects by clicking the "new project" button. All changes you do in a project
+                will be saved automatically. Projects can be deleted by clicking "x" on the project you want to delete.
               </p>
             </div>
 
@@ -56,8 +56,17 @@
 
             <div class="tutorialText">
               <h1>Layers</h1>
-              <p> Layers contains different spatial data, example rivers. You can view and hide
-                the layers by clicking the eye icon, and you can delete a layer by clicking the trashcan icon.
+              <p> Layers contains different spatial data, example rivers, schools and so on.
+                <br><br>
+                You can view and hide
+                layers by clicking the <i class="fa fa-eye" style="width:14px; color:black;"></i>,
+                and you can delete a layer by clicking <img src="../images/trash-black.png" style="width:14px;" />.
+
+                You can also change the order the layers are drawn by dragging the layer to a different place
+                in the layer menu. The layers at the top of the menu will be positioned at the front, on top of the other layers.
+                <br><br>
+                You can also change styling of a layer by clicking the
+                <img src="../images/edit.png" style="width:14px;" /> icon, and you can then change color, opacity and line width.
               </p>
             </div>
           </div>
@@ -69,8 +78,13 @@
           <div class="tutorialPoint-left anchor" id="anchorBuffer">
             <div class="tutorialText">
               <h1>Buffer</h1>
-              <p> You can create your own projects by clicking on new projects. All changes you do on the project
-                will be saved. Delete project by clicking x on the project you want to delete.>
+              <p> A buffer is an area defined as a zone around a map layer. The zone is measured by a distance of meter from the points in the input layer.
+                <br><br>
+                <b>Input:</b>
+                Polygon, Lines, Points
+                <br>
+                <b>Output: </b>
+                Polygon
               </p>
             </div>
             <div class="tutorial">
@@ -88,7 +102,14 @@
             </div>
             <div class="tutorialText">
               <h1>Intersection</h1>
-              <p> Intersection is used to find the intersecting are between to layers of the same type, example line or polygon.
+              <p>
+                Intersection is defined as the overlapping area between two polygons.
+                <br><br>
+                <b>Input: </b>
+                Polygon
+                <br>
+                <b>Output: </b>
+                Polygon
               </p>
             </div>
           </div>
@@ -100,7 +121,16 @@
           <div class="tutorialPoint-left anchor" id="anchorDifference">
             <div class="tutorialText">
               <h1>Difference</h1>
-              <p> Find the are that are different between the two input layers.</p>
+              <p>
+                Difference takes two parameters; Output area and intersecting area.
+                The function returns all area that are in the "output area" but not in the "intersecting area".
+                <br><br>
+                <b>Input: </b>
+                Polygons
+                <br>
+                <b>Output: </b>
+                Polygon
+              </p>
             </div>
             <div class="tutorial">
               <iframe width="593" height="315" src="https://www.youtube.com/embed/VyFuEFYn4o0"></iframe>
@@ -117,7 +147,16 @@
             </div>
             <div class="tutorialText">
               <h1>Merge</h1>
-              <p> Take two layers and merge them together into one layer.
+              <p> Merge takes two layers of same type and merge them together into one layer.
+                <br><br>
+                <b>Input 1: </b>
+                Polygon, Point, Line
+                <br>
+                <b>Input 2: </b>
+                Same type as selected in "Input 1"
+                <br>
+                <b>Output: </b>
+                Same type as selected in "Input 1" and "Input 2"
               </p>
             </div>
           </div>
@@ -129,11 +168,44 @@
           <div class="tutorialPoint-left anchor">
             <div class="tutorialText">
               <h1>Within</h1>
-              <p> Find all points or polygons within a polygon.
+              <p>
+                Within returns all elements in a layer that is completely or partially inside another selected layer.
+                <br><br>
+                <b>Input 1: </b>
+                Polygon, Point
+                <br>
+                <b>Input 2: </b>
+                Polygon
+                <br>
+                <b>Output: </b>
+                Same type as selected in "Input 1"
               </p>
             </div>
             <div class="tutorial">
               <iframe width="540" height="315" src="https://www.youtube.com/embed/0ePcOtDsxv4"></iframe>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="red-line-tutorial"></div>
+
+        <div class="tutorial-row">
+          <div class="tutorialPoint-right anchor" id="anchorMerge">
+            <div class="tutorial">
+              <iframe width="540" height="315" src="https://www.youtube.com/embed/diUuIllHlXY"></iframe>
+            </div>
+            <div class="tutorialText">
+              <h1>Upload layers</h1>
+              <p>
+                You can upload your own data to your project, by clicking "Add new layer".
+                A good place to find data is on overpass-turbo which you can find a link to in the upload layer popup window.
+                If you upload a layer that contains multiple types of data, the layer will be split into different
+                layers that contains each of the types.
+                <br><br>
+                <b>Input: </b>
+                GeoJSON
+              </p>
             </div>
           </div>
         </div>

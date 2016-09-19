@@ -37,6 +37,12 @@ gisApp.config(['$routeProvider',
             access: {restricted: false}
 
         }).
+        when('/info',{
+            templateUrl: 'views/info.html',
+            //controller:'infoController',
+            access: {restricted: false}
+
+        }).
         when('/login',{
             templateUrl:'views/login.html',
             controller:'loginController',
@@ -75,4 +81,3 @@ gisApp.run(function ($rootScope, $location, $route, AuthService) {
 
 //USE for ordering layers by name:
 //&scope.orderProp='name';
-
