@@ -7,7 +7,7 @@ body a:hover{
 
 $nav-color:rgba(0,0,0,0.58);
 
-#cartodb-map{
+#leaflet-map{
 
   z-index:1;
   width: 100%;
@@ -111,7 +111,8 @@ $nav-color:rgba(0,0,0,0.58);
   }
 
   #menuLayerDropdown{
-    padding-left: 0;
+    padding-left: 10px;
+    width: 238px;
     height:auto;
     max-height: 200px;
     overflow-y: scroll;
@@ -123,20 +124,26 @@ $nav-color:rgba(0,0,0,0.58);
     margin-right: 5%;
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
-    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.44);
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.44);
     li{
-      display: table;
+      //display: table;
+      display: flex;
+      //width: 235px;
+
     }
     .btnDiv{
-      position: relative;
-      margin-left: 175px;
+      margin-right: 6px;
+      float:right;
+      //position: relative;
+      //margin-left: 175px;
     }
     a{
-      position: absolute;
-      width: 162px;
+      //position: absolute;
+      margin-right: 10px;
+      width: 153px;
       overflow-x: scroll;
       font-size: medium;
-      margin-left: 3%;
+      //margin-left: 3%;
     }
     img{
       // float: right;
@@ -366,7 +373,7 @@ $nav-color:rgba(0,0,0,0.58);
 
 #differencePopUp{
   img{
-
+    width: 364px;
   }
 }
 

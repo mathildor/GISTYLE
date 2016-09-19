@@ -30,7 +30,7 @@ main.map.init=function(){
     console.log("Project undefined");
     window.location="/#projects";
   }
-  map = new L.Map('cartodb-map', {
+  map = new L.Map('leaflet-map', {
     center: [63.43, 10.39],
     zoom: 14,
     zoomControl: true
@@ -249,26 +249,12 @@ main.getLeafletLayerFromName=function(layerName){
 }
 
 main.map.removeLayerFromMapView=function(layerName){ //TODO: change name to removeLayer
-
-  // for(var i=0; i<main.map.layers.length; i++){
-  //   if(main.map.layers[i].name === layerName){
-  //     main.map.layers[i].active=false;
-  //   }
-  // }
   var layer=main.getLeafletLayerFromName(layerName);
   layer.active=false;
   map.removeLayer(layer);
 };
 
 main.map.addLayerToMapView=function(layer, layerName){
-  //TODO: problem er at den leter etter noe som ikke finnes? Hva gjør egentlig denne metoden? Hvis den skal adde, hva må den finne?
-  // for(var i=0; i<main.map.layers.length; i++){
-  //   if(main.map.layers[i].name === layerName){
-  //     console.log("adding to map");
-  //     map.addLayer(main.map.layers[i]);
-  //     main.map.layers[i].active=true;
-  //   }
-  // }
   var layer=getLeafletLayerFromName(layerName);
   layer.active=true;
   map.addLayer(layer);
@@ -286,7 +272,6 @@ main.menu.addToLayerList=function(newLayer, newSublayer){
     main.menu.toggleLayerView(event.currentTarget.parentNode.children[1].children[0]);
     main.reorderLayers();
   });
-  //link.contentEditable='true';
 
   var checkbox=document.createElement('i');
 
@@ -382,6 +367,7 @@ main.deleteLayer=function(layerName){
         });
       }
       main.map.layers.splice(i,1);
+      main.menu.activeLayers.splice(i,1);
     }
   }
 }

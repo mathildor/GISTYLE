@@ -35,14 +35,27 @@ common.addToolLayer=function(dataObj, reqUrl, type, color, newLayerName){
   });
 }
 
+common.getActiveLayersList=function(){
+  var layers=[];
+  console.log(main.map.layers[0]);
+  console.log(main.map.layers[0].name);
+  for(var i=0; i<main.map.layers.length; i++){
+    console.log(main.map.layers[i].name);
+    layers.push(main.map.layers[i].name);
+  }
+  return layers;
+}
+
 common.getUnusedLayerName=function(name){
   var nameTaken=true;
   var count=1;
   var newName=name;
   while(nameTaken){
     console.log("Name taken?");
-    console.log(main.menu.activeLayers);
-    if(common.exsistsInList(main.menu.activeLayers, newName)){
+    console.log(main.map.layers);
+    var activeLayers=common.getActiveLayersList();
+    console.log(activeLayers);
+    if(common.exsistsInList(activeLayers, newName)){
       console.log("already in list, need to change to:");
       newName=name+"_"+count;
       count++;

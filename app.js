@@ -11,7 +11,8 @@ var hash = require('bcrypt-nodejs');
 var path = require('path');
 var passport = require('passport');
 var localStrategy = require('passport-local' ).Strategy;
-const favicon = require('express-favicon');
+// var favicon = require('express-favicon');
+var favicon = require('serve-favicon');
 
 
 // mongoose
@@ -23,7 +24,8 @@ var User = require('./models/user.js');
 
 // create instance of express
 var app = express();
-app.use(favicon('/images/map-marker-icon.png'));
+//app.use('/icon.png', express.static('images/icon.png'));
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 // require routes - allows for having api in other document
 var routes = require('./routes/api.js');
@@ -47,6 +49,7 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // configure passport
 passport.use(new localStrategy(User.authenticate()));

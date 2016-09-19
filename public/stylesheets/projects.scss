@@ -287,3 +287,23 @@
     width:195px;
   }
 }
+
+#newProjectPopUp{
+  .popupContent{
+    margin: 0;
+    display: block!important;
+  }
+  ul{
+    width: 100%;
+  }
+  li{
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+#deleteProjectPopUp{
+  .popupContent{
+    display: block!important;
+  }
+}
