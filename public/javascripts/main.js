@@ -5,7 +5,8 @@ var main = {
     map: {
         layers: [],
         activeStyleLayer: "",
-        activeStyleLayerName: ""
+        activeStyleLayerName: "",
+        popup:{}
     }
 };
 
@@ -61,7 +62,9 @@ main.map.addLayer = function(layer, styling, layerName, defaultLayer) {
             pointToLayer: function(feature, latlng) {
                 return L.circleMarker(latlng, style);
             }
-        }).addTo(map);
+        }).addTo(map).on('click', function(e) {
+            main.map.popup.getLayerInfo(e);
+        });
     } else {
         newLayer = L.geoJson(layer, {
             style: {
@@ -71,7 +74,7 @@ main.map.addLayer = function(layer, styling, layerName, defaultLayer) {
                 "color": styling.lineColor //stroke-color
             }
         }).addTo(map).on('click', function(e) {
-            console.log(e.layer);
+            main.map.popup.getLayerInfo(e);
         });
     }
 
@@ -87,7 +90,32 @@ main.map.addLayer = function(layer, styling, layerName, defaultLayer) {
 
     return newLayer;
 }
+var popup=L.popup();
 
+main.map.popup.getLayerInfo = function(e){
+  var prop=(e.layer.feature.properties);
+  console.log(e.layer);
+  console.log(e.layer);
+  var content="";
+  var layerName=main.getNameFromLeafletLayer(e.layer);
+  content+=main.map.popup.getContentLine("Layer", layerName)
+  for(var att in prop){
+    if(att==="name"){
+      content+=main.map.popup.getContentLine(att, prop[att]);
+    }
+  }
+    popup
+      .setLatLng(e.latlng)
+      .setContent(content)
+      .openOn(map);
+}
+
+main.map.popup.getContentLine = function(name, value){
+  var contentToAdd="";
+  contentToAdd+="<h5>"+name+": "+"</h5>";
+  contentToAdd+="<h6>"+value+"</h6>";
+  return contentToAdd;
+}
 
 main.map.removeFromLeafletLayerList = function(layerName) {
     for (var i = 0; i < main.map.layers.length; i++) {
@@ -234,6 +262,18 @@ main.getLeafletLayerFromName = function(layerName) {
         }
     }
     return layer;
+}
+main.getNameFromLeafletLayer = function(layer) {
+    console.log("in function");
+    for (var i = 0; i < main.map.layers.length; i++) {
+      console.log(main.map.layers[i].layer);
+      console.log(layer);
+        if (main.map.layers[i].layer === layer) {
+            var name = main.map.layers[i].name;
+            console.log(name);
+        }
+    }
+    return name;
 }
 
 main.map.removeLayerFromMapView = function(layerName) { //TODO: change name to removeLayer
